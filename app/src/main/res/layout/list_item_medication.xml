@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:paddingBottom="5dp"
+              android:paddingEnd="10dp"
+              android:paddingTop="10dp">
+
+    <ImageView
+        android:id="@+id/ivMedListImage"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:contentDescription="@string/med_image_desc"
+        android:src="@drawable/default_image"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvListItemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Medication name"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/tvMedListFreq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:text="Frequency"/>
+
+    </LinearLayout>
+</LinearLayout>

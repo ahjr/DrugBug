@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout
+    android:id="@+id/image_dialog_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/ivImageDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/med_image_desc"/>
+
+</FrameLayout>

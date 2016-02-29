@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="15dp"
+                android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvAddMedNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/etAddMedName"
+        android:text="@string/add_dose_label_name"/>
+
+    <EditText
+        android:id="@+id/etAddMedName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvAddMedNameLabel"
+        android:inputType="text"/>
+
+    <TextView
+        android:id="@+id/tvAddMedDosageLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ivAddMedImage"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/ivAddMedImage"
+        android:labelFor="@+id/etAddMedDosage"
+        android:text="@string/add_dose_label_dosage"/>
+
+    <EditText
+        android:id="@+id/etAddMedDosage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvAddMedDosageLabel"
+        android:layout_below="@+id/tvAddMedDosageLabel"
+        android:inputType="text"/>
+
+    <TextView
+        android:id="@+id/tvAddMedFreqLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvAddMedDosageLabel"
+        android:layout_below="@+id/etAddMedDosage"
+        android:layout_marginTop="10dp"
+        android:labelFor="@+id/spAddMedFreq"
+        android:text="@string/add_dose_label_freq"/>
+
+    <Spinner
+        android:id="@+id/spAddMedFreq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvAddMedDosageLabel"
+        android:layout_below="@+id/tvAddMedFreqLabel"
+        android:layout_marginTop="10dp"/>
+
+    <CheckBox
+        android:id="@+id/cbAddMedReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvAddMedDosageLabel"
+        android:layout_below="@+id/spAddMedFreq"
+        android:layout_marginTop="10dp"
+        android:checked="false"
+        android:paddingEnd="15dp"
+        android:text="@string/add_dose_label_reminder"/>
+
+    <ImageView
+        android:id="@+id/ivAddMedImage"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etAddMedName"
+        android:layout_marginTop="10dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/med_image_desc"
+        android:cropToPadding="false"
+        android:scaleType="fitCenter"/>
+
+    <Button
+        android:id="@+id/btnAddMedImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ivAddMedImage"
+        android:onClick="onClickAddMedAddImage"
+        android:text="@string/add_dose_button_image_add"
+        android:textSize="12sp"/>
+
+    <Button
+        android:id="@+id/btnAddMedSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onClickAddMedSave"
+        android:text="@string/add_dose_button_save"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cbAddMedReminder"
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickDatetime"
+        android:text="New Button"/>
+
+
+</RelativeLayout>

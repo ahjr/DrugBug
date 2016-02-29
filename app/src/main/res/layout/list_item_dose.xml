@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:paddingBottom="5dp"
+              android:paddingEnd="10dp"
+              android:paddingTop="10dp">
+
+    <ImageView
+        android:id="@+id/ivDoseListImage"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:contentDescription="@string/med_image_desc"
+        android:padding="5dp"
+        android:src="@drawable/default_image"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvListItemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="15sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvListItemDateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:text="@string/dose_list_date_label"/>
+
+            <TextView
+                android:id="@+id/tvListItemDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingTop="5dp"/>
+
+            <TextView
+                android:id="@+id/tvListItemReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingTop="5dp"
+                android:text="@string/dose_list_reminder_set"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
