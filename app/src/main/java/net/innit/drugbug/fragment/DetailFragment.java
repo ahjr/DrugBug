@@ -24,7 +24,7 @@ import net.innit.drugbug.AddDoseActivity;
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.DoseItem;
 
 import java.text.SimpleDateFormat;
@@ -36,7 +36,7 @@ import java.util.Locale;
  */
 public class DetailFragment extends DialogFragment {
     private long id;
-    private DataSource db;
+    private DBDataSource db;
     private Context context;
     private DoseItem dose;
 
@@ -44,7 +44,7 @@ public class DetailFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
-        db = new DataSource(context);
+        db = new DBDataSource(context);
     }
 
     @Nullable

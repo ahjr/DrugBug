@@ -203,4 +203,17 @@
 </string>
     <string name="menu_default_help">Help</string>
     <string name="main_view_list">View List</string>
+    <string name="main_future_header">Future Doses</string>
+    <string name="main_future_description">View a list of doses due to be taken</string>
+    <string name="main_future_due_today">Doses due today:</string>
+    <string name="main_future_missed">Doses missed today:</string>
+    <string name="main_future_num_doses">Number of doses per medication:</string>
+    <string name="main_taken_header">Taken Doses</string>
+    <string name="main_taken_description">View a list of taken doses</string>
+    <string name="main_header_reminders">Reminders</string>
+    <string name="main_reminders_description">View a list of currently set reminders</string>
+    <string name="main_meds_header">Medications</string>
+    <string name="main_meds_description">View a list of medications</string>
+    <string name="main_meds_active">Active medications:</string>
+    <string name="main_meds_inactive">Inactive medications:</string>
 </resources>

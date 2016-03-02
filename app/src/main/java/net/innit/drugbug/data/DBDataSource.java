@@ -14,6 +14,8 @@ import net.innit.drugbug.PrefScreenActivity;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -23,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataSource {
+public class DBDataSource {
     /**
      * Array of columns in medication table
      */
@@ -70,8 +72,8 @@ public class DataSource {
     /**
      * @param context Context for this database
      */
-    public DataSource(Context context) {
-        Log.d(MainActivity.LOGTAG, "DataSource: created");
+    public DBDataSource(Context context) {
+        Log.d(MainActivity.LOGTAG, "DBDataSource: created");
         dbhelper = new DBHelper(context);
     }
 
@@ -584,6 +586,60 @@ public class DataSource {
         newFutureItem.setDate(calendar.getTime());
         return createDose(newFutureItem);
 
+    }
+
+    public List<DoseItem> getDosesForDate(Date date) {
+        Log.d(MainActivity.LOGTAG, "getDosesForDate: start");
+        List<DoseItem> doses = new ArrayList<>();
+        // Get day from date
+        SimpleDateFormat daySDF = new SimpleDateFormat("yyyyMMdd");
+        String day = daySDF.format(date);
+        String midnight = day + " 00:00:00";
+        String endOfDay = day + " 23:59:59";
+
+        // Calculate epoch seconds for midnight and 11:59pm
+        SimpleDateFormat datetimeSDF = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
+        long midnightDate;
+        long endOfDayDate;
+        try {
+            midnightDate = datetimeSDF.parse(midnight).getTime();
+            endOfDayDate = datetimeSDF.parse(endOfDay).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        // Set selection
+        String selection = DBHelper.COLUMN_DATE + ">" + midnightDate + " AND " +
+                            DBHelper.COLUMN_DATE + "<" + endOfDayDate;
+
+        // Build the dose list to return
+        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, null);
+        Log.d(MainActivity.LOGTAG, "getDosesForDate: query returned " + cursor.getCount() + " doses");
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                MedicationItem medication = new MedicationItem();
+                medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MEDICATION_ID)));
+                medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
+                medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
+                medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
+
+                DoseItem dose = new DoseItem();
+                dose.setMedication(medication);
+                dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
+                dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
+                dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
+                dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
+                dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
+                Log.d(MainActivity.LOGTAG, "getDosesForDate: dose id " + dose.getId());
+                doses.add(dose);
+            }
+        }
+        cursor.close();
+
+
+
+        return doses;
     }
 
     /**

@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * ** NOT IN USE **
- * Implemented as a static list in DataSource object for now
+ * Implemented as a static list in DBDataSource object for now
  */
 public class FrequencyItem {
     private String label;

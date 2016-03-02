@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.DoseItem;
 
 import java.util.Calendar;
@@ -17,13 +17,13 @@ import java.util.Calendar;
 public class Reminder {
     public static final int REQUEST_HEADER_FUTURE_DOSE = 10;
 
-    private final DataSource db;
+    private final DBDataSource db;
 
     private final Context context;
 
     public Reminder(Context context) {
         this.context = context;
-        db = new DataSource(context);
+        db = new DBDataSource(context);
     }
 
     /**

@@ -13,7 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.fragment.DetailFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
@@ -39,7 +39,7 @@ public class DoseListActivity extends Activity {
     private static final int CONTEXT_TAKEN = 10004;
     private static final int CONTEXT_ONLY_THIS_MED = 10005;
 
-    private final DataSource db = new DataSource(this);
+    private final DBDataSource db = new DBDataSource(this);
     private List<DoseItem> doses = new ArrayList<>();
     private String type;
 

@@ -11,7 +11,7 @@ import android.util.Log;
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.PrefScreenActivity;
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.ImageStorage;
@@ -19,7 +19,7 @@ import net.innit.drugbug.util.ImageStorage;
 import java.util.List;
 
 public class PrefScreenFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private DataSource db;
+    private DBDataSource db;
     private int oldNumDoses;
     private ImageStorage imageStorage;
 
@@ -28,7 +28,7 @@ public class PrefScreenFragment extends PreferenceFragment implements SharedPref
         super.onCreate(savedInstanceState);
 
         Context context = getActivity().getApplicationContext();
-        db = new DataSource(context);
+        db = new DBDataSource(context);
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);

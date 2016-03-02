@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.MedicationItem;
 
 /**
@@ -34,7 +34,7 @@ public class ImageFragment extends DialogFragment {
 //        String imagePath = bundle.getString("imagePath");
         long medId = bundle.getLong("med_id");
 
-        DataSource db = new DataSource(context);
+        DBDataSource db = new DBDataSource(context);
         db.open();
         MedicationItem medicationItem = db.getMedication(medId);
         db.close();

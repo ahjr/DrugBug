@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_sort_order"
-        android:showAsAction="always|withText"
+        android:icon="@drawable/ic_action_sort_2"
+        android:showAsAction="always"
         android:title="@string/menu_list_sort">
         <menu>
             <group>
@@ -22,7 +22,8 @@
 
     <item
         android:id="@+id/menu_filter"
-        android:showAsAction="never"
+        android:icon="@drawable/ic_content_filter_list"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_list_filter">
         <menu>
             <group>
@@ -39,7 +40,8 @@
     <item
         android:id="@+id/menu_list_help"
         android:orderInCategory="300"
-        android:showAsAction="never"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_default_help"/>
 
 </menu>

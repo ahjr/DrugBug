@@ -3,19 +3,22 @@
     <item
         android:id="@+id/menu_main_add"
         android:orderInCategory="100"
+        android:icon="@drawable/ic_content_add"
         android:showAsAction="ifRoom"
         android:title="@string/menu_add"/>
 
     <item
         android:id="@+id/menu_main_prefs"
         android:orderInCategory="200"
-        android:showAsAction="never"
+        android:icon="@drawable/ic_action_settings"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_preferences"/>
 
     <item
         android:id="@+id/menu_main_help"
         android:orderInCategory="300"
-        android:showAsAction="never"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_default_help"/>
 
 </menu>

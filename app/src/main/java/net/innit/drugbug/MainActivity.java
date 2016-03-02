@@ -2,25 +2,94 @@ package net.innit.drugbug;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
+import net.innit.drugbug.model.MedicationItem;
+
+import java.util.Date;
+import java.util.List;
 
 // TODO really need to add comments everywhere
 // TODO Extract string resources
 
 public class MainActivity extends Activity {
-
     public static final String LOGTAG = "DrugBug";
+
+    private TextView mFutureDueToday;
+    private TextView mFutureMissed;
+    private TextView mFutureNumDoses;
+    private TextView mMedActive;
+//    private TextView mMedInactive;
+
+    private DBDataSource db;
+    private List<DoseItem> doses;
+    private List<MedicationItem> medications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = new DBDataSource(this);
+
+        setupViews();
+
+        db.open();
+        doses = db.getDosesForDate(new Date());
+        medications = db.getAllMedications();
+        db.close();
+
+    }
+
+    private void setupViews() {
+        mFutureDueToday = (TextView) findViewById(R.id.tvMainFutureDueToday);
+        mFutureMissed = (TextView) findViewById(R.id.tvMainFutureMissed);
+        mFutureNumDoses = (TextView) findViewById(R.id.tvMainFutureNumDoses);
+        mMedActive = (TextView) findViewById(R.id.tvMainMedActive);
+//        mMedInactive = (TextView) findViewById(R.id.tvMainMedInactive);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Date now = new Date();
+
+        // Calculate # doses due today
+        int count = 0;
+        for (DoseItem dose : doses) {
+            if (!dose.isTaken() && now.compareTo(dose.getDate())<0) {
+                count++;
+            }
+        }
+        mFutureDueToday.setText(String.format("%,d", count));
+
+        // Calculate # missed doses today
+        count = 0;
+        for (DoseItem dose : doses) {
+            if (!dose.isTaken() && now.compareTo(dose.getDate())>=0) {
+                count++;
+            }
+        }
+        mFutureMissed.setText(String.format("%,d", count));
+
+        // Lookup number of doses from SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mFutureNumDoses.setText(String.format("%,d", sharedPreferences.getInt(PrefScreenActivity.KEY_NUM_DOSES, PrefScreenActivity.DEFAULT_NUM_DOSES)));
+
+        // Calculate # of active medications
+        mMedActive.setText(String.format("%,d", medications.size()));
+
+        // Calculate # of inactive medications (not implemented)
     }
 
     @Override

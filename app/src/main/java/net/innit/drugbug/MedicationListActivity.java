@@ -15,7 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class MedicationListActivity extends Activity {
     private static final int CONTEXT_DELETE_ALL = 1001;
-    private DataSource db;
+    private DBDataSource db;
     private List<MedicationItem> medications;
     private String sortOrder;
     private MedicationArrayAdapter adapter;
@@ -41,7 +41,7 @@ public class MedicationListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_medication);
 
-        db = new DataSource(this);
+        db = new DBDataSource(this);
         db.open();
         medications = db.getAllMedications();
         db.close();

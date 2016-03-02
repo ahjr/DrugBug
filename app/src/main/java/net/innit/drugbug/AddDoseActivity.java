@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
@@ -51,7 +51,7 @@ public class AddDoseActivity extends FragmentActivity {
 
     private static final int RESULT_TAKE_PICTURE = 300;
 
-    private final DataSource db = new DataSource(this);
+    private final DBDataSource db = new DBDataSource(this);
     private String action;
 
     private File dir;

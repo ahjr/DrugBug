@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DataSource;
+import net.innit.drugbug.data.DBDataSource;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -128,7 +128,7 @@ public class DoseItem implements Comparable<DoseItem> {
      * @param intent  intent to start after confirmation
      */
     public void confirmDelete(final Context context, final Intent intent) {
-        final DataSource db = new DataSource(context);
+        final DBDataSource db = new DBDataSource(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(R.string.alert_delete_dose_title);
         alertDialogBuilder.setMessage(R.string.alert_delete_dose_message);
@@ -166,7 +166,7 @@ public class DoseItem implements Comparable<DoseItem> {
      * @param intent  intent to start after confirmation
      */
     public void confirmTaken(final Context context, final Intent intent) {
-        final DataSource db = new DataSource(context);
+        final DBDataSource db = new DBDataSource(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(R.string.taken_dialog_title);
         alertDialogBuilder.setMessage(R.string.dialog_confirm);
