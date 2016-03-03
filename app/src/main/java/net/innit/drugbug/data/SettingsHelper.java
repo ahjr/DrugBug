@@ -1,7 +1,6 @@
 package net.innit.drugbug.data;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import net.innit.drugbug.MainActivity;

@@ -11,6 +11,9 @@ import net.innit.drugbug.data.SettingsHelper;
 
 import java.io.File;
 
+/**
+ * Object for manipulating the app image storage
+ */
 public class ImageStorage {
     private static final String IMAGE_DIR = "images/medications";
 
@@ -23,11 +26,14 @@ public class ImageStorage {
     private File rootDir;           // Root directory for the storage type
     private File absDir;            // Full directory - rootDir + IMAGE_DIR
 
+    /**
+     * @param context Context for this object
+     */
     public ImageStorage(Context context) {
         this.context = context;
 
         LOCATION_EXTERNAL = new File(Environment.getExternalStorageDirectory(), context.getPackageName());
-        LOCATION_INTERNAL = context.getFilesDir();
+       LOCATION_INTERNAL = context.getFilesDir();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.locationType = sharedPreferences.getString(SettingsHelper.KEY_IMAGE_STORAGE, SettingsHelper.DEFAULT_IMAGE_STORAGE);
@@ -35,7 +41,7 @@ public class ImageStorage {
         switch (locationType) {
             case "INTERNAL":
                 this.displayText = "Internal";
-                this.rootDir = LOCATION_INTERNAL;
+                this.rootDir =LOCATION_INTERNAL;
                 this.absDir = new File(rootDir, IMAGE_DIR);
                 break;
             case "EXTERNAL":
@@ -46,14 +52,20 @@ public class ImageStorage {
         }
     }
 
+    /**
+     * @return Location type string for this object
+     */
     public String getLocationType() {
         return locationType;
     }
 
+    /**
+     * @param type Location type string
+     */
     public void setLocationType(String type) {
         switch (type) {
             case "INTERNAL":
-                File rootDir = LOCATION_INTERNAL;
+                File rootDir =LOCATION_INTERNAL;
                 File internalDir = new File(rootDir, IMAGE_DIR);
                 // if internal directory doesnt exist
                 if (!internalDir.exists()) {
@@ -129,14 +141,23 @@ public class ImageStorage {
         }
     }
 
+    /**
+     * @return Text to display
+     */
     public String getDisplayText() {
         return displayText;
     }
 
+    /**
+     * @return Current image location root directory (not utilized - future: there may be need for another category of images)
+     */
     public File getRootDir() {
         return rootDir;
     }
 
+    /**
+     * @return Current image location absolute directory
+     */
     public File getAbsDir() {
         return absDir;
     }
