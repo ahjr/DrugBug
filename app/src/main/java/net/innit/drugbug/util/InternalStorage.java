@@ -5,19 +5,16 @@ import android.widget.Toast;
 
 import java.io.File;
 
-/**
- * Created by alissa on 3/2/16.
- */
-public class InternalStorage {
-    private final Context context;
+public class InternalStorage implements Storage {
+    public static final String DISPLAY_TEXT = "Internal";
 
     private static InternalStorage instance;
+    private ExternalStorage externalStorage;
 
-    private String displayText = "Internal";     // Text for display
+    private final Context context;
     private File rootDir;           // Root directory for the storage type
     private File absDir;            // Full directory - rootDir + IMAGE_DIR
     private boolean active;
-    private ExternalStorage externalStorage;
 
     private InternalStorage(Context context, String subDir) {
         this.context = context;
@@ -25,7 +22,7 @@ public class InternalStorage {
         this.absDir = new File(rootDir, subDir);
         this.externalStorage = ExternalStorage.getInstance(context, subDir);
 
-        // Check SharedPreferences
+        // Check SharedPreferences and set active if internal is selected
     }
 
     public static InternalStorage getInstance(Context context, String subDir) {
@@ -33,10 +30,6 @@ public class InternalStorage {
             instance = new InternalStorage(context, subDir);
         }
         return instance;
-    }
-
-    public String getDisplayText() {
-        return displayText;
     }
 
     public File getRootDir() {
@@ -51,16 +44,16 @@ public class InternalStorage {
         return active;
     }
 
-    protected synchronized void setActive() {
+    public synchronized void setActive() {
         externalStorage.setInactive();
         active = true;
     }
 
-    protected void setInactive() {
+    public void setInactive() {
         active = false;
     }
 
-    public void setInternal() {
+    public void setStorageLocation () {
         // if internal directory doesn't exist
         if (!absDir.exists()) {
             boolean created = absDir.mkdirs();
@@ -78,10 +71,6 @@ public class InternalStorage {
                 }
         } // else do nothing
 
-        // Make this atomic
-        synchronized (this) {
-            setActive();
-            externalStorage.setInactive();
-        }
+        setActive();
     }
 }

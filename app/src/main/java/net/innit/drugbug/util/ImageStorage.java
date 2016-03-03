@@ -17,14 +17,16 @@ import java.io.File;
 public class ImageStorage {
     private static final String IMAGE_DIR = "images/medications";
 
-    public final File LOCATION_INTERNAL;
-    public final File LOCATION_EXTERNAL;
+//    public final File LOCATION_INTERNAL;
+//    public final File LOCATION_EXTERNAL;
 
     private final Context context;
     private String displayText;     // Text for display
     private String locationType;    // File storage location type - INTERNAL or EXTERNAL
     private File rootDir;           // Root directory for the storage type
     private File absDir;            // Full directory - rootDir + IMAGE_DIR
+    private InternalStorage internalStorage;
+    private ExternalStorage externalStorage;
 
     /**
      * @param context Context for this object
@@ -32,22 +34,16 @@ public class ImageStorage {
     public ImageStorage(Context context) {
         this.context = context;
 
-        LOCATION_EXTERNAL = new File(Environment.getExternalStorageDirectory(), context.getPackageName());
-       LOCATION_INTERNAL = context.getFilesDir();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.locationType = sharedPreferences.getString(SettingsHelper.KEY_IMAGE_STORAGE, SettingsHelper.DEFAULT_IMAGE_STORAGE);
 
         switch (locationType) {
             case "INTERNAL":
-                this.displayText = "Internal";
-                this.rootDir =LOCATION_INTERNAL;
-                this.absDir = new File(rootDir, IMAGE_DIR);
+                internalStorage = InternalStorage.getInstance(context, IMAGE_DIR);
                 break;
             case "EXTERNAL":
-                this.displayText = "External";
-                this.rootDir = LOCATION_EXTERNAL;
-                this.absDir = new File(rootDir, IMAGE_DIR);
+                externalStorage = ExternalStorage.getInstance(context, IMAGE_DIR);
                 break;
         }
     }

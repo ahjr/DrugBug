@@ -10,19 +10,16 @@ import net.innit.drugbug.data.SettingsHelper;
 
 import java.io.File;
 
-/**
- * Created by alissa on 3/2/16.
- */
-public class ExternalStorage {
-    private final Context context;
+public class ExternalStorage implements Storage {
+    public final static String DISPLAY_TEXT = "SD Card";     // Text for display
 
     private static ExternalStorage instance;
-
-    private String displayText = "SD Card";     // Text for display
-    private File rootDir;           // Root directory for the storage type
-    private File absDir;            // Full directory - rootDir + IMAGE_DIR
-    private boolean active;
     private InternalStorage internalStorage;
+
+    private final Context context;
+    private final File rootDir;           // Root directory for the storage type
+    private final File absDir;            // Full directory - rootDir + IMAGE_DIR
+    private boolean active;
 
     private ExternalStorage(Context context, String subDir) {
         this.context = context;
@@ -36,10 +33,6 @@ public class ExternalStorage {
             instance = new ExternalStorage(context, subDir);
         }
         return instance;
-    }
-
-    public String getDisplayText() {
-        return displayText;
     }
 
     public File getRootDir() {
@@ -59,51 +52,43 @@ public class ExternalStorage {
         active = true;
     }
 
-    protected void setInactive() {
+    public void setInactive() {
         active = false;
     }
 
-    public void setExternal() {
-//        rootDir = LOCATION_EXTERNAL;
-//        File externalDir = new File(rootDir, IMAGE_DIR);
-//
-//        // if sd card is read/write
-//        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-//            // if external directory doesnt exist
-//            if (!externalDir.exists()) {
-//                boolean created = externalDir.mkdirs();
-//            } else {
-//                // empty it
-//                for (File file : externalDir.listFiles()) file.delete();
-//            }
-//
-//            // if locationType == INTERNAL
-//            if (locationType.equals("INTERNAL")) {
-//                // move files from internal to external
-//                // if internal absDir exists
-//                if (absDir.exists()) {
-//                    // rename internal full absDir to external full absDir
-//                    boolean moved = absDir.renameTo(externalDir);
-//                    // if successful
-//                    if (moved) {
-//                        Toast.makeText(context, "Files moved from external to internal", Toast.LENGTH_SHORT).show();
-//                    }
-//                } // else do nothing
-//            } // else it's already external so we'll change nothing
-//            this.rootDir = rootDir;
-//            this.absDir = externalDir;
-//            this.locationType = "EXTERNAL";
-//            this.displayText = "SD Card";
-//        } else {
-//            Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
-//            // change sharedPref back to internal
-//            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//            SharedPreferences.Editor editor = sharedPreferences.edit();
-//            editor.putString(SettingsHelper.KEY_IMAGE_STORAGE, "INTERNAL");
-//            editor.apply();
-//
-//        }
+    public void setStorageLocation () {
+        // if sd card is read/write
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            // if external directory doesnt exist
+            if (!absDir.exists()) {
+                boolean created = absDir.mkdirs();
+            } else {
+                // empty it
+                for (File file : absDir.listFiles()) file.delete();
+            }
 
+            // if locationType == INTERNAL
+            if (internalStorage.isActive() && internalStorage.getAbsDir().canWrite()) {
+                // move files from internal to external
+                boolean moved = internalStorage.getAbsDir().renameTo(absDir);
+                // if successful
+                if (moved) {
+                    Toast.makeText(context, "Files moved from external to internal", Toast.LENGTH_SHORT).show();
+                }
+            } // else it's already external so we'll change nothing
+
+        } else {
+            Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
+
+            // change sharedPref back to internal
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(SettingsHelper.KEY_IMAGE_STORAGE, "INTERNAL");
+            editor.apply();
+
+        }
+
+        setActive();
     }
 
 }
