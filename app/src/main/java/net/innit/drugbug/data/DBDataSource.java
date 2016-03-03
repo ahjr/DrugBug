@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.innit.drugbug.MainActivity;
-import net.innit.drugbug.PrefScreenActivity;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 
@@ -276,7 +275,7 @@ public class DBDataSource {
         // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
         String keepTimeString = PreferenceManager
                 .getDefaultSharedPreferences(context)
-                .getString(PrefScreenActivity.KEY_KEEP_TIME_MISSED, PrefScreenActivity.DEFAULT_KEEP_TIME_MISSED);
+                .getString(SettingsHelper.KEY_KEEP_TIME_MISSED, SettingsHelper.DEFAULT_KEEP_TIME_MISSED);
         int numDeleted = removeOldDoses(DoseItem.TYPE_MISSED, keepTimeString);
         Log.d(MainActivity.LOGTAG, "getAllFuture: " + numDeleted + " missed doses removed");
 
@@ -387,7 +386,7 @@ public class DBDataSource {
         // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
         String keepTimeString = PreferenceManager
                 .getDefaultSharedPreferences(context)
-                .getString(PrefScreenActivity.KEY_KEEP_TIME_TAKEN, PrefScreenActivity.DEFAULT_KEEP_TIME_TAKEN);
+                .getString(SettingsHelper.KEY_KEEP_TIME_TAKEN, SettingsHelper.DEFAULT_KEEP_TIME_TAKEN);
         int numDeleted = removeOldDoses(DoseItem.TYPE_TAKEN, keepTimeString);
         Log.d(MainActivity.LOGTAG, "getAllTaken: " + numDeleted + " old doses removed");
 
@@ -428,7 +427,7 @@ public class DBDataSource {
      */
     public int removeOldDoses(String type, String keepTimeString) {
         Log.d(MainActivity.LOGTAG, "removeOldDoses: start");
-        int[] keepTimeArray = PrefScreenActivity.parseKeepTime(keepTimeString);
+        int[] keepTimeArray = SettingsHelper.parseKeepTime(keepTimeString);
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.YEAR, keepTimeArray[0] * -1);

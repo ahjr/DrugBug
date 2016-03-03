@@ -28,6 +28,7 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
 import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.SettingsHelper;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
@@ -279,7 +280,7 @@ public class AddDoseActivity extends FragmentActivity {
 
             // Figure out how many future items to create
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            int numFutureDoses = preferences.getInt(PrefScreenActivity.KEY_NUM_DOSES, PrefScreenActivity.DEFAULT_NUM_DOSES);
+            int numFutureDoses = preferences.getInt(SettingsHelper.KEY_NUM_DOSES, SettingsHelper.DEFAULT_NUM_DOSES);
 
             // For # of future items, create a future item using the medication id created earlier
             doseItem.setDosage(mDosage.getText().toString());

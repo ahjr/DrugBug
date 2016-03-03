@@ -6,7 +6,8 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import net.innit.drugbug.PrefScreenActivity;
+import net.innit.drugbug.SettingsActivity;
+import net.innit.drugbug.data.SettingsHelper;
 
 import java.io.File;
 
@@ -29,7 +30,7 @@ public class ImageStorage {
         LOCATION_INTERNAL = context.getFilesDir();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.locationType = sharedPreferences.getString(PrefScreenActivity.KEY_IMAGE_STORAGE, PrefScreenActivity.DEFAULT_IMAGE_STORAGE);
+        this.locationType = sharedPreferences.getString(SettingsHelper.KEY_IMAGE_STORAGE, SettingsHelper.DEFAULT_IMAGE_STORAGE);
 
         switch (locationType) {
             case "INTERNAL":
@@ -117,7 +118,7 @@ public class ImageStorage {
                     // change sharedPref back to internal
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(PrefScreenActivity.KEY_IMAGE_STORAGE, "INTERNAL");
+                    editor.putString(SettingsHelper.KEY_IMAGE_STORAGE, "INTERNAL");
                     editor.apply();
 
                 }
