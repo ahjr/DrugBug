@@ -4,24 +4,26 @@
         android:defaultValue="5"
         android:key="NumFutureDoses"
         android:persistent="true"
+        android:summary="PLACEHOLDER"
         android:title="@string/preferences_numfuturedoses_title"/>
 
     <net.innit.drugbug.util.KeepTimePreference
         android:defaultValue="1:0:0"
         android:key="KeepTimeTaken"
         android:persistent="true"
+        android:summary="PLACEHOLDER"
         android:title="@string/preferences_keeptimetaken_title"/>
 
     <net.innit.drugbug.util.KeepTimePreference
         android:defaultValue="0:1:0"
         android:key="KeepTimeMissed"
         android:persistent="true"
+        android:summary="PLACEHOLDER"
         android:title="@string/preferences_keeptimemissed_title"/>
 
     <ListPreference
-        android:entries="@array/storagePref"
-        android:entryValues="@array/storagePrefValues"
         android:key="StorageLoc"
+        android:summary="PLACEHOLDER"
         android:title="@string/preferences_storageloc_title"/>
 
 

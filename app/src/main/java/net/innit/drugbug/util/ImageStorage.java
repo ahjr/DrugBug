@@ -2,50 +2,62 @@ package net.innit.drugbug.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
+import android.util.ArrayMap;
 
-import net.innit.drugbug.SettingsActivity;
 import net.innit.drugbug.data.SettingsHelper;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Object for manipulating the app image storage
  */
 public class ImageStorage {
-    private static final String IMAGE_DIR = "images/medications";
-
-//    public final File LOCATION_INTERNAL;
-//    public final File LOCATION_EXTERNAL;
-
-    private final Context context;
-    private String displayText;     // Text for display
+    public static final String IMAGE_DIR = "images/medications";
+    private static ImageStorage instance;
     private String locationType;    // File storage location type - INTERNAL or EXTERNAL
-    private File rootDir;           // Root directory for the storage type
-    private File absDir;            // Full directory - rootDir + IMAGE_DIR
-    private InternalStorage internalStorage;
-    private ExternalStorage externalStorage;
+    private Map<String, Storage> locations = new ArrayMap<>();
 
     /**
      * @param context Context for this object
      */
-    public ImageStorage(Context context) {
-        this.context = context;
-
+    private ImageStorage(Context context) {
+        locations.put("INTERNAL", InternalStorage.getInstance(context, IMAGE_DIR));
+        locations.put("EXTERNAL", ExternalStorage.getInstance(context, IMAGE_DIR));
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.locationType = sharedPreferences.getString(SettingsHelper.KEY_IMAGE_STORAGE, SettingsHelper.DEFAULT_IMAGE_STORAGE);
+        this.locationType = sharedPreferences.getString(SettingsHelper.KEY_IMAGE_STORAGE, new SettingsHelper(context).DEFAULT_IMAGE_STORAGE);
 
-        switch (locationType) {
-            case "INTERNAL":
-                internalStorage = InternalStorage.getInstance(context, IMAGE_DIR);
-                break;
-            case "EXTERNAL":
-                externalStorage = ExternalStorage.getInstance(context, IMAGE_DIR);
-                break;
+        setLocationType(locationType);
+    }
+
+    public static ImageStorage getInstance(Context context) {
+        if (instance == null) {
+            instance = new ImageStorage(context);
         }
+        return instance;
+    }
+
+    /**
+     * @return Text to display
+     */
+    public String getDisplayText() {
+        return locations.get(locationType).getDisplayText();
+    }
+
+    /**
+     * @return Current image location root directory (not utilized - future: there may be need for another category of images)
+     */
+    public File getRootDir() {
+        return locations.get(locationType).getRootDir();
+    }
+
+    /**
+     * @return Current image location absolute directory
+     */
+    public File getAbsDir() {
+        return locations.get(locationType).getAbsDir();
     }
 
     /**
@@ -59,103 +71,34 @@ public class ImageStorage {
      * @param type Location type string
      */
     public void setLocationType(String type) {
-        switch (type) {
-            case "INTERNAL":
-                File rootDir =LOCATION_INTERNAL;
-                File internalDir = new File(rootDir, IMAGE_DIR);
-                // if internal directory doesnt exist
-                if (!internalDir.exists()) {
-                    boolean created = internalDir.mkdirs();
-                } else {
-                    // empty it
-                    for (File file : internalDir.listFiles()) file.delete();
-                }
+        String oldType = locationType;
 
-                // if locationType == EXTERNAL
-                if (locationType.equals("EXTERNAL")) {
-                    // move files from external to internal
-                    // if external absDir exists
-                    if (absDir.exists()) {
-                        // rename external full absDir to internal full absDir
-                        boolean moved = absDir.renameTo(internalDir);
-                        // if successful
-                        if (moved) {
-                            Toast.makeText(context, "Files moved from external to internal", Toast.LENGTH_SHORT).show();
-                        }
-                    } // else do nothing
-                } // else it's already internal
-                this.rootDir = rootDir;
-                this.absDir = internalDir;
-                this.locationType = "INTERNAL";
-                this.displayText = "Internal";
-
-                return;
-            case "EXTERNAL":
-                rootDir = LOCATION_EXTERNAL;
-                File externalDir = new File(rootDir, IMAGE_DIR);
-
-                // if sd card is read/write
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    // if external directory doesnt exist
-                    if (!externalDir.exists()) {
-                        boolean created = externalDir.mkdirs();
-                    } else {
-                        // empty it
-                        for (File file : externalDir.listFiles()) file.delete();
-                    }
-
-                    // if locationType == INTERNAL
-                    if (locationType.equals("INTERNAL")) {
-                        // move files from internal to external
-                        // if internal absDir exists
-                        if (absDir.exists()) {
-                            // rename internal full absDir to external full absDir
-                            boolean moved = absDir.renameTo(externalDir);
-                            // if successful
-                            if (moved) {
-                                Toast.makeText(context, "Files moved from external to internal", Toast.LENGTH_SHORT).show();
-                            }
-                        } // else do nothing
-                    } // else it's already external so we'll change nothing
-                    this.rootDir = rootDir;
-                    this.absDir = externalDir;
-                    this.locationType = "EXTERNAL";
-                    this.displayText = "SD Card";
-                } else {
-                    Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
-                    // change sharedPref back to internal
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(SettingsHelper.KEY_IMAGE_STORAGE, "INTERNAL");
-                    editor.apply();
-
-                }
-
-                return;
-            default:
-                Toast.makeText(context, "Invalid location type", Toast.LENGTH_SHORT).show();
+        if (!oldType.equals(type)) {
+            // location has changed, so need to do stuff
+            locations.get(type).setStorageLocation(locations.get(oldType));
+        } else {
+            locations.get(type).setStorageLocation(null);
         }
+
+        locationType = type;
     }
 
-    /**
-     * @return Text to display
-     */
-    public String getDisplayText() {
-        return displayText;
+    public Map<Integer, String> getAllLocations() {
+        Map<Integer, String> returnMap = new ArrayMap<>();
+        int key = 0;
+        for (Storage location : locations.values()) {
+            if (location.isAvailable()) returnMap.put(++key, location.getDisplayText());
+        }
+        return returnMap;
     }
 
-    /**
-     * @return Current image location root directory (not utilized - future: there may be need for another category of images)
-     */
-    public File getRootDir() {
-        return rootDir;
-    }
-
-    /**
-     * @return Current image location absolute directory
-     */
-    public File getAbsDir() {
-        return absDir;
+    public Map<String, String> getAvailableLocations() {
+        Map<String, String> returnMap = new ArrayMap<>();
+        int key = 0;
+        for (Storage location : locations.values()) {
+            if (location.isAvailable()) returnMap.put("" + ++key, location.getDisplayText());
+        }
+        return returnMap;
     }
 
 }

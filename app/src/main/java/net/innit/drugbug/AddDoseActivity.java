@@ -1,5 +1,6 @@
 package net.innit.drugbug;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +52,10 @@ public class AddDoseActivity extends FragmentActivity {
     public static final String ACTION_ADD = "add";
     public static final String ACTION_EDIT = "edit";
 
-    private static final int RESULT_TAKE_PICTURE = 300;
+    private static final int REQUEST_TAKE_PICTURE = 300;
+    private static final int REQUEST_CAPTURE_IMAGE = 400;
+
+    private static final String MED_IMAGE_FILE_PROVIDER = "net.innit.drugbug.med_image.fileprovider";
 
     private final DBDataSource db = new DBDataSource(this);
     private String action;
@@ -136,9 +141,10 @@ public class AddDoseActivity extends FragmentActivity {
 
     private boolean setupImageLocation() {
         // Need to do some stuff with the temporary image file
-        ImageStorage imageStorage = new ImageStorage(this);
+        ImageStorage imageStorage = ImageStorage.getInstance(this);
         // Get the absolute path based on the current location SharedPreference setting
         dir = imageStorage.getAbsDir();
+        Log.d(MainActivity.LOGTAG, "setupImageLocation: dir is " + dir);
 
         if (dir.canWrite()) {
             Log.d(MainActivity.LOGTAG, "onCreate: " + dir.getAbsolutePath() + " is writable");
@@ -225,12 +231,12 @@ public class AddDoseActivity extends FragmentActivity {
     }
 
     public void onClickAddMedAddImage(View view) {
-        Uri outputFileUri = Uri.fromFile(tempPath);
+//        Uri outputFileUri = Uri.fromFile(tempPath);
+        Uri outputFileUri = FileProvider.getUriForFile(this, MED_IMAGE_FILE_PROVIDER, tempPath);
         if (hasCamera()) {
-
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            startActivityForResult(intent, RESULT_TAKE_PICTURE);
+            startActivityForResult(intent, REQUEST_TAKE_PICTURE);
         } else {
             Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show();
         }
@@ -355,12 +361,14 @@ public class AddDoseActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (resultCode) {
-            case RESULT_TAKE_PICTURE:
-                Toast.makeText(getBaseContext(), R.string.add_dose_error_image_cancel, Toast.LENGTH_SHORT).show();
-                break;
-            case -1:
-                break;
+        switch (requestCode) {
+            case REQUEST_TAKE_PICTURE:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Toast.makeText(this, "User cancelled", Toast.LENGTH_SHORT).show();
+                }
         }
     }
 

@@ -79,7 +79,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     }
 
     public Bitmap getBitmap(Context context) {
-        ImageStorage imageStorage = new ImageStorage(context);
+        ImageStorage imageStorage = ImageStorage.getInstance(context);
         return BitmapFactory.decodeFile(imageStorage.getAbsDir() + "/" + imagePath);
     }
 

@@ -21,6 +21,7 @@ import java.util.List;
 
 // TODO really need to add comments everywhere
 // TODO Extract string resources
+// todo delete image file when medication gets removed
 
 public class MainActivity extends Activity {
     public static final String LOGTAG = "DrugBug";

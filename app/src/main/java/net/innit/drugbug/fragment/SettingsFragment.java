@@ -5,17 +5,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.SettingsHelper;
 import net.innit.drugbug.util.ImageStorage;
 
-import java.util.List;
+import java.util.Map;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+
     private int oldNumDoses;                // Holder field for initial number of doses to keep
     private ImageStorage imageStorage;      // Image storage object
     private SettingsHelper settingsHelper;  // Settings constants and methods
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,7 +27,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         Context context = getActivity().getApplicationContext();
         settingsHelper = new SettingsHelper(context);
 
-        SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         // Load the preferences from an XML resource
@@ -32,14 +35,20 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         oldNumDoses = sharedPreferences.getInt(SettingsHelper.KEY_NUM_DOSES, SettingsHelper.DEFAULT_NUM_DOSES);
 
-        imageStorage = new ImageStorage(context);
-        // Hide external choice if SD card is not available
-        if (!imageStorage.LOCATION_EXTERNAL.canWrite()) {
-            ListPreference listPreference = (ListPreference) findPreference(SettingsHelper.KEY_IMAGE_STORAGE);
-            listPreference.setEntries(new String[]{"Internal"});
-            listPreference.setEntryValues(new String[]{"2"});
-        }
+        imageStorage = ImageStorage.getInstance(context);
 
+        ListPreference listPreference = (ListPreference) findPreference(SettingsHelper.KEY_IMAGE_STORAGE);
+        Map<String, String> locations = imageStorage.getAvailableLocations();
+        listPreference.setEntries(locations.values().toArray(new String[0]));
+        listPreference.setEntryValues(locations.keySet().toArray(new String[0]));
+
+        imageStorage.setLocationType(sharedPreferences.getString(SettingsHelper.KEY_IMAGE_STORAGE, settingsHelper.DEFAULT_IMAGE_STORAGE));
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         setSummaries(sharedPreferences);
     }
 
@@ -56,7 +65,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 settingsHelper.keepTimeMissedChanged(sharedPreferences.getString(key, SettingsHelper.DEFAULT_KEEP_TIME_MISSED));
                 break;
             case SettingsHelper.KEY_IMAGE_STORAGE:
-                imageStorage.setLocationType(sharedPreferences.getString(key, SettingsHelper.DEFAULT_IMAGE_STORAGE));
+                imageStorage.setLocationType(sharedPreferences.getString(key, settingsHelper.DEFAULT_IMAGE_STORAGE));
                 settingsHelper.imageStorageChanged(imageStorage);
                 break;
         }

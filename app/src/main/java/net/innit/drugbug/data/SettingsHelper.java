@@ -6,6 +6,7 @@ import android.util.Log;
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
+import net.innit.drugbug.util.ExternalStorage;
 import net.innit.drugbug.util.ImageStorage;
 
 import java.util.List;
@@ -18,12 +19,18 @@ public class SettingsHelper {
     public static final String KEY_KEEP_TIME_MISSED = "KeepTimeMissed";
     public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
     public static final String KEY_IMAGE_STORAGE = "StorageLoc";
-    public static final String DEFAULT_IMAGE_STORAGE = "INTERNAL";
+
+    public final String DEFAULT_IMAGE_STORAGE;
 
     private DBDataSource db;
 
     public SettingsHelper(Context context) {
         db = new DBDataSource(context);
+        if (ExternalStorage.getInstance(context, ImageStorage.IMAGE_DIR).isAvailable()) {
+            DEFAULT_IMAGE_STORAGE = "EXTERNAL";
+        } else {
+            DEFAULT_IMAGE_STORAGE = "INTERNAL";
+        }
     }
 
     public static int[] parseKeepTime(String keepTimeString) {

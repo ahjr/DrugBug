@@ -30,8 +30,6 @@ import java.util.List;
 // future todo enable filter on taken/future for TYPE_SINGLE
 // future todo implement filter single med list by taken and future
 
-// todo (Reminder set) is not showing on doses beyond first page of results --- CAN'T REPRODUCE NOW ugh
-
 public class DoseListActivity extends Activity {
     private static final int CONTEXT_EDIT = 10001;
     private static final int CONTEXT_DELETE = 10002;
