@@ -30,6 +30,7 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
 import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.data.SettingsHelper;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
@@ -43,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 // future todo ability to change dose taken date
+// todo add image has stopped working - possibly directory creation isn't happening early enough?
 
 public class AddDoseActivity extends FragmentActivity {
 
@@ -54,8 +56,6 @@ public class AddDoseActivity extends FragmentActivity {
 
     private static final int REQUEST_TAKE_PICTURE = 300;
     private static final int REQUEST_CAPTURE_IMAGE = 400;
-
-    private static final String MED_IMAGE_FILE_PROVIDER = "net.innit.drugbug.med_image.fileprovider";
 
     private final DBDataSource db = new DBDataSource(this);
     private String action;
@@ -69,6 +69,7 @@ public class AddDoseActivity extends FragmentActivity {
 
     private boolean wasChecked;
     private boolean imageLocationOK;
+    private ImageStorage imageStorage;
 
     private ImageView mMedImage;
     private Button mMedImageButton;
@@ -141,7 +142,7 @@ public class AddDoseActivity extends FragmentActivity {
 
     private boolean setupImageLocation() {
         // Need to do some stuff with the temporary image file
-        ImageStorage imageStorage = ImageStorage.getInstance(this);
+        imageStorage = ImageStorage.getInstance(this);
         // Get the absolute path based on the current location SharedPreference setting
         dir = imageStorage.getAbsDir();
         Log.d(MainActivity.LOGTAG, "setupImageLocation: dir is " + dir);
@@ -232,7 +233,8 @@ public class AddDoseActivity extends FragmentActivity {
 
     public void onClickAddMedAddImage(View view) {
 //        Uri outputFileUri = Uri.fromFile(tempPath);
-        Uri outputFileUri = FileProvider.getUriForFile(this, MED_IMAGE_FILE_PROVIDER, tempPath);
+//        Uri outputFileUri = FileProvider.getUriForFile(this, MED_IMAGE_FILE_PROVIDER, tempPath);
+        Uri outputFileUri = imageStorage.getStorageUri(tempPath);
         if (hasCamera()) {
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
@@ -286,7 +288,8 @@ public class AddDoseActivity extends FragmentActivity {
 
             // Figure out how many future items to create
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            int numFutureDoses = preferences.getInt(SettingsHelper.KEY_NUM_DOSES, SettingsHelper.DEFAULT_NUM_DOSES);
+//            int numFutureDoses = preferences.getInt(SettingsHelper.KEY_NUM_DOSES, Integer.parseInt(SettingsHelper.DEFAULT_NUM_DOSES));
+            int numFutureDoses = preferences.getInt(Settings.NUM_DOSES.getKey(), Integer.parseInt(Settings.NUM_DOSES.getDefault(this)));
 
             // For # of future items, create a future item using the medication id created earlier
             doseItem.setDosage(mDosage.getText().toString());

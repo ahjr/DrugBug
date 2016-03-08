@@ -45,6 +45,7 @@ public class DoseListActivity extends Activity {
     private Long medId;
     private MedicationItem medication;
     private int listItemPressedPos;
+    private String filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class DoseListActivity extends Activity {
         type = bundle.getString("type", DoseItem.TYPE_FUTURE);
         medId = bundle.getLong("med_id");
         sortOrder = bundle.getString("sort_order");
+        filter = bundle.getString("filter");
 
         setContentView(R.layout.activity_list_dose);
 
@@ -110,6 +112,16 @@ public class DoseListActivity extends Activity {
                 return true;
             case R.id.menu_sort_order_name:
                 sortOrder = "name";
+                doses = getDoses();
+                refreshDisplay();
+                return true;
+            case R.id.menu_filter_future:
+                filter = "future";
+                doses = getDoses();
+                refreshDisplay();
+                return true;
+            case R.id.menu_filter_taken:
+                filter = "taken";
                 doses = getDoses();
                 refreshDisplay();
                 return true;
@@ -325,6 +337,7 @@ public class DoseListActivity extends Activity {
                 break;
             case DoseItem.TYPE_SINGLE:
                 medication = db.getMedication(medId);
+                // todo do some filtery stuff here, but have to refactor the DB stuff first
                 doses = db.getAllDosesForMed(medId);
                 break;
             default:

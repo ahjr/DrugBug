@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 
 /**
@@ -38,8 +40,10 @@ public class KeepTimePreference extends DialogPreference {
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
+        Log.d(MainActivity.LOGTAG, "onDialogClosed: start");
         if (positiveResult) {
-            persistString("" + yearPicker.getValue() + ":" + monthPicker.getValue() + ":" + dayPicker.getValue());
+            value = "" + yearPicker.getValue() + ":" + monthPicker.getValue() + ":" + dayPicker.getValue();
+            persistString(value);
         }
     }
 
@@ -53,6 +57,7 @@ public class KeepTimePreference extends DialogPreference {
             value = (String) defaultValue;
             persistString(value);
         }
+        Log.d(MainActivity.LOGTAG, "onSetInitialValue: value: " + value);
     }
 
     @Override
@@ -71,6 +76,7 @@ public class KeepTimePreference extends DialogPreference {
         dayPicker = (NumberPicker) view.findViewById(R.id.npDay);
 
         int[] defaultKeep = splitString(value);
+        Log.d(MainActivity.LOGTAG, "onCreateDialogView: value: " + value);
 
         // Initialize state
         yearPicker.setMaxValue(YEAR_MAX_VALUE);

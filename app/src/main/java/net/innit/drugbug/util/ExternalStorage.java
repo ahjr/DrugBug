@@ -1,6 +1,7 @@
 package net.innit.drugbug.util;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ public class ExternalStorage extends Storage {
         return instance;
     }
 
-    public void setStorageLocation(Storage oldStorage) {
+    protected void setStorageLocation(Storage oldStorage) {
         // if sd card is read/write
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             // if external directory doesnt exist
@@ -43,5 +44,9 @@ public class ExternalStorage extends Storage {
     @Override
     public boolean isAvailable() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    }
+
+    protected Uri getStorageUri(File file) {
+        return Uri.fromFile(file);
     }
 }

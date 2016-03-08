@@ -2,6 +2,7 @@ package net.innit.drugbug.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -72,7 +73,7 @@ public abstract class Storage {
         return type;
     }
 
-    public abstract void setStorageLocation(Storage oldStorage);
+    protected abstract void setStorageLocation(Storage oldStorage);
 
     public abstract boolean isAvailable();
 
@@ -111,4 +112,6 @@ public abstract class Storage {
         }
         return false;
     }
+
+    protected abstract Uri getStorageUri(File file);
 }

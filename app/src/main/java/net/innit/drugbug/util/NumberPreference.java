@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 
 /**
@@ -39,11 +41,13 @@ public class NumberPreference extends DialogPreference {
         if (restorePersistedValue) {
             // Restore existing state
             value = this.getPersistedInt(DEFAULT_VALUE);
+            Log.d(MainActivity.LOGTAG, "onSetInitialValue: value: " + value);
         } else {
             // Set default state from the XML attribute
             value = (Integer) defaultValue;
             persistInt(value);
         }
+        Log.d(MainActivity.LOGTAG, "onSetInitialValue: value: " + value);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package net.innit.drugbug.data;
 
 import android.content.Context;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import net.innit.drugbug.MainActivity;
@@ -9,11 +10,13 @@ import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.ExternalStorage;
 import net.innit.drugbug.util.ImageStorage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SettingsHelper {
     public static final String KEY_NUM_DOSES = "NumFutureDoses";
-    public static final int DEFAULT_NUM_DOSES = 5;
+    public static final String DEFAULT_NUM_DOSES = "5";
     public static final String KEY_KEEP_TIME_TAKEN = "KeepTimeTaken";
     public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
     public static final String KEY_KEEP_TIME_MISSED = "KeepTimeMissed";
@@ -79,7 +82,7 @@ public class SettingsHelper {
                 // number of doses has increased
                 // add $DIFFERENCE doses based on lastDose
                 // Get last dose
-                Log.d(MainActivity.LOGTAG, "onSharedPreferenceChanged: medId " + medication.getId());
+                Log.d(MainActivity.LOGTAG, "numDosesChanged: medId " + medication.getId());
                 DoseItem lastFutureDose = db.getLastDose(medication);
                 if (lastFutureDose != null) {
                     int doseCount = (int) db.getFutureDoseCount(medication);
@@ -111,20 +114,20 @@ public class SettingsHelper {
     public void keepTimeTakenChanged(String keepTimeString) {
         db.open();
         int numRemoved = db.removeOldDoses(DoseItem.TYPE_TAKEN, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "onSharedPreferenceChanged: " + numRemoved + " taken doses removed");
+        Log.d(MainActivity.LOGTAG, "keepTimeTakenChanged: " + numRemoved + " taken doses removed");
         db.close();
     }
 
     public void keepTimeMissedChanged(String keepTimeString) {
         db.open();
         int numRemoved = db.removeOldDoses(DoseItem.TYPE_MISSED, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "onSharedPreferenceChanged: " + numRemoved + " missed doses removed");
+        Log.d(MainActivity.LOGTAG, "keepTimeMissedChanged: " + numRemoved + " missed doses removed");
         db.close();
     }
 
     public void imageStorageChanged(ImageStorage imageStorage) {
         // Nothing here yet, but extracted it to keep everything together
-        Log.d(MainActivity.LOGTAG, "onSharedPreferenceChanged: Image storage location changed to " + imageStorage.getDisplayText());
+        Log.d(MainActivity.LOGTAG, "imageStorageChanged: Image storage location changed to " + imageStorage.getDisplayText());
     }
 
 }

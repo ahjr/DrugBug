@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.data.SettingsHelper;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
@@ -86,7 +87,8 @@ public class MainActivity extends Activity {
 
         // Lookup number of doses from SharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mFutureNumDoses.setText(String.format("%,d", sharedPreferences.getInt(SettingsHelper.KEY_NUM_DOSES, SettingsHelper.DEFAULT_NUM_DOSES)));
+//        mFutureNumDoses.setText(String.format("%,d", sharedPreferences.getInt(SettingsHelper.KEY_NUM_DOSES, Integer.parseInt(SettingsHelper.DEFAULT_NUM_DOSES))));
+        mFutureNumDoses.setText(String.format("%,d", sharedPreferences.getInt(Settings.NUM_DOSES.getKey(), Integer.parseInt(Settings.NUM_DOSES.getDefault(this)))));
 
         // Calculate # of active medications
         mMedActive.setText(String.format("%,d", medications.size()));
