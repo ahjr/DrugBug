@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import net.innit.drugbug.util.ImageStorage;
 
+import java.io.File;
 import java.util.Comparator;
 
 public class MedicationItem implements Comparable<MedicationItem> {
@@ -67,6 +68,10 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public boolean deleteImageFile(Context context) {
+        return imagePath != null && new File(ImageStorage.getInstance(context).getAbsDir(), imagePath).delete();
     }
 
     public boolean hasImage() {

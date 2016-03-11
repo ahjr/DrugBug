@@ -1,6 +1,8 @@
 package net.innit.drugbug.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.Preference;
 import android.util.ArrayMap;
 import android.util.Log;
 
@@ -73,7 +75,7 @@ public class SettingsHelper {
         return output;
     }
 
-    public void numDosesChanged(int maxNumDoses, int oldNumDoses) {
+    public void numDosesChanged(Context context, int maxNumDoses, int oldNumDoses) {
         db.open();
         List<MedicationItem> medications = db.getAllMedications();
         for (MedicationItem medication : medications) {
@@ -101,7 +103,7 @@ public class SettingsHelper {
                     DoseItem lastFutureDose = db.getLastDose(medication);
                     // getLastDose returns null if there isn't one
                     if (lastFutureDose != null) {
-                        db.removeDose(lastFutureDose.getId());
+                        db.removeDose(context, lastFutureDose.getId(), false);
                     }
                     doseCount--;
                 }

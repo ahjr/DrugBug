@@ -118,7 +118,8 @@ public class DBDataSource {
         medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
         medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
         medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-        Log.d(MainActivity.LOGTAG, "addMedFromDB: medication id " + medication.getId());
+        Log.d(MainActivity.LOGTAG, "getMedFromDB: medication id " + medication.getId());
+        if (cursor.isLast()) cursor.close();
         return medication;
     }
 
@@ -129,7 +130,7 @@ public class DBDataSource {
             cursor.moveToFirst();
             return getMedFromDB(cursor);
         }
-        cursor.close();
+//        cursor.close();
         return null;
     }
 
@@ -149,7 +150,7 @@ public class DBDataSource {
                 returnList.add(getMedFromDB(cursor));
             }
         }
-        cursor.close();
+//        cursor.close();
         return returnList;
     }
 
@@ -238,12 +239,17 @@ public class DBDataSource {
      * @return RESULT_OK if successful
      */
     // Delete
-    private Result removeMedication(MedicationItem medication) {
+    private Result removeMedication(Context context, MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "removeMedication: start");
         String where = DBHelper.COLUMN_ID + "=" + medication.getId();
         int result = database.delete(DBHelper.TABLE_MEDICATIONS, where, null);
         if (result == 1) {
             Log.d(MainActivity.LOGTAG, "removeMedication: medication " + medication.getId() + " removed");
+            if (medication.deleteImageFile(context)) {
+                Log.d(MainActivity.LOGTAG, "removeMedication: medication " + medication.getId() + " image removed");
+            } else {
+                Log.d(MainActivity.LOGTAG, "removeMedication: medication " + medication.getId() + " image not removed or didn't exist");
+            }
             return Result.RESULT_OK;
         } else {
             Log.d(MainActivity.LOGTAG, "removeMedication: medication " + medication.getId() + " not removed");
@@ -297,11 +303,9 @@ public class DBDataSource {
                 returnList.add(getDoseFromDB(cursor, null));
             }
         }
-//        cursor.close();
         return returnList;
     }
 
-    // todo combine getAllDosesForMed and getAllFutureForMed
     public List<DoseItem> getAllDosesForMed(long medId) {
         Log.d(MainActivity.LOGTAG, "getAllDosesForMed: start");
         String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medId;
@@ -337,7 +341,8 @@ public class DBDataSource {
      */
     public List<DoseItem> getAllFutureForMed(MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "getAllFutureForMed: start");
-        String selection = DBHelper.COLUMN_TAKEN + "=" + 0 + " AND " + DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
+        String selection = DBHelper.COLUMN_TAKEN + "=" + 0 +
+                " AND " + DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
         String orderBy = DBHelper.COLUMN_DATE + " ASC";
         return getDoses(selection, orderBy);
     }
@@ -393,7 +398,6 @@ public class DBDataSource {
         cal.add(Calendar.MONTH, keepTimeArray[1] * -1);
         cal.add(Calendar.DAY_OF_MONTH, keepTimeArray[2] * -1);
 
-
         String selection = DBHelper.COLUMN_TAKEN + " = " + ((type.equals(DoseItem.TYPE_TAKEN)) ? 1 : 0) + " AND " +
                 DBHelper.COLUMN_DATE + " < " + cal.getTime().getTime();
         int numDeleted = database.delete(DBHelper.TABLE_DOSES, selection, null);
@@ -416,9 +420,9 @@ public class DBDataSource {
         Log.d(MainActivity.LOGTAG, "getSingleDose: query returned " + cursor.getCount() + " doses");
         if (cursor.getCount() == 1) {
             cursor.moveToFirst();
-            return getDoseFromDB(cursor, null);
+            return getDoseFromDB(cursor, medication);
         }
-        cursor.close();
+//        cursor.close();
         return null;
     }
 
@@ -443,9 +447,8 @@ public class DBDataSource {
      */
     public DoseItem getLastDose(MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "getLastDose: medication is " + medication.getName());
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
-        // Changed logic: now will return the dose with the highest date, untaken or not
-        //+ " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
+        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() +
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
         String orderBy = DBHelper.COLUMN_DATE + " DESC";
         return getSingleDose(medication, selection, orderBy);
     }
@@ -458,7 +461,8 @@ public class DBDataSource {
      */
     public DoseItem getFirstFutureDose(MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "getFirstFutureDose: medication id is " + medication.getId());
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
+        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() +
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
         String orderBy = DBHelper.COLUMN_DATE + " ASC";
         return getSingleDose(medication, selection, orderBy);
     }
@@ -471,7 +475,8 @@ public class DBDataSource {
      */
     public long getFutureDoseCount(MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "getFutureDoseCount: start");
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
+        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() +
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
         long numEntries = DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection);
         Log.d(MainActivity.LOGTAG, "getFutureDoseCount: " + numEntries + " future doses");
         return numEntries;
@@ -588,14 +593,14 @@ public class DBDataSource {
      * @param medication medication to remove
      * @return true if medication was removed
      */
-    private boolean removeMedicationIfNoDoses(MedicationItem medication) {
+    private boolean removeMedicationIfNoDoses(Context context, MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "removeMedicationIfNoDoses: start");
         // Remove medication if no doses are associated with it
-        String selection = DBHelper.COLUMN_ID + "=" + medication.getId();
+        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
         Log.d(MainActivity.LOGTAG, "removeMedicationIfNoDoses: doses associated with this medication: " + DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection));
         if (DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection) < 1) {
             Log.d(MainActivity.LOGTAG, "removeMedicationIfNoDoses: medication deleted");
-            Result medResult = removeMedication(medication);
+            Result medResult = removeMedication(context, medication);
             if (medResult == Result.RESULT_OK) {
                 return true;
             }
@@ -608,24 +613,29 @@ public class DBDataSource {
      * Remove a dose
      *
      * @param id id of dose to remove
+     * @param createNextDose
      * @return RESULT_OK if dose was removed successfully
      */
     // Delete one dose
-    public Result removeDose(long id) {
+    public Result removeDose(Context context, long id, boolean createNextDose) {
         Log.d(MainActivity.LOGTAG, "removeDose: start");
         // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
         String where = DBHelper.COLUMN_ID + "=" + id;
         // Get medication
         MedicationItem medication = getMedicationForDose(id);
 
+        if (createNextDose) {
+            generateNextFuture(medication);
+        }
+
         boolean deleteOK = (database.delete(DBHelper.TABLE_DOSES, where, null) == 1);
         if (deleteOK) {
             Log.d(MainActivity.LOGTAG, "removeDose: dose " + id + " removed");
             if (medication != null) {
-                long medId = medication.getId();
-                boolean medRemoved = removeMedicationIfNoDoses(medication);
-                if (medRemoved)
-                    Log.d(MainActivity.LOGTAG, "removeDose: medication " + medId + " removed");
+//                long medId = medication.getId();
+//                boolean medRemoved = removeMedicationIfNoDoses(context, medication);
+//                if (medRemoved)
+//                    Log.d(MainActivity.LOGTAG, "removeDose: medication " + medId + " removed");
                 return Result.RESULT_OK;
             } else {
                 return Result.ERROR_UNKNOWN_ERROR;
@@ -641,14 +651,14 @@ public class DBDataSource {
      * @param medication medication to remove all future doses for
      * @return number of deleted doses
      */
-    public int removeAllFutureDosesForMed(MedicationItem medication) {
+    public int removeAllFutureDosesForMed(Context context, MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: start");
         // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
         String where = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
         int numDeleted = database.delete(DBHelper.TABLE_DOSES, where, null);
         Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: " + numDeleted + " doses deleted");
-        boolean medRemoved = removeMedicationIfNoDoses(medication);
-        Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: medication removed " + medRemoved);
+//        boolean medRemoved = removeMedicationIfNoDoses(context, medication);
+//        Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: medication removed " + medRemoved);
         return numDeleted;
     }
 
@@ -658,14 +668,14 @@ public class DBDataSource {
      * @param medication medication to remove all doses for
      * @return number of deleted doses
      */
-    public int removeAllDosesForMed(MedicationItem medication) {
+    public int removeAllDosesForMed(Context context, MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: start");
         // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
         String where = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
         int numDeleted = database.delete(DBHelper.TABLE_DOSES, where, null);
         Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: " + numDeleted + " doses deleted");
-        boolean medRemoved = removeMedicationIfNoDoses(medication);
-        Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: medication removed " + medRemoved);
+//        boolean medRemoved = removeMedicationIfNoDoses(context, medication);
+//        Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: medication removed " + medRemoved);
         return numDeleted;
     }
 

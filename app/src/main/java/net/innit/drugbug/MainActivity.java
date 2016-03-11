@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +21,7 @@ import net.innit.drugbug.model.MedicationItem;
 import java.util.Date;
 import java.util.List;
 
-// TODO really need to add comments everywhere
-// TODO Extract string resources
-// todo delete image file when medication gets removed
+// future todo (After archiving/deleting of meds complete) Delete image file when medication gets removed
 
 public class MainActivity extends Activity {
     public static final String LOGTAG = "DrugBug";
@@ -33,37 +32,39 @@ public class MainActivity extends Activity {
     private TextView mMedActive;
 //    private TextView mMedInactive;
 
-    private DBDataSource db;
-    private List<DoseItem> doses;
-    private List<MedicationItem> medications;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = new DBDataSource(this);
-
-        setupViews();
-
-        db.open();
-        doses = db.getDosesForDate(new Date());
-        medications = db.getAllMedications();
-        db.close();
-
-    }
-
-    private void setupViews() {
-        mFutureDueToday = (TextView) findViewById(R.id.tvMainFutureDueToday);
-        mFutureMissed = (TextView) findViewById(R.id.tvMainFutureMissed);
-        mFutureNumDoses = (TextView) findViewById(R.id.tvMainFutureNumDoses);
-        mMedActive = (TextView) findViewById(R.id.tvMainMedActive);
-//        mMedInactive = (TextView) findViewById(R.id.tvMainMedInactive);
+        // Set SharedPreferences to default if setting is not set yet
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        for (Settings setting : Settings.values()) {
+            if (!sharedPreferences.contains(setting.getKey())) {
+                if (setting.equals(Settings.NUM_DOSES)) {
+                    editor.putInt(setting.getKey(), Integer.parseInt(setting.getDefault(this)));
+                } else {
+                    editor.putString(setting.getKey(), setting.getDefault(this));
+                }
+            }
+        }
+        editor.apply();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(MainActivity.LOGTAG, "onResume: start");
+
+        DBDataSource db = new DBDataSource(this);
+
+        db.open();
+        List<DoseItem> doses = db.getDosesForDate(new Date());
+        List<MedicationItem> medications = db.getAllMedications();
+        db.close();
+
+        setupViews();
 
         Date now = new Date();
 
@@ -87,13 +88,20 @@ public class MainActivity extends Activity {
 
         // Lookup number of doses from SharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-//        mFutureNumDoses.setText(String.format("%,d", sharedPreferences.getInt(SettingsHelper.KEY_NUM_DOSES, Integer.parseInt(SettingsHelper.DEFAULT_NUM_DOSES))));
         mFutureNumDoses.setText(String.format("%,d", sharedPreferences.getInt(Settings.NUM_DOSES.getKey(), Integer.parseInt(Settings.NUM_DOSES.getDefault(this)))));
 
         // Calculate # of active medications
         mMedActive.setText(String.format("%,d", medications.size()));
 
         // Calculate # of inactive medications (not implemented)
+    }
+
+    private void setupViews() {
+        mFutureDueToday = (TextView) findViewById(R.id.tvMainFutureDueToday);
+        mFutureMissed = (TextView) findViewById(R.id.tvMainFutureMissed);
+        mFutureNumDoses = (TextView) findViewById(R.id.tvMainFutureNumDoses);
+        mMedActive = (TextView) findViewById(R.id.tvMainMedActive);
+//        mMedInactive = (TextView) findViewById(R.id.tvMainMedInactive);
     }
 
     @Override

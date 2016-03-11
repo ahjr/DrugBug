@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +30,6 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
 import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.data.Settings;
-import net.innit.drugbug.data.SettingsHelper;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
@@ -44,7 +42,6 @@ import java.util.Date;
 import java.util.List;
 
 // future todo ability to change dose taken date
-// todo add image has stopped working - possibly directory creation isn't happening early enough?
 
 public class AddDoseActivity extends FragmentActivity {
 
@@ -55,7 +52,6 @@ public class AddDoseActivity extends FragmentActivity {
     public static final String ACTION_EDIT = "edit";
 
     private static final int REQUEST_TAKE_PICTURE = 300;
-    private static final int REQUEST_CAPTURE_IMAGE = 400;
 
     private final DBDataSource db = new DBDataSource(this);
     private String action;
@@ -258,7 +254,7 @@ public class AddDoseActivity extends FragmentActivity {
         if (action.equals(ACTION_EDIT)) {
             if (!medication.getFrequency().equals(freqOrig)) {
                 // frequency has changed, so delete all previous futures with this medId
-                int dosesRemoved = db.removeAllFutureDosesForMed(medication);
+                int dosesRemoved = db.removeAllFutureDosesForMed(this, medication);
                 Log.d(MainActivity.LOGTAG, "onClickAddMedSave: " + dosesRemoved + " doses removed");
                 freqChanged = true;
             }
@@ -288,7 +284,6 @@ public class AddDoseActivity extends FragmentActivity {
 
             // Figure out how many future items to create
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-//            int numFutureDoses = preferences.getInt(SettingsHelper.KEY_NUM_DOSES, Integer.parseInt(SettingsHelper.DEFAULT_NUM_DOSES));
             int numFutureDoses = preferences.getInt(Settings.NUM_DOSES.getKey(), Integer.parseInt(Settings.NUM_DOSES.getDefault(this)));
 
             // For # of future items, create a future item using the medication id created earlier

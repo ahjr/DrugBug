@@ -26,19 +26,16 @@ public class ExternalStorage extends Storage {
 
     protected void setStorageLocation(Storage oldStorage) {
         // if sd card is read/write
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            // if external directory doesnt exist
-            this.prepareDirectory();
-
-            // Move files from old storage location to here
-            if (oldStorage != null) {
-                boolean success = this.moveFiles(oldStorage);
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                // if external directory doesnt exist
+                this.prepareDirectory(oldStorage);
+                if (oldStorage != null) {
+                    boolean success = this.moveFiles(oldStorage);
+                }
+            } else {
+                Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
+                //revertToDefault(context);
             }
-
-        } else {
-            Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
-            //revertToDefault(context);
-        }
     }
 
     @Override

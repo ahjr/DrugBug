@@ -33,7 +33,11 @@ public abstract class Storage {
         if (source.isDirectory()) {
             Log.d(MainActivity.LOGTAG, "copyAllFiles: " + source + " is a directory");
             if (!target.exists()) {
-                target.mkdir();
+                if (target.mkdir()) {
+                    Log.d(MainActivity.LOGTAG, "copyAllFiles: " + target + " was created");
+                } else {
+                    Log.d(MainActivity.LOGTAG, "copyAllFiles: " + target + " was not created");
+                }
             }
 
             String[] children = source.list();
@@ -77,14 +81,16 @@ public abstract class Storage {
 
     public abstract boolean isAvailable();
 
-    public void prepareDirectory() {
+    public void prepareDirectory(Storage oldStorage) {
         if (!this.getAbsDir().exists()) {
             boolean created = absDir.mkdirs();
             Log.d(MainActivity.LOGTAG, "prepareDirectory: Directory " + this.getAbsDir() + " (and any missing parents) have been created.");
         } else {
-            // empty it
-            for (File file : absDir.listFiles()) file.delete();
-            Log.d(MainActivity.LOGTAG, "prepareDirectory: Directory " + this.getAbsDir() + " has been emptied.");
+            // empty it if location has changed
+            if (oldStorage != null) {
+                for (File file : absDir.listFiles()) file.delete();
+                Log.d(MainActivity.LOGTAG, "prepareDirectory: Directory " + this.getAbsDir() + " has been emptied.");
+            }
         }
     }
 

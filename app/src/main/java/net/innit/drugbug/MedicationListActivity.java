@@ -183,7 +183,7 @@ public class MedicationListActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                int numDeleted = db.removeAllDosesForMed(medicationItem);
+                int numDeleted = db.removeAllDosesForMed(context, medicationItem);
                 db.close();
                 Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
                 medications.remove(pos);

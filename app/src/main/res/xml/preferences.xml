@@ -24,6 +24,7 @@
     <ListPreference
         android:key="StorageLoc"
         android:summary="PLACEHOLDER"
+        android:defaultValue="INTERNAL"
         android:title="@string/preferences_storageloc_title"/>
 
 

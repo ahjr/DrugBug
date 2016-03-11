@@ -29,6 +29,7 @@ import java.util.List;
 // FUTURE TODO pass sortOrder in
 // future todo enable filter on taken/future for TYPE_SINGLE
 // future todo implement filter single med list by taken and future
+// future todo add dose in options
 
 public class DoseListActivity extends Activity {
     private static final int CONTEXT_EDIT = 10001;
@@ -337,7 +338,7 @@ public class DoseListActivity extends Activity {
                 break;
             case DoseItem.TYPE_SINGLE:
                 medication = db.getMedication(medId);
-                // todo do some filtery stuff here, but have to refactor the DB stuff first
+                // future todo do some filtery stuff here
                 doses = db.getAllDosesForMed(medId);
                 break;
             default:

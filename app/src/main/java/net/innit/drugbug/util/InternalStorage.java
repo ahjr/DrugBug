@@ -26,7 +26,7 @@ public class InternalStorage extends Storage {
 
     protected void setStorageLocation(Storage oldStorage) {
         // if external directory doesnt exist
-        this.prepareDirectory();
+        this.prepareDirectory(oldStorage);
 
         // Move files from old storage location to here
         if (oldStorage != null) {
