@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,10 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +35,8 @@ import net.innit.drugbug.util.ImageStorage;
 import net.innit.drugbug.util.Reminder;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -55,11 +55,13 @@ public class AddDoseActivity extends FragmentActivity {
 
     private final DBDataSource db = new DBDataSource(this);
     private String action;
+    private String sortOrder;
 
     private File dir;
     private File tempPath;
 
     private DoseItem doseItem = new DoseItem();
+    private Date origDate;
     private String freqOrig;
     private String type;
 
@@ -67,12 +69,15 @@ public class AddDoseActivity extends FragmentActivity {
     private boolean imageLocationOK;
     private ImageStorage imageStorage;
 
-    private ImageView mMedImage;
-    private Button mMedImageButton;
+    private ImageButton mMedImage;
     private TextView mMedName;
     private TextView mDosage;
+    private TextView mDateTimeLabel;
+    private EditText mDateTime;
+    private DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
     private CheckBox mReminder;
     private Spinner mFrequency;
+
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
@@ -80,6 +85,7 @@ public class AddDoseActivity extends FragmentActivity {
             // Do something with the date. This Date object contains
             // the date and time that the user has selected.
             doseItem.setDate(date);
+            mDateTime.setText(sdf.format(doseItem.getDate()));
             Log.d(MainActivity.LOGTAG, "onDateTimeSet: Date set to " + date.toString());
         }
 
@@ -103,6 +109,9 @@ public class AddDoseActivity extends FragmentActivity {
         Bundle bundle = getIntent().getExtras();
         action = bundle.getString("action", ACTION_ADD);
         type = bundle.getString("type", DoseItem.TYPE_NONE);
+        sortOrder = bundle.getString("sort_order");
+
+        mDateTime.setText(sdf.format(new Date()));
 
         if (action.equals(ACTION_EDIT))
             populateOnEdit(bundle);
@@ -110,10 +119,11 @@ public class AddDoseActivity extends FragmentActivity {
     }
 
     private void setupViews() {
-        mMedImage = (ImageView) findViewById(R.id.ivAddMedImage);
-        mMedImageButton = (Button) findViewById(R.id.btnAddMedImage);
+        mMedImage = (ImageButton) findViewById(R.id.ivAddMedImage);
         mMedName = (EditText) findViewById(R.id.etAddMedName);
         mDosage = (EditText) findViewById(R.id.etAddMedDosage);
+        mDateTimeLabel = (TextView) findViewById(R.id.tvAddMedDateTimeLabel);
+        mDateTime = (EditText) findViewById(R.id.etAddMedDateTime);
         mReminder = (CheckBox) findViewById(R.id.cbAddMedReminder);
         mReminder.setChecked(true);
         mFrequency = (Spinner) findViewById(R.id.spAddMedFreq);
@@ -122,16 +132,18 @@ public class AddDoseActivity extends FragmentActivity {
     private void populateOnEdit(Bundle bundle) {
         db.open();
         doseItem = db.getDose(bundle.getLong("dose_id"));
+        db.close();
+
         freqOrig = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
             Bitmap image = doseItem.getMedication().getBitmap(this);
             mMedImage.setImageBitmap(image);
-
-            mMedImageButton.setText(R.string.add_dose_button_image_change);
         }
 
-        db.close();
+        mDateTimeLabel.setText("Dose due");
+        mDateTime.setText(sdf.format(doseItem.getDate()));
+        origDate = doseItem.getDate();
 
         setTitle(R.string.add_dose_title_edit);
     }
@@ -153,8 +165,8 @@ public class AddDoseActivity extends FragmentActivity {
             return true;
         } else {
             Log.d(MainActivity.LOGTAG, "onCreate: " + dir.getAbsolutePath() + " is not writable");
-            // Hide the image add/edit button
-            mMedImageButton.setVisibility(View.GONE);
+            // Hide the image button
+            mMedImage.setVisibility(View.GONE);
         }
         return false;
     }
@@ -164,11 +176,12 @@ public class AddDoseActivity extends FragmentActivity {
         super.onResume();
 
         if (imageLocationOK && tempPath.isFile()) {
-            Bitmap image = BitmapFactory.decodeFile(tempPath.getAbsolutePath());
+//            Bitmap image = BitmapFactory.decodeFile(tempPath.getAbsolutePath());
+            Bitmap image = MedicationItem.orientBitmap(tempPath.getAbsolutePath());
 
             mMedImage.setImageBitmap(image);
 
-            mMedImageButton.setText(R.string.add_dose_button_image_change);
+//            mMedImageButton.setText(R.string.add_dose_button_image_change);
 
         }
 
@@ -179,7 +192,6 @@ public class AddDoseActivity extends FragmentActivity {
 
             mReminder.setChecked(doseItem.isReminderSet());
             wasChecked = doseItem.isReminderSet();
-
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getFreqLabels());
@@ -222,6 +234,7 @@ public class AddDoseActivity extends FragmentActivity {
 
         Intent intent = new Intent(this, DoseListActivity.class);
         intent.putExtra("type", type);
+        intent.putExtra("sort_order", sortOrder);
 
         startActivity(intent);
         finish();
@@ -292,7 +305,7 @@ public class AddDoseActivity extends FragmentActivity {
             doseItem.setReminder(mReminder.isChecked());
 
             if (!doseItem.getDosage().equals("")) {
-                Date doseDate = new Date();
+                Date doseDate = doseItem.getDate();
                 Calendar calendar;
                 if ((action.equals(ACTION_ADD)) || freqChanged) {
                     Log.d(MainActivity.LOGTAG, "onClickAddMedSave: action is add or frequency has changed");
@@ -318,11 +331,23 @@ public class AddDoseActivity extends FragmentActivity {
                         }
                     }
                 } else {
-                    List<DoseItem> doses = db.getAllFutureForMed(medication);
+                    // future todo Refactoring missed doses should help this.  Currently changing future dates doesn't handle changing time backwards at all.
+                    List<DoseItem> doses = db.getAllFutureForMed(this, medication);
+                    DoseItem prevDose = doseItem;
                     Log.d(MainActivity.LOGTAG, "onClickAddMedSave: updating all futures: " + doses.size() + " futures retrieved");
                     for (DoseItem futureDose : doses) {
-                        futureDose.setDosage(doseItem.getDosage());
-                        futureDose.setReminder(doseItem.isReminderSet());
+                        if (futureDose.getId() != doseItem.getId()) {
+                            // Only do the setting if this is not the dose currently being edited
+                            if (futureDose.getDate().getTime() > origDate.getTime()) {
+                                futureDose.setDate(prevDose.nextDate(this));
+                                prevDose = futureDose;
+                            }
+                            futureDose.setDosage(doseItem.getDosage());
+                            futureDose.setReminder(doseItem.isReminderSet());
+                        } else {
+                            futureDose = doseItem;
+                        }
+
                         if (db.updateDose(futureDose)) {
                             if (doseItem.isReminderSet() && !wasChecked) {
                                 // if reminder is true and wasChecked is false
@@ -343,6 +368,7 @@ public class AddDoseActivity extends FragmentActivity {
                 Intent intent = new Intent(this, DoseListActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("type", type);
+                intent.putExtra("sort_order", sortOrder);
                 if (type.equals(DoseItem.TYPE_SINGLE))
                     intent.putExtra("med_id", medication.getId());
                 startActivity(intent);
@@ -379,7 +405,7 @@ public class AddDoseActivity extends FragmentActivity {
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         new SlideDateTimePicker.Builder(fm)
                 .setListener(listener)
-                .setInitialDate(new Date())
+                .setInitialDate(doseItem.getDate())
                 .build()
                 .show();
     }

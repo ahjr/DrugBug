@@ -27,9 +27,9 @@ import net.innit.drugbug.R;
 import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.DoseItem;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Fragment for displaying the detail of a dose
@@ -39,6 +39,7 @@ public class DetailFragment extends DialogFragment {
     private DBDataSource db;
     private Context context;
     private DoseItem dose;
+    private String sortOrder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class DetailFragment extends DialogFragment {
         Bundle bundle = this.getArguments();
         final String type = bundle.getString("type", DoseItem.TYPE_FUTURE);
         id = bundle.getLong("dose_id");
+        sortOrder = bundle.getString("sort_order");
 
         db.open();
         dose = db.getDose(id);
@@ -62,7 +64,7 @@ public class DetailFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.activity_detail, container, false);
 
         // Dose is taken
-        if (type.equals(DoseItem.TYPE_TAKEN)) {
+        if (dose.isTaken()) {
             // Remove reminder text view
             TextView textView = (TextView) view.findViewById(R.id.tvDetailReminder);
             textView.setVisibility(View.GONE);
@@ -100,7 +102,7 @@ public class DetailFragment extends DialogFragment {
 
         // Show the date all pretty instead of a long number
         // Set it red if the date has passed on taken doses
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context.getString(R.string.date_format), Locale.getDefault());
+        DateFormat simpleDateFormat = SimpleDateFormat.getDateTimeInstance();
         String dateString = simpleDateFormat.format(dose.getDate());
         textView = (TextView) view.findViewById(R.id.tvDetailDate);
         textView.setText(dateString);
@@ -117,6 +119,7 @@ public class DetailFragment extends DialogFragment {
                 intent.putExtra("action", AddDoseActivity.ACTION_EDIT);
                 intent.putExtra("type", type);
                 intent.putExtra("dose_id", id);
+                intent.putExtra("sort_order", sortOrder);
                 db.close();
 
                 startActivity(intent);
@@ -131,6 +134,7 @@ public class DetailFragment extends DialogFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(context, DoseListActivity.class);
                 intent.putExtra("type", type);
+                intent.putExtra("sort_order", sortOrder);
                 if (type.equals(DoseItem.TYPE_SINGLE))
                     intent.putExtra("med_id", dose.getMedication().getId());
                 dose.confirmDelete(context, intent);
@@ -144,6 +148,7 @@ public class DetailFragment extends DialogFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(context, DoseListActivity.class);
                 intent.putExtra("type", DoseItem.TYPE_TAKEN);
+                intent.putExtra("sort_order", sortOrder);
                 if (type.equals(DoseItem.TYPE_SINGLE))
                     intent.putExtra("med_id", dose.getMedication().getId());
                 dose.confirmTaken(context, intent);

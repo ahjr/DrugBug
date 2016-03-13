@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-// FUTURE TODO pass sortOrder in
-// future todo enable filter on taken/future for TYPE_SINGLE
-// future todo implement filter single med list by taken and future
 // future todo add dose in options
 
 public class DoseListActivity extends Activity {
@@ -69,6 +66,10 @@ public class DoseListActivity extends Activity {
                 default:
                     sortOrder = "dateAsc";
             }
+        }
+
+        if (filter == null) {
+            filter = "none";
         }
 
         doses = getDoses();
@@ -172,6 +173,16 @@ public class DoseListActivity extends Activity {
             default:
                 menuItem = menu.findItem(R.id.menu_sort_order_date_asc);
         }
+        switch (filter) {
+            case "taken":
+                menuItem = menu.findItem(R.id.menu_filter_taken);
+                break;
+            case "future":
+                menuItem = menu.findItem(R.id.menu_filter_future);
+                break;
+            default:
+                menuItem = menu.findItem(R.id.menu_filter_none);
+        }
         menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.dose_list_sort_order_current) + ")");
         if (type.equals(DoseItem.TYPE_SINGLE))
             menu.findItem(R.id.menu_sort_order_name).setVisible(false);
@@ -210,6 +221,7 @@ public class DoseListActivity extends Activity {
                 intent.putExtra("dose_id", doseItem.getId());
                 intent.putExtra("action", AddDoseActivity.ACTION_EDIT);
                 intent.putExtra("type", type);
+                intent.putExtra("sort_order", sortOrder);
                 startActivity(intent);
                 return true;
             case CONTEXT_DELETE:
@@ -297,6 +309,7 @@ public class DoseListActivity extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putString("type", type);
                 bundle.putLong("dose_id", doseItem.getId());
+                bundle.putString("sort_order", sortOrder);
 
                 showDetailFragment(bundle);
             }
@@ -334,12 +347,20 @@ public class DoseListActivity extends Activity {
                 doses = db.getAllTaken(this);
                 break;
             case DoseItem.TYPE_REMINDER:
-                doses = db.getAllFutureWithReminder();
+                doses = db.getAllFutureWithReminder(this);
                 break;
             case DoseItem.TYPE_SINGLE:
                 medication = db.getMedication(medId);
-                // future todo do some filtery stuff here
-                doses = db.getAllDosesForMed(medId);
+                switch (filter) {
+                    case "taken":
+                        doses = db.getAllTakenForMed(this, medication);
+                        break;
+                    case "future":
+                        doses = db.getAllFutureForMed(this, medication);
+                        break;
+                    default:
+                        doses = db.getAllDosesForMed(this, medication);
+                }
                 break;
             default:
                 doses = db.getAllFuture(this);

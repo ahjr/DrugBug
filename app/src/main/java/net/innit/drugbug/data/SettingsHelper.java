@@ -1,9 +1,6 @@
 package net.innit.drugbug.data;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.Preference;
-import android.util.ArrayMap;
 import android.util.Log;
 
 import net.innit.drugbug.MainActivity;
@@ -12,9 +9,7 @@ import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.ExternalStorage;
 import net.innit.drugbug.util.ImageStorage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SettingsHelper {
     public static final String KEY_NUM_DOSES = "NumFutureDoses";
@@ -89,7 +84,7 @@ public class SettingsHelper {
                 if (lastFutureDose != null) {
                     int doseCount = (int) db.getFutureDoseCount(medication);
                     while (maxNumDoses > doseCount) {
-                        db.generateNextFuture(medication);
+                        db.getNextFuture(medication);
                         doseCount++;
                     }
                 }

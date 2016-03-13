@@ -306,82 +306,6 @@ public class DBDataSource {
         return returnList;
     }
 
-    public List<DoseItem> getAllDosesForMed(long medId) {
-        Log.d(MainActivity.LOGTAG, "getAllDosesForMed: start");
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medId;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        return getDoses(selection, orderBy);
-    }
-
-    /**
-     * Returns all future doses
-     *
-     * @param context Context for this method
-     * @return List of future doses as DoseItem objects
-     */
-    public List<DoseItem> getAllFuture(Context context) {
-        Log.d(MainActivity.LOGTAG, "getAllFuture: start");
-        // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
-        String keepTimeString = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(Settings.KEEP_TIME_MISSED.getKey(), Settings.KEEP_TIME_MISSED.getDefault(context));
-        int numDeleted = removeOldDoses(DoseItem.TYPE_MISSED, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "getAllFuture: " + numDeleted + " missed doses removed");
-
-        String selection = DBHelper.COLUMN_TAKEN + "=" + 0;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        return getDoses(selection, orderBy);
-    }
-
-    /**
-     * Return a list of all future doses for a single medication id
-     *
-     * @param medication medication to retrieve doses for
-     * @return List of DoseItem objects
-     */
-    public List<DoseItem> getAllFutureForMed(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "getAllFutureForMed: start");
-        String selection = DBHelper.COLUMN_TAKEN + "=" + 0 +
-                " AND " + DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        return getDoses(selection, orderBy);
-    }
-
-    /**
-     * Returns a list of all future doses with reminders
-     *
-     * @return List of DoseItem objects
-     */
-    public List<DoseItem> getAllFutureWithReminder() {
-        Log.d(MainActivity.LOGTAG, "getAllFutureWithReminder: start");
-        long date = new Date().getTime();
-        String selection = DBHelper.COLUMN_TAKEN + " = " + 0 +
-                " AND " + DBHelper.COLUMN_REMINDER + " = " + 1 +
-                " AND " + DBHelper.COLUMN_DATE + " >= " + date;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        return getDoses(selection, orderBy);
-    }
-
-    /**
-     * Returns a list of all taken doses
-     *
-     * @param context Context for this method
-     * @return List of DoseItem objects
-     */
-    public List<DoseItem> getAllTaken(Context context) {
-        Log.d(MainActivity.LOGTAG, "getAllTaken: start");
-        // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
-        String keepTimeString = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(Settings.KEEP_TIME_TAKEN.getKey(), Settings.KEEP_TIME_TAKEN.getDefault(context));
-        int numDeleted = removeOldDoses(DoseItem.TYPE_TAKEN, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "getAllTaken: " + numDeleted + " old doses removed");
-
-        String selection = DBHelper.COLUMN_TAKEN + "=" + 1;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        return getDoses(selection, orderBy);
-    }
-
     /**
      * Remove doses older than keep time
      *
@@ -406,6 +330,142 @@ public class DBDataSource {
 
     }
 
+    private void cleanDB(Context context) {
+        // Get missed keep time from SharedPreferences and convert it into an array: [y, m, d]
+        String keepTimeString = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getString(Settings.KEEP_TIME_MISSED.getKey(), Settings.KEEP_TIME_MISSED.getDefault(context));
+        int numDeleted = removeOldDoses(DoseItem.TYPE_MISSED, keepTimeString);
+        Log.d(MainActivity.LOGTAG, "cleanDB: " + numDeleted + " missed doses removed");
+
+        // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
+        keepTimeString = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getString(Settings.KEEP_TIME_TAKEN.getKey(), Settings.KEEP_TIME_TAKEN.getDefault(context));
+        numDeleted = removeOldDoses(DoseItem.TYPE_TAKEN, keepTimeString);
+        Log.d(MainActivity.LOGTAG, "cleanDB: " + numDeleted + " old taken doses removed");
+
+    }
+
+    public List<DoseItem> getAllDoses(Context context, MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
+        Log.d(MainActivity.LOGTAG, "getAllDoses: start");
+        cleanDB(context);
+
+        List<String> selection = new ArrayList<>();
+
+        if (medication != null) {
+            selection.add(DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId());
+        }
+
+        if (date != null) {
+            // Get day from date
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat daySDF = new SimpleDateFormat("yyyyMMdd");
+            String day = daySDF.format(date);
+            String midnight = day + " 00:00:00";
+            String endOfDay = day + " 23:59:59";
+
+            // Calculate epoch seconds for midnight and 11:59pm
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat datetimeSDF = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
+            long midnightDate;
+            long endOfDayDate;
+            try {
+                midnightDate = datetimeSDF.parse(midnight).getTime();
+                endOfDayDate = datetimeSDF.parse(endOfDay).getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            // Set selection
+            selection.add(DBHelper.COLUMN_DATE + ">" + midnightDate + " AND " +
+                    DBHelper.COLUMN_DATE + "<" + endOfDayDate);
+        }
+
+        if (reminderOnly) {
+            selection.add(DBHelper.COLUMN_REMINDER + " = " + 1);
+            selection.add(DBHelper.COLUMN_DATE + " >= " + new Date().getTime());
+        }
+
+        if (!(takenOnly == futureOnly)) {
+            // Both false doesn't make sense, so we'll assume if they're the same, we want all
+            if (takenOnly) {
+                selection.add(DBHelper.COLUMN_TAKEN + "=" + 1);
+            } else {
+                selection.add(DBHelper.COLUMN_TAKEN + "=" + 0);
+            }
+        }
+
+        String sel = null;
+        if (selection.size() > 0) {
+            sel = selection.get(0);
+            for (String str : selection) {
+                sel += " AND " + str;
+            }
+        }
+
+        String orderBy = DBHelper.COLUMN_DATE + " ASC";
+
+        return getDoses(sel, orderBy);
+    }
+
+    public List<DoseItem> getAllDosesForMed(Context context, MedicationItem medication) {
+        Log.d(MainActivity.LOGTAG, "getAllDosesForMed: start");
+        return getAllDoses(context, medication, null, false, false, false);
+    }
+
+    /**
+     * Returns all future doses
+     *
+     * @param context Context for this method
+     * @return List of future doses as DoseItem objects
+     */
+    public List<DoseItem> getAllFuture(Context context) {
+        Log.d(MainActivity.LOGTAG, "getAllFuture: start");
+        return getAllDoses(context, null, null, false, true, false);
+    }
+
+    /**
+     * Return a list of all future doses for a single medication id
+     *
+     * @param medication medication to retrieve doses for
+     * @return List of DoseItem objects
+     */
+    public List<DoseItem> getAllFutureForMed(Context context, MedicationItem medication) {
+        Log.d(MainActivity.LOGTAG, "getAllFutureForMed: start");
+        return getAllDoses(context, medication, null, false, true, false);
+    }
+
+    public List<DoseItem> getAllTakenForMed(Context context, MedicationItem medication) {
+        Log.d(MainActivity.LOGTAG, "getAllTakenForMed: start");
+        return getAllDoses(context, medication, null, true, false, false);
+    }
+
+    /**
+     * Returns a list of all future doses with reminders
+     *
+     * @return List of DoseItem objects
+     */
+    public List<DoseItem> getAllFutureWithReminder(Context context) {
+        Log.d(MainActivity.LOGTAG, "getAllFutureWithReminder: start");
+        return getAllDoses(context, null, null, false, true, true);
+    }
+
+    /**
+     * Returns a list of all taken doses
+     *
+     * @param context Context for this method
+     * @return List of DoseItem objects
+     */
+    public List<DoseItem> getAllTaken(Context context) {
+        Log.d(MainActivity.LOGTAG, "getAllTaken: start");
+        return getAllDoses(context, null, null, true, false, false);
+    }
+
+    public List<DoseItem> getAllDosesForDate(Context context, Date date) {
+        Log.d(MainActivity.LOGTAG, "getAllDosesForDate: start");
+        return getAllDoses(context, null, date, false, false, false);
+    }
+
     private DoseItem getSingleDose(MedicationItem medication, String selection, String orderBy) {
         String table;
         String[] columns;
@@ -422,7 +482,6 @@ public class DBDataSource {
             cursor.moveToFirst();
             return getDoseFromDB(cursor, medication);
         }
-//        cursor.close();
         return null;
     }
 
@@ -488,15 +547,15 @@ public class DBDataSource {
      * @param medication medication to generate a future dose for
      * @return DoseItem object for new dose
      */
-    public DoseItem generateNextFuture(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "generateNextFuture: start");
+    public DoseItem getNextFuture(MedicationItem medication) {
+        Log.d(MainActivity.LOGTAG, "getNextFuture: start");
 
         // After successful update, add another future dose so we keep the same number in our future list
         // Get last future dose for medication
         DoseItem newFutureItem = getLastDose(medication);
         newFutureItem.setTaken(false);
-        Log.d(MainActivity.LOGTAG, "generateNextFuture: newFutureItem is " + newFutureItem);
-        Log.d(MainActivity.LOGTAG, "generateNextFuture: medication is " + medication);
+        Log.d(MainActivity.LOGTAG, "getNextFuture: newFutureItem is " + newFutureItem);
+        Log.d(MainActivity.LOGTAG, "getNextFuture: medication is " + medication);
         // Get frequency
         long interval = getInterval(medication.getFrequency());
         Calendar calendar = Calendar.getInstance();
@@ -515,34 +574,6 @@ public class DBDataSource {
         newFutureItem.setDate(calendar.getTime());
         return createDose(newFutureItem);
 
-    }
-
-    public List<DoseItem> getDosesForDate(Date date) {
-        Log.d(MainActivity.LOGTAG, "getDosesForDate: start");
-        // Get day from date
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat daySDF = new SimpleDateFormat("yyyyMMdd");
-        String day = daySDF.format(date);
-        String midnight = day + " 00:00:00";
-        String endOfDay = day + " 23:59:59";
-
-        // Calculate epoch seconds for midnight and 11:59pm
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat datetimeSDF = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
-        long midnightDate;
-        long endOfDayDate;
-        try {
-            midnightDate = datetimeSDF.parse(midnight).getTime();
-            endOfDayDate = datetimeSDF.parse(endOfDay).getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        // Set selection
-        String selection = DBHelper.COLUMN_DATE + ">" + midnightDate + " AND " +
-                            DBHelper.COLUMN_DATE + "<" + endOfDayDate;
-
-        // Build the dose list to return
-        return getDoses(selection, null);
     }
 
     private ContentValues createDoseCV(DoseItem dose) {
@@ -613,7 +644,7 @@ public class DBDataSource {
      * Remove a dose
      *
      * @param id id of dose to remove
-     * @param createNextDose
+     * @param createNextDose True if next dose should be created
      * @return RESULT_OK if dose was removed successfully
      */
     // Delete one dose
@@ -625,7 +656,7 @@ public class DBDataSource {
         MedicationItem medication = getMedicationForDose(id);
 
         if (createNextDose) {
-            generateNextFuture(medication);
+            getNextFuture(medication);
         }
 
         boolean deleteOK = (database.delete(DBHelper.TABLE_DOSES, where, null) == 1);

@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.util.ArrayMap;
 
 import net.innit.drugbug.data.Settings;
-import net.innit.drugbug.data.SettingsHelper;
 
 import java.io.File;
 import java.util.Map;

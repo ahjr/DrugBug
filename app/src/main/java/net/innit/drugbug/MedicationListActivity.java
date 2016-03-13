@@ -24,8 +24,6 @@ import net.innit.drugbug.util.MedicationArrayAdapter;
 import java.util.Collections;
 import java.util.List;
 
-// future todo Add edit medication - set reminder for all doses?
-
 /**
  * Activity to create a medication list
  */

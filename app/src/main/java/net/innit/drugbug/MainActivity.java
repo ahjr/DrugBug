@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.data.Settings;
-import net.innit.drugbug.data.SettingsHelper;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
@@ -22,6 +21,15 @@ import java.util.Date;
 import java.util.List;
 
 // future todo (After archiving/deleting of meds complete) Delete image file when medication gets removed
+// future todo swipe right goes back
+// -- This is more complicated than I anticipated
+// -- http://androidexample.com/Swipe_screen_left__right__top_bottom/index.php?view=article_discription&aid=95&aaid=118
+// future todo Handle missed doses better
+// -- Show only one entry in list "Med Name - # missed"/"Last missed dose: Date/time"
+// -- Clicking shows list of all missed doses
+// future todo Handle reminder changes better
+// -- Currently removing reminder from one dose changes all
+// -- Should probably give the option to remove all or one
 
 public class MainActivity extends Activity {
     public static final String LOGTAG = "DrugBug";
@@ -60,7 +68,7 @@ public class MainActivity extends Activity {
         DBDataSource db = new DBDataSource(this);
 
         db.open();
-        List<DoseItem> doses = db.getDosesForDate(new Date());
+        List<DoseItem> doses = db.getAllDosesForDate(this, new Date());
         List<MedicationItem> medications = db.getAllMedications();
         db.close();
 

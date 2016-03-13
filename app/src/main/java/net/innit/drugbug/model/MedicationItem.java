@@ -3,11 +3,16 @@ package net.innit.drugbug.model;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.util.ImageStorage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 
 public class MedicationItem implements Comparable<MedicationItem> {
@@ -85,8 +90,56 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
     public Bitmap getBitmap(Context context) {
         ImageStorage imageStorage = ImageStorage.getInstance(context);
-        return BitmapFactory.decodeFile(imageStorage.getAbsDir() + "/" + imagePath);
+        String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
+        return orientBitmap(imageAbsPath);
+//        return BitmapFactory.decodeFile(imageStorage.getAbsDir() + "/" + imagePath);
     }
+
+    public static Bitmap orientBitmap(String path) {
+        Log.d(MainActivity.LOGTAG, "orientBitmap: start");
+        File imageFile = new File(path);
+        try {
+            Log.d(MainActivity.LOGTAG, "orientBitmap: Trying to resolve orientation");
+            return applyOrientation(BitmapFactory.decodeFile(path), resolveBitmapOrientation(imageFile));
+        } catch (IOException e) {
+            Log.d(MainActivity.LOGTAG, "orientBitmap: Failed to resolve orientation");
+            return BitmapFactory.decodeFile(path);
+        }
+    }
+
+    private static int resolveBitmapOrientation(File bitmapFile) throws IOException {
+        Log.d(MainActivity.LOGTAG, "resolveBitmapOrientation: start");
+        ExifInterface exif = null;
+        exif = new ExifInterface(bitmapFile.getAbsolutePath());
+
+        return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+    }
+
+    private static Bitmap applyOrientation(Bitmap bitmap, int orientation) {
+        Log.d(MainActivity.LOGTAG, "applyOrientation: start");
+        Log.d(MainActivity.LOGTAG, "applyOrientation: orientation is " + orientation);
+        int rotate = 0;
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                rotate = 270;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                rotate = 180;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                rotate = 90;
+                break;
+            default:
+                return bitmap;
+        }
+
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        Matrix mtx = new Matrix();
+        mtx.postRotate(rotate);
+        return Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, true);
+    }
+
 
     /**
      * Default sort - by name alphabetically

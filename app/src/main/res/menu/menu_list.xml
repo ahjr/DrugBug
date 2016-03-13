@@ -28,6 +28,9 @@
         <menu>
             <group>
                 <item
+                    android:id="@+id/menu_filter_none"
+                    android:title="Show all doses"/>
+                <item
                     android:id="@+id/menu_filter_taken"
                     android:title="@string/menu_list_filter_taken"/>
                 <item

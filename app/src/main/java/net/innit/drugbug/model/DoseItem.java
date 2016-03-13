@@ -75,6 +75,12 @@ public class DoseItem implements Comparable<DoseItem> {
         this.date = date;
     }
 
+    public Date nextDate(Context context) {
+        DBDataSource db = new DBDataSource(context);
+        long secs = date.getTime() + db.getInterval(medication.getFrequency()) * 1000;
+        return new Date(secs);
+    }
+
     public boolean isReminderSet() {
         return reminder;
     }
@@ -175,7 +181,7 @@ public class DoseItem implements Comparable<DoseItem> {
                 convertToTaken();
                 db.open();
                 if (db.updateDose(DoseItem.this)) {
-                    DoseItem newFutureItem = db.generateNextFuture(DoseItem.this.getMedication());
+                    DoseItem newFutureItem = db.getNextFuture(DoseItem.this.getMedication());
                     Log.d(MainActivity.LOGTAG, "TakenButton:onClick: newFutureItem generated with id " + newFutureItem.getId());
                     DoseItem firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
 
@@ -183,7 +189,7 @@ public class DoseItem implements Comparable<DoseItem> {
                         // First future dose date is before taken dose date
                         Log.d(MainActivity.LOGTAG, "onClick: firstFutureDose id " + firstFutureDose.getId());
                         db.removeDose(context, firstFutureDose.getId(), true);
-//                        newFutureItem = db.generateNextFuture(DoseItem.this.getMedication());
+//                        newFutureItem = db.getNextFuture(DoseItem.this.getMedication());
                         Log.d(MainActivity.LOGTAG, "TakenButton:onClick: newFutureItem generated with id " + newFutureItem.getId());
                         firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
 
