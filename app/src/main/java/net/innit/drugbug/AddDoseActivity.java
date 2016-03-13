@@ -53,7 +53,9 @@ public class AddDoseActivity extends FragmentActivity {
 
     private final DBDataSource db = new DBDataSource(this);
     private String action;
+    private Long medId;
     private String sortOrder;
+    private String filter;
 
     private File dir;
     private File tempPath;
@@ -107,7 +109,9 @@ public class AddDoseActivity extends FragmentActivity {
         Bundle bundle = getIntent().getExtras();
         action = bundle.getString("action", ACTION_ADD);
         type = bundle.getString("type", DoseItem.TYPE_NONE);
+        medId = bundle.getLong("med_id");
         sortOrder = bundle.getString("sort_order");
+        filter = bundle.getString("filter");
 
         mDateTime.setText(sdf.format(new Date()));
 
@@ -135,8 +139,9 @@ public class AddDoseActivity extends FragmentActivity {
         freqOrig = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
-            Bitmap image = doseItem.getMedication().getBitmap(this, 100, 100);
-            mMedImage.setImageBitmap(image);
+//            Bitmap image = doseItem.getMedication().getBitmap(this, 100, 100);
+//            mMedImage.setImageBitmap(image);
+            doseItem.getMedication().new BitmapWorkerTask(mMedImage, 100, 100).execute(this);
         }
 
         mDateTimeLabel.setText(R.string.add_dose_datetime_label);
@@ -229,6 +234,7 @@ public class AddDoseActivity extends FragmentActivity {
         Intent intent = new Intent(this, DoseListActivity.class);
         intent.putExtra("type", type);
         intent.putExtra("sort_order", sortOrder);
+        intent.putExtra("filter", filter);
 
         startActivity(intent);
         finish();
@@ -361,6 +367,7 @@ public class AddDoseActivity extends FragmentActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("type", type);
                 intent.putExtra("sort_order", sortOrder);
+                intent.putExtra("filter", filter);
                 if (type.equals(DoseItem.TYPE_SINGLE))
                     intent.putExtra("med_id", medication.getId());
                 startActivity(intent);

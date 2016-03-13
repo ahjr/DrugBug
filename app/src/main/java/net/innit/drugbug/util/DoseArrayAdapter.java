@@ -13,6 +13,7 @@ import android.widget.TextView;
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.model.DoseItem;
+import net.innit.drugbug.model.MedicationItem;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -106,7 +107,8 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
 
         // Replace placeholder image thumbnail with medication's image
         if (doseItem.getMedication().hasImage()) {
-            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context, 50, 50));
+            doseItem.getMedication().new BitmapWorkerTask(mViewHolder.image, 50, 50).execute(context);
+//            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context, 50, 50));
         } else {
             mViewHolder.image.setImageResource(R.drawable.default_image);
         }

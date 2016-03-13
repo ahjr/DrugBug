@@ -16,7 +16,7 @@
     <string name="add_dose_label_reminder">Set Reminder</string>
     <string name="add_dose_button_save">Save Medication</string>
     <string name="add_dose_title_edit">Edit dose</string>
-    <string name="add_dose_title_add">Add Dose</string>
+    <string name="add_dose_title_add">Add Medication</string>
     <string name="preferences_title">Settings</string>
     <string name="detail_dosage_label">Dosage:</string>
     <string name="detail_frequency_label">Frequency:</string>

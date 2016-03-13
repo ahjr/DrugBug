@@ -59,7 +59,8 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
         mViewHolder.date.setText(display);
 
         if (doseItem.getMedication().hasImage()) {
-            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context, 50, 50));
+//            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context, 50, 50));
+            doseItem.getMedication().new BitmapWorkerTask(mViewHolder.image, 50, 50).execute(context);
         }
 
         return convertView;

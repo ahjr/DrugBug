@@ -2,6 +2,8 @@ package net.innit.drugbug;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -10,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,12 +24,14 @@ import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.DoseArrayAdapter;
 import net.innit.drugbug.util.ReminderArrayAdapter;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 // future todo add dose in options
+// todo TYPE_SINGLE back pressed after add medication throws exception - something to do with passing med_id
 
 public class DoseListActivity extends Activity {
     private static final int CONTEXT_EDIT = 10001;
@@ -72,8 +77,6 @@ public class DoseListActivity extends Activity {
             filter = "none";
         }
 
-        doses = getDoses();
-
         if (bundle.getBoolean("fromReminder", false) && bundle.getLong("dose_id") > 0) {
             showDetailFragment(bundle);
         }
@@ -81,6 +84,8 @@ public class DoseListActivity extends Activity {
 
     @Override
     protected void onResume() {
+        doses = getDoses();
+
         refreshDisplay();
 
         super.onResume();
@@ -93,6 +98,9 @@ public class DoseListActivity extends Activity {
         if (!type.equals(DoseItem.TYPE_SINGLE)) {
             MenuItem menuItem = menu.findItem(R.id.menu_filter);
             menuItem.setVisible(false);
+        } else {
+            MenuItem menuItem = menu.findItem(R.id.menu_list_add);
+            menuItem.setVisible(false);
         }
         return true;
     }
@@ -102,6 +110,15 @@ public class DoseListActivity extends Activity {
         invalidateOptionsMenu();
 
         switch (item.getItemId()) {
+            case R.id.menu_list_add:
+                Intent intent = new Intent(DoseListActivity.this, AddDoseActivity.class);
+                intent.putExtra("action", AddDoseActivity.ACTION_ADD);
+                intent.putExtra("type", type);
+                intent.putExtra("med_id", medId);
+                intent.putExtra("sort_order", sortOrder);
+                intent.putExtra("filter", filter);
+                startActivity(intent);
+                return true;
             case R.id.menu_sort_order_date_asc:
                 sortOrder = "dateAsc";
                 doses = getDoses();
@@ -224,6 +241,7 @@ public class DoseListActivity extends Activity {
                 intent.putExtra("action", AddDoseActivity.ACTION_EDIT);
                 intent.putExtra("type", type);
                 intent.putExtra("sort_order", sortOrder);
+                intent.putExtra("med_id", medId);
                 startActivity(intent);
                 return true;
             case CONTEXT_DELETE:

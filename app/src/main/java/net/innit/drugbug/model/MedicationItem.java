@@ -5,14 +5,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.ImageView;
 
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.util.ImageStorage;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Comparator;
 
 public class MedicationItem implements Comparable<MedicationItem> {
@@ -96,20 +99,18 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
     public static Bitmap orientBitmap(String path, int width, int height) {
         Log.d(MainActivity.LOGTAG, "orientBitmap: start");
-        File imageFile = new File(path);
         try {
             Log.d(MainActivity.LOGTAG, "orientBitmap: Trying to resolve orientation");
-            return applyOrientation(decodeSampledBitmapFromFile(imageFile.getAbsolutePath(), width, height), resolveBitmapOrientation(imageFile));
+            return applyOrientation(decodeSampledBitmapFromFile(path, width, height), resolveBitmapOrientation(path));
         } catch (IOException e) {
             Log.d(MainActivity.LOGTAG, "orientBitmap: Failed to resolve orientation");
-            return decodeSampledBitmapFromFile(imageFile.getAbsolutePath(), width, height);
+            return decodeSampledBitmapFromFile(path, width, height);
         }
     }
 
-    private static int resolveBitmapOrientation(File bitmapFile) throws IOException {
+    private static int resolveBitmapOrientation(String path) throws IOException {
         Log.d(MainActivity.LOGTAG, "resolveBitmapOrientation: start");
-        return new ExifInterface(bitmapFile.getAbsolutePath())
-                .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        return new ExifInterface(path).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
     }
 
     private static Bitmap applyOrientation(Bitmap bitmap, int orientation) {
@@ -180,7 +181,13 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(imagePath, options);
+
+        // Reorient resized bitmap if necessary
+        try {
+            return applyOrientation(BitmapFactory.decodeFile(imagePath, options), resolveBitmapOrientation(imagePath));
+        } catch (IOException e) {
+            return BitmapFactory.decodeFile(imagePath, options);
+        }
     }
 
     /**
@@ -216,5 +223,37 @@ public class MedicationItem implements Comparable<MedicationItem> {
 //            return rhs.getDate().compareTo(lhs.getDate());
 //        }
 //    }
+
+    public class BitmapWorkerTask extends AsyncTask<Context, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private int width;
+        private int height;
+
+        public BitmapWorkerTask(ImageView imageView, int width, int height) {
+            // Use a WeakReference to ensure the ImageView can be garbage collected
+            imageViewReference = new WeakReference<ImageView>(imageView);
+            this.width = width;
+            this.height = height;
+        }
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(Context... params) {
+            ImageStorage imageStorage = ImageStorage.getInstance(params[0]);
+            String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
+            return decodeSampledBitmapFromFile(imageAbsPath, width, height);
+        }
+
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (imageViewReference != null && bitmap != null) {
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
+        }
+    }
 
 }

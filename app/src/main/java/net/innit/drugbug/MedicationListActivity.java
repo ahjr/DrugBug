@@ -184,7 +184,7 @@ public class MedicationListActivity extends Activity {
                 int numDeleted = db.removeAllDosesForMed(medicationItem);
                 db.close();
                 Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
-                medications.remove(pos);
+//                medications.remove(pos);
                 adapter.notifyDataSetChanged();
             }
         });
