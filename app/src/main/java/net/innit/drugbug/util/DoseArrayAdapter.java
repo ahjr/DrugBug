@@ -55,7 +55,8 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
             mViewHolder.name = (TextView) convertView.findViewById(R.id.tvListItemName);
             mViewHolder.dateLabel = (TextView) convertView.findViewById(R.id.tvListItemDateLabel);
             mViewHolder.date = (TextView) convertView.findViewById(R.id.tvListItemDate);
-            mViewHolder.reminder = (TextView) convertView.findViewById(R.id.tvListItemReminder);
+//            mViewHolder.reminder = (TextView) convertView.findViewById(R.id.tvListItemReminder);
+            mViewHolder.reminderImg = (ImageView) convertView.findViewById(R.id.ivListItemReminder);
             mViewHolder.image = (ImageView) convertView.findViewById(R.id.ivDoseListImage);
 
             convertView.setTag(mViewHolder);
@@ -90,15 +91,24 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         // Don't display the reminder set textview if dose is taken
         // If dose is future, don't display the reminder set textview if dose is missed
         // If future dose hasn't been missed, don't display the reminder set textview if dose reminder isn't set
-        if (doseItem.isTaken() || missedDose || !doseItem.isReminderSet()) {
-            mViewHolder.reminder.setVisibility(View.INVISIBLE);
+        if (doseItem.isTaken() || missedDose) {
+            mViewHolder.reminderImg.setVisibility(View.INVISIBLE);
         } else {
-            mViewHolder.reminder.setVisibility(View.VISIBLE);
+            mViewHolder.reminderImg.setVisibility(View.VISIBLE);
+            if (!doseItem.isReminderSet()) {
+//            mViewHolder.reminder.setVisibility(View.INVISIBLE);
+                mViewHolder.reminderImg.setImageResource(R.drawable.ic_action_alarm_off);
+            } else {
+//            mViewHolder.reminder.setVisibility(View.VISIBLE);
+                mViewHolder.reminderImg.setImageResource(R.drawable.ic_action_alarm_on);
+            }
         }
 
         // Replace placeholder image thumbnail with medication's image
         if (doseItem.getMedication().hasImage()) {
-            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context));
+            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context, 50, 50));
+        } else {
+            mViewHolder.image.setImageResource(R.drawable.default_image);
         }
 
         return convertView;
@@ -111,7 +121,8 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         private TextView name;
         private TextView dateLabel;
         private TextView date;
-        private TextView reminder;
+//        private TextView reminder;
+        private ImageView reminderImg;
         private ImageView image;
     }
 }

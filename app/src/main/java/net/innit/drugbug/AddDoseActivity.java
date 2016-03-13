@@ -41,8 +41,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// future todo ability to change dose taken date
-
 public class AddDoseActivity extends FragmentActivity {
 
     /**
@@ -74,11 +72,11 @@ public class AddDoseActivity extends FragmentActivity {
     private TextView mDosage;
     private TextView mDateTimeLabel;
     private EditText mDateTime;
-    private DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
+    private final DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
     private CheckBox mReminder;
     private Spinner mFrequency;
 
-    private SlideDateTimeListener listener = new SlideDateTimeListener() {
+    private final SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
         public void onDateTimeSet(Date date) {
@@ -137,11 +135,11 @@ public class AddDoseActivity extends FragmentActivity {
         freqOrig = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
-            Bitmap image = doseItem.getMedication().getBitmap(this);
+            Bitmap image = doseItem.getMedication().getBitmap(this, 100, 100);
             mMedImage.setImageBitmap(image);
         }
 
-        mDateTimeLabel.setText("Dose due");
+        mDateTimeLabel.setText(R.string.add_dose_datetime_label);
         mDateTime.setText(sdf.format(doseItem.getDate()));
         origDate = doseItem.getDate();
 
@@ -176,13 +174,9 @@ public class AddDoseActivity extends FragmentActivity {
         super.onResume();
 
         if (imageLocationOK && tempPath.isFile()) {
-//            Bitmap image = BitmapFactory.decodeFile(tempPath.getAbsolutePath());
-            Bitmap image = MedicationItem.orientBitmap(tempPath.getAbsolutePath());
+            Bitmap image = MedicationItem.orientBitmap(tempPath.getAbsolutePath(), 100, 100);
 
             mMedImage.setImageBitmap(image);
-
-//            mMedImageButton.setText(R.string.add_dose_button_image_change);
-
         }
 
         if (action.equals(ACTION_EDIT)) {
@@ -241,8 +235,6 @@ public class AddDoseActivity extends FragmentActivity {
     }
 
     public void onClickAddMedAddImage(View view) {
-//        Uri outputFileUri = Uri.fromFile(tempPath);
-//        Uri outputFileUri = FileProvider.getUriForFile(this, MED_IMAGE_FILE_PROVIDER, tempPath);
         Uri outputFileUri = imageStorage.getStorageUri(tempPath);
         if (hasCamera()) {
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -267,7 +259,7 @@ public class AddDoseActivity extends FragmentActivity {
         if (action.equals(ACTION_EDIT)) {
             if (!medication.getFrequency().equals(freqOrig)) {
                 // frequency has changed, so delete all previous futures with this medId
-                int dosesRemoved = db.removeAllFutureDosesForMed(this, medication);
+                int dosesRemoved = db.removeAllFutureDosesForMed(medication);
                 Log.d(MainActivity.LOGTAG, "onClickAddMedSave: " + dosesRemoved + " doses removed");
                 freqChanged = true;
             }
@@ -398,6 +390,7 @@ public class AddDoseActivity extends FragmentActivity {
 
     private boolean hasCamera() {
         final boolean deviceHasCameraFlag = getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        //noinspection deprecation
         return !(!deviceHasCameraFlag || Camera.getNumberOfCameras() == 0);
     }
 

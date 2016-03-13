@@ -216,4 +216,9 @@
     <string name="main_meds_description">View a list of medications</string>
     <string name="main_meds_active">Active medications:</string>
     <string name="main_meds_inactive">Inactive medications:</string>
+    <string name="add_dose_datetime_label">Dose due</string>
+    <string name="menu_list_filter_none">Show all doses</string>
+    <string name="add_med_datetime_label_first">Time of first dose</string>
+    <string name="add_med_datetime_calendar_desc">Calendar button</string>
+    <string name="dose_list_reminder_icon_desc">Reminder</string>
 </resources>

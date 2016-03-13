@@ -14,7 +14,7 @@ public enum Settings {
     KEEP_TIME_MISSED("KeepTimeMissed", "0:1:0"),
     IMAGE_STORAGE("StorageLoc", "EXTERNAL");
 
-    private String key;
+    private final String key;
     private String defaultValue;
 
     // There must be a better way to do this, but for now I'll hard code it.

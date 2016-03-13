@@ -173,6 +173,10 @@ public class DoseListActivity extends Activity {
             default:
                 menuItem = menu.findItem(R.id.menu_sort_order_date_asc);
         }
+        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.dose_list_sort_order_current) + ")");
+        if (type.equals(DoseItem.TYPE_SINGLE))
+            menu.findItem(R.id.menu_sort_order_name).setVisible(false);
+
         switch (filter) {
             case "taken":
                 menuItem = menu.findItem(R.id.menu_filter_taken);
@@ -184,8 +188,6 @@ public class DoseListActivity extends Activity {
                 menuItem = menu.findItem(R.id.menu_filter_none);
         }
         menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.dose_list_sort_order_current) + ")");
-        if (type.equals(DoseItem.TYPE_SINGLE))
-            menu.findItem(R.id.menu_sort_order_name).setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }
 

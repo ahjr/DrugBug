@@ -88,37 +88,34 @@ public class MedicationItem implements Comparable<MedicationItem> {
         return name;
     }
 
-    public Bitmap getBitmap(Context context) {
+    public Bitmap getBitmap(Context context, int width, int height) {
         ImageStorage imageStorage = ImageStorage.getInstance(context);
         String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
-        return orientBitmap(imageAbsPath);
-//        return BitmapFactory.decodeFile(imageStorage.getAbsDir() + "/" + imagePath);
+        return orientBitmap(imageAbsPath, width, height);
     }
 
-    public static Bitmap orientBitmap(String path) {
+    public static Bitmap orientBitmap(String path, int width, int height) {
         Log.d(MainActivity.LOGTAG, "orientBitmap: start");
         File imageFile = new File(path);
         try {
             Log.d(MainActivity.LOGTAG, "orientBitmap: Trying to resolve orientation");
-            return applyOrientation(BitmapFactory.decodeFile(path), resolveBitmapOrientation(imageFile));
+            return applyOrientation(decodeSampledBitmapFromFile(imageFile.getAbsolutePath(), width, height), resolveBitmapOrientation(imageFile));
         } catch (IOException e) {
             Log.d(MainActivity.LOGTAG, "orientBitmap: Failed to resolve orientation");
-            return BitmapFactory.decodeFile(path);
+            return decodeSampledBitmapFromFile(imageFile.getAbsolutePath(), width, height);
         }
     }
 
     private static int resolveBitmapOrientation(File bitmapFile) throws IOException {
         Log.d(MainActivity.LOGTAG, "resolveBitmapOrientation: start");
-        ExifInterface exif = null;
-        exif = new ExifInterface(bitmapFile.getAbsolutePath());
-
-        return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        return new ExifInterface(bitmapFile.getAbsolutePath())
+                .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
     }
 
     private static Bitmap applyOrientation(Bitmap bitmap, int orientation) {
         Log.d(MainActivity.LOGTAG, "applyOrientation: start");
         Log.d(MainActivity.LOGTAG, "applyOrientation: orientation is " + orientation);
-        int rotate = 0;
+        int rotate;
         switch (orientation) {
             case ExifInterface.ORIENTATION_ROTATE_270:
                 rotate = 270;
@@ -140,6 +137,51 @@ public class MedicationItem implements Comparable<MedicationItem> {
         return Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, true);
     }
 
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+
+        if (reqHeight == 0) {
+            reqHeight = height;
+        }
+
+        if (reqWidth == 0) {
+            reqWidth = width;
+        }
+
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    private static Bitmap decodeSampledBitmapFromFile(String imagePath, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imagePath, options);
+    }
 
     /**
      * Default sort - by name alphabetically

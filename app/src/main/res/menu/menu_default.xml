@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+      xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_default_help"
         android:orderInCategory="300"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_help"
-        android:title="@string/menu_default_help"/>
+        android:title="@string/menu_default_help"
+        tools:ignore="AppCompatResource"/>
 
 </menu>

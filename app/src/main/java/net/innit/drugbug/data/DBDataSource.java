@@ -347,7 +347,7 @@ public class DBDataSource {
 
     }
 
-    public List<DoseItem> getAllDoses(Context context, MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
+    private List<DoseItem> getAllDoses(Context context, MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
         Log.d(MainActivity.LOGTAG, "getAllDoses: start");
         cleanDB(context);
 
@@ -648,7 +648,7 @@ public class DBDataSource {
      * @return RESULT_OK if dose was removed successfully
      */
     // Delete one dose
-    public Result removeDose(Context context, long id, boolean createNextDose) {
+    public Result removeDose(long id, boolean createNextDose) {
         Log.d(MainActivity.LOGTAG, "removeDose: start");
         // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
         String where = DBHelper.COLUMN_ID + "=" + id;
@@ -682,7 +682,7 @@ public class DBDataSource {
      * @param medication medication to remove all future doses for
      * @return number of deleted doses
      */
-    public int removeAllFutureDosesForMed(Context context, MedicationItem medication) {
+    public int removeAllFutureDosesForMed(MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: start");
         // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
         String where = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
@@ -699,7 +699,7 @@ public class DBDataSource {
      * @param medication medication to remove all doses for
      * @return number of deleted doses
      */
-    public int removeAllDosesForMed(Context context, MedicationItem medication) {
+    public int removeAllDosesForMed(MedicationItem medication) {
         Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: start");
         // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
         String where = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();

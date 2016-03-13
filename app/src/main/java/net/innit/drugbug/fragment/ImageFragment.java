@@ -43,7 +43,7 @@ public class ImageFragment extends DialogFragment {
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        final Bitmap image = medicationItem.getBitmap(context);
+        final Bitmap image = medicationItem.getBitmap(context, 0, 0);
         ImageView imageView = new ImageView(context);
         imageView.setClickable(true);
         imageView.setImageBitmap(image);

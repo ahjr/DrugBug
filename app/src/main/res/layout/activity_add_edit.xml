@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/etAddMedDosage"
             android:layout_marginTop="10dp"
-            android:text="Time of first dose"/>
+            android:text="@string/add_med_datetime_label_first"/>
 
         <EditText
             android:id="@+id/etAddMedDateTime"
@@ -89,7 +89,7 @@
             android:layout_toEndOf="@+id/etAddMedDateTime"
             android:onClick="onClickDatetime"
             android:src="@drawable/ic_action_calendar_day"
-            android:contentDescription="Calendar button"/>
+            android:contentDescription="@string/add_med_datetime_calendar_desc"/>
 
         <TextView
             android:id="@+id/tvAddMedFreqLabel"

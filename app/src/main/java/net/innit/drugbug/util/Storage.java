@@ -16,20 +16,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-public abstract class Storage {
-    private File rootDir;           // Root directory for the storage type
-    private File absDir;            // Full directory - rootDir + subDir
-    private String displayText;
-    private String type;
+abstract class Storage {
+    private final File rootDir;           // Root directory for the storage type
+    private final File absDir;            // Full directory - rootDir + subDir
+    private final String displayText;
+    private final String type;
 
-    protected Storage(File rootDir, String subDir, String displayText, String type) {
+    Storage(File rootDir, String subDir, String displayText, String type) {
         this.rootDir = rootDir;
         this.displayText = displayText;
         this.type = type;
         this.absDir = new File(rootDir, subDir);
     }
 
-    public static void copyAllFiles(File source, File target) throws IOException {
+    private static void copyAllFiles(File source, File target) throws IOException {
         if (source.isDirectory()) {
             Log.d(MainActivity.LOGTAG, "copyAllFiles: " + source + " is a directory");
             if (!target.exists()) {
@@ -81,14 +81,15 @@ public abstract class Storage {
 
     public abstract boolean isAvailable();
 
-    public void prepareDirectory(Storage oldStorage) {
+    void prepareDirectory(Storage oldStorage) {
         if (!this.getAbsDir().exists()) {
             boolean created = absDir.mkdirs();
             Log.d(MainActivity.LOGTAG, "prepareDirectory: Directory " + this.getAbsDir() + " (and any missing parents) have been created.");
         } else {
             // empty it if location has changed
             if (oldStorage != null) {
-                for (File file : absDir.listFiles()) file.delete();
+                for (File file : absDir.listFiles()) //noinspection ResultOfMethodCallIgnored
+                    file.delete();
                 Log.d(MainActivity.LOGTAG, "prepareDirectory: Directory " + this.getAbsDir() + " has been emptied.");
             }
         }
@@ -102,7 +103,7 @@ public abstract class Storage {
         Log.d(MainActivity.LOGTAG, "revertToDefault: Storage location " + key + " reset to default: " + defaultLocation);
     }
 
-    public boolean moveFiles(Storage oldStorage) {
+    boolean moveFiles(Storage oldStorage) {
         if (oldStorage.getAbsDir().canRead()) {
             // move files from old to new
             try {

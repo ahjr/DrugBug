@@ -15,6 +15,7 @@ import net.innit.drugbug.data.SettingsHelper;
 import net.innit.drugbug.util.ImageStorage;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -51,10 +52,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         ListPreference listPreference = (ListPreference) findPreference(Settings.IMAGE_STORAGE.getKey());
         Map<String, String> locations = imageStorage.getAvailableLocations();
-        listPreference.setEntries(locations.values().toArray(new String[0]));
-        Log.d(MainActivity.LOGTAG, "SettingsFragment: Entries -> " + Arrays.toString(locations.values().toArray(new String[0])));
-        listPreference.setEntryValues(locations.keySet().toArray(new String[0]));
-        Log.d(MainActivity.LOGTAG, "SettingsFragment: Values -> " + Arrays.toString(locations.keySet().toArray(new String[0])));
+        Collection<String> values = locations.values();
+        listPreference.setEntries(values.toArray(new String[values.size()]));
+        Log.d(MainActivity.LOGTAG, "SettingsFragment: Entries -> " + Arrays.toString(locations.values().toArray(new String[values.size()])));
+        values = locations.keySet();
+        listPreference.setEntryValues(values.toArray(new String[values.size()]));
+        Log.d(MainActivity.LOGTAG, "SettingsFragment: Values -> " + Arrays.toString(locations.keySet().toArray(new String[values.size()])));
 
         imageStorage.setLocationType(sharedPreferences.getString(Settings.IMAGE_STORAGE.getKey(), Settings.IMAGE_STORAGE.getDefault(context)));
 
@@ -67,7 +70,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         Settings changedSetting = Settings.keyToEnum(key);
         switch (changedSetting) {
             case NUM_DOSES:
-                settingsHelper.numDosesChanged(context, sharedPreferences.getInt(key, Integer.parseInt(Settings.NUM_DOSES.getDefault(context))), oldNumDoses);
+                settingsHelper.numDosesChanged(sharedPreferences.getInt(key, Integer.parseInt(Settings.NUM_DOSES.getDefault(context))), oldNumDoses);
                 break;
             case KEEP_TIME_TAKEN:
                 settingsHelper.keepTimeTakenChanged(sharedPreferences.getString(key, Settings.KEEP_TIME_TAKEN.getDefault(context)));

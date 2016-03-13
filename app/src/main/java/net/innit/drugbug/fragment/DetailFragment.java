@@ -157,7 +157,7 @@ public class DetailFragment extends DialogFragment {
 
         // Replace the detail image with the medication's image, if there is one
         if (dose.getMedication().hasImage()) {
-            final Bitmap image = dose.getMedication().getBitmap(context);
+            final Bitmap image = dose.getMedication().getBitmap(context, 100, 100);
             ImageView imageView = (ImageView) view.findViewById(R.id.ivDetailImage);
             imageView.setImageBitmap(image);
 

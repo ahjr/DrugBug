@@ -142,7 +142,7 @@ public class DoseItem implements Comparable<DoseItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                switch (db.removeDose(context, id, true)) {
+                switch (db.removeDose(id, true)) {
                     case RESULT_OK:
                         Toast.makeText(context, R.string.dose_list_toast_removed_ok, Toast.LENGTH_SHORT).show();
                         context.startActivity(intent);
@@ -188,7 +188,7 @@ public class DoseItem implements Comparable<DoseItem> {
                     while ((firstFutureDose != null) && (firstFutureDose.getDate().getTime() <= DoseItem.this.getDate().getTime())) {
                         // First future dose date is before taken dose date
                         Log.d(MainActivity.LOGTAG, "onClick: firstFutureDose id " + firstFutureDose.getId());
-                        db.removeDose(context, firstFutureDose.getId(), true);
+                        db.removeDose(firstFutureDose.getId(), true);
 //                        newFutureItem = db.getNextFuture(DoseItem.this.getMedication());
                         Log.d(MainActivity.LOGTAG, "TakenButton:onClick: newFutureItem generated with id " + newFutureItem.getId());
                         firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());

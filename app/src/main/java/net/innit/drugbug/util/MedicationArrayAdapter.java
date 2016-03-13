@@ -53,7 +53,7 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
         mViewHolder.frequency.setText(medicationItem.getFrequency());
 
         if (medicationItem.hasImage()) {
-            mViewHolder.image.setImageBitmap(medicationItem.getBitmap(context));
+            mViewHolder.image.setImageBitmap(medicationItem.getBitmap(context, 50, 50));
         }
 
         return convertView;

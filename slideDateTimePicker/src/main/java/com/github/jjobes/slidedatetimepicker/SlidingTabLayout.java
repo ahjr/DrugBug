@@ -64,7 +64,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     // A map of the TextViews in each tab.
     // Maps page index -> tab TextView
-    private SparseArray<TextView> mTabTitleViews = new SparseArray<TextView>();
+    private SparseArray<TextView> mTabTitleViews = new SparseArray<>();
 
     private ViewPager mViewPager;
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;

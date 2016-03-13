@@ -18,7 +18,7 @@ public class ImageStorage {
     public static final String IMAGE_DIR = "images/medications";
     private static ImageStorage instance;
     private String locationType;    // File storage location type - INTERNAL or EXTERNAL
-    private Map<String, Storage> locations = new ArrayMap<>();
+    private final Map<String, Storage> locations = new ArrayMap<>();
 
     /**
      * @param context Context for this object

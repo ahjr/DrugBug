@@ -20,9 +20,9 @@ public class SettingsHelper {
     public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
     public static final String KEY_IMAGE_STORAGE = "StorageLoc";
 
-    public final String DEFAULT_IMAGE_STORAGE;
+    private final String DEFAULT_IMAGE_STORAGE;
 
-    private DBDataSource db;
+    private final DBDataSource db;
 
     public SettingsHelper(Context context) {
         db = new DBDataSource(context);
@@ -70,7 +70,7 @@ public class SettingsHelper {
         return output;
     }
 
-    public void numDosesChanged(Context context, int maxNumDoses, int oldNumDoses) {
+    public void numDosesChanged(int maxNumDoses, int oldNumDoses) {
         db.open();
         List<MedicationItem> medications = db.getAllMedications();
         for (MedicationItem medication : medications) {
@@ -98,7 +98,7 @@ public class SettingsHelper {
                     DoseItem lastFutureDose = db.getLastDose(medication);
                     // getLastDose returns null if there isn't one
                     if (lastFutureDose != null) {
-                        db.removeDose(context, lastFutureDose.getId(), false);
+                        db.removeDose(lastFutureDose.getId(), false);
                     }
                     doseCount--;
                 }

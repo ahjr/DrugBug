@@ -171,7 +171,7 @@ public class MedicationListActivity extends Activity {
      *
      * @param pos Position in the array of the medication to delete
      */
-    public void confirmDelete(final int pos) {
+    private void confirmDelete(final int pos) {
         final Context context = this;
         final MedicationItem medicationItem = medications.get(pos);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -181,7 +181,7 @@ public class MedicationListActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                int numDeleted = db.removeAllDosesForMed(context, medicationItem);
+                int numDeleted = db.removeAllDosesForMed(medicationItem);
                 db.close();
                 Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
                 medications.remove(pos);
