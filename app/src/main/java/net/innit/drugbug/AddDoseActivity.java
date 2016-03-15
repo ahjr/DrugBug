@@ -117,7 +117,31 @@ public class AddDoseActivity extends FragmentActivity {
 
         if (action.equals(ACTION_EDIT))
             populateOnEdit(bundle);
+        else if (action.equals("reactivate")) {
+            reactivateMed(medId);
+        }
 
+
+    }
+
+    private void reactivateMed(Long medId) {
+        db.open();
+        MedicationItem medicationItem = db.getMedication(medId);
+        db.close();
+
+        medicationItem.setArchived(false);
+
+        doseItem.setMedication(medicationItem);
+        doseItem.setDate(new Date());       // set date to now
+        freqOrig = doseItem.getMedication().getFrequency();
+
+        if (doseItem.getMedication().hasImage()) {
+            doseItem.getMedication().new BitmapWorkerTask(mMedImage, 100, 100).execute(this);
+        }
+        mDateTime.setText(sdf.format(doseItem.getDate()));
+        mMedName.setText(doseItem.getMedication().getName());
+
+        setTitle("Reactivate Medication");
     }
 
     private void setupViews() {
@@ -162,9 +186,6 @@ public class AddDoseActivity extends FragmentActivity {
             Log.d(MainActivity.LOGTAG, "onCreate: " + dir.getAbsolutePath() + " is writable");
             // Temporary filename.  We'll save it to it's permanent place when we save the MedicationItem
             tempPath = new File(dir, getString(R.string.add_dose_temp_image_filename));
-            // Delete any temp file left over from a previous addition
-            boolean fileDeleted = tempPath.delete();
-            Log.d(MainActivity.LOGTAG, "onCreate: Temp file " + ((fileDeleted) ? " deleted" : " not deleted"));
             return true;
         } else {
             Log.d(MainActivity.LOGTAG, "onCreate: " + dir.getAbsolutePath() + " is not writable");
@@ -179,10 +200,15 @@ public class AddDoseActivity extends FragmentActivity {
         super.onResume();
 
         if (imageLocationOK && tempPath.isFile()) {
-            Bitmap image = MedicationItem.orientBitmap(tempPath.getAbsolutePath(), 100, 100);
+            Bitmap image = MedicationItem.decodeSampledBitmapFromFile(tempPath.getAbsolutePath(), 100, 100);
 
             mMedImage.setImageBitmap(image);
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getFreqLabels());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mFrequency.setAdapter(adapter);
 
         if (action.equals(ACTION_EDIT)) {
             mMedName.setText(doseItem.getMedication().getName());
@@ -191,16 +217,11 @@ public class AddDoseActivity extends FragmentActivity {
 
             mReminder.setChecked(doseItem.isReminderSet());
             wasChecked = doseItem.isReminderSet();
-        }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getFreqLabels());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        mFrequency.setAdapter(adapter);
-        if (action.equals(ACTION_EDIT)) {
+            mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
+        } else if (action.equals("reactivate")) {
             mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
         }
-
     }
 
     @Override
@@ -231,16 +252,22 @@ public class AddDoseActivity extends FragmentActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        Intent intent = new Intent(this, DoseListActivity.class);
+        Intent intent;
+        if (type.equals("medication") || action.equals("reactivate")) {
+            intent = new Intent(this, MedicationListActivity.class);
+        } else {
+            intent = new Intent(this, DoseListActivity.class);
+        }
         intent.putExtra("type", type);
         intent.putExtra("sort_order", sortOrder);
         intent.putExtra("filter", filter);
-
         startActivity(intent);
         finish();
     }
 
     public void onClickAddMedAddImage(View view) {
+        // Delete any temp file left over from a previous addition
+        boolean fileDeleted = tempPath.delete();
         Uri outputFileUri = imageStorage.getStorageUri(tempPath);
         if (hasCamera()) {
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -311,7 +338,7 @@ public class AddDoseActivity extends FragmentActivity {
                         Log.d(MainActivity.LOGTAG, "onClickAddMedSave: iteration " + i);
                         if (i == 0) {
                             // Use current datetime as a starting point in first iteration
-                            // FUTURE TODO Allow user to choose first dose time, as well as ability to set meal and waking times for more accuracy
+                            // TODO Allow user to choose first dose time, as well as ability to set meal and waking times for more accuracy
                             calendar = Calendar.getInstance();
                         } else {
                             // Add interval to last date
@@ -329,7 +356,7 @@ public class AddDoseActivity extends FragmentActivity {
                         }
                     }
                 } else {
-                    // future todo Refactoring missed doses should help this.  Currently changing future dates doesn't handle changing time backwards at all.
+                    // todo Refactoring missed doses should help this.  Currently changing future dates doesn't handle changing time backwards at all.
                     List<DoseItem> doses = db.getAllFutureForMed(this, medication);
                     DoseItem prevDose = doseItem;
                     Log.d(MainActivity.LOGTAG, "onClickAddMedSave: updating all futures: " + doses.size() + " futures retrieved");

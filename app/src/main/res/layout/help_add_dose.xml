@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_help_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv_help_add_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_action_help"
+            android:text="Help - Add Dose"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/background_dark"/>
+
+
+        <TextView
+            android:id="@+id/tv_help_add_medication_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Medication Name"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_add_medication_name_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="Name of the medication.  Can not be left blank."/>
+
+        <TextView
+            android:id="@+id/tv_help_add_medication_name_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_image_camera_alt"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="Click on image icon to add a picture to this medication."/>
+
+        <TextView
+            android:id="@+id/tv_help_add_dosage_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Dosage"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_add_dosage_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="Dosage for this medication.  Can not be left blank."/>
+
+        <TextView
+            android:id="@+id/tv_help_add_time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Time of first dose"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_add_time_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="Set the time of the first dose."/>
+
+        <TextView
+            android:id="@+id/tv_help_add_time_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_action_calendar_day"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="Click on the calendar icon to bring up the picker window."/>
+
+        <TextView
+            android:id="@+id/tv_help_add_frequency_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Frequency"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_add_frequency_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="How often this medication should be taken."/>
+
+        <TextView
+            android:id="@+id/tv_help_add_frequency_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="Choose from the drop down menu. "/>
+
+        <TextView
+            android:id="@+id/tv_help_add_frequency_text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:text="(Currently hard coded.)"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/tv_help_add_save_button_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Click Save Medication button to save this medication."
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_add_save_button_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Clicking back will cancel."
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+</ScrollView>

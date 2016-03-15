@@ -13,7 +13,6 @@ import android.widget.TextView;
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.model.DoseItem;
-import net.innit.drugbug.model.MedicationItem;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -97,10 +96,8 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         } else {
             mViewHolder.reminderImg.setVisibility(View.VISIBLE);
             if (!doseItem.isReminderSet()) {
-//            mViewHolder.reminder.setVisibility(View.INVISIBLE);
                 mViewHolder.reminderImg.setImageResource(R.drawable.ic_action_alarm_off);
             } else {
-//            mViewHolder.reminder.setVisibility(View.VISIBLE);
                 mViewHolder.reminderImg.setImageResource(R.drawable.ic_action_alarm_on);
             }
         }
@@ -108,7 +105,6 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         // Replace placeholder image thumbnail with medication's image
         if (doseItem.getMedication().hasImage()) {
             doseItem.getMedication().new BitmapWorkerTask(mViewHolder.image, 50, 50).execute(context);
-//            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context, 50, 50));
         } else {
             mViewHolder.image.setImageResource(R.drawable.default_image);
         }

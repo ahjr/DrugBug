@@ -49,7 +49,10 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
 
         Log.d(MainActivity.LOGTAG, "getView: medication name is " + medicationItem.getName());
 
-        mViewHolder.name.setText(medicationItem.getName());
+        String title = medicationItem.getName();
+        if (medicationItem.isArchived())
+            title += " (archived)";
+        mViewHolder.name.setText(title);
         mViewHolder.frequency.setText(medicationItem.getFrequency());
 
         if (medicationItem.hasImage()) {

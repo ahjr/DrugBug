@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,22 +27,26 @@ import java.util.List;
  * Activity to create a medication list
  */
 public class MedicationListActivity extends Activity {
-    private static final int CONTEXT_DELETE_ALL = 1001;
-    private DBDataSource db;
+//    private static final int CONTEXT_DELETE_ALL = 1001;
+    private DBDataSource db = new DBDataSource(this);
     private List<MedicationItem> medications;
     private String sortOrder;
     private MedicationArrayAdapter adapter;
+    private String filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_medication);
 
-        db = new DBDataSource(this);
-        db.open();
-        medications = db.getAllMedications();
-        db.close();
-        sortOrder = "dateDsc";
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            sortOrder = bundle.getString("sort_order", "dateDsc");
+            filter = bundle.getString("filter", "active");
+        } else {
+            sortOrder = "dateDsc";
+            filter = "active";
+        }
 
         setTitle(getString(R.string.medication_list_title));
     }
@@ -66,15 +69,13 @@ public class MedicationListActivity extends Activity {
         invalidateOptionsMenu();
 
         switch (item.getItemId()) {
-            case R.id.menu_med_sort_order_name_asc:
-                sortOrder = "nameAsc";
-                medications = getMedications();
-                refreshDisplay();
-                return true;
-            case R.id.menu_med_sort_order_name_dsc:
-                sortOrder = "nameDsc";
-                medications = getMedications();
-                refreshDisplay();
+            case R.id.menu_med_list_add:
+                Intent intent = new Intent(MedicationListActivity.this, AddDoseActivity.class);
+                intent.putExtra("action", AddDoseActivity.ACTION_ADD);
+                intent.putExtra("type", "medication");
+                intent.putExtra("sort_order", sortOrder);
+                intent.putExtra("filter", filter);
+                startActivity(intent);
                 return true;
             case R.id.menu_list_med_help:
                 Bundle bundle = new Bundle();
@@ -87,7 +88,24 @@ public class MedicationListActivity extends Activity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.menu_med_sort_order_name_asc:
+                sortOrder = "nameAsc";
+                break;
+            case R.id.menu_med_sort_order_name_dsc:
+                sortOrder = "nameDsc";
+                break;
+            case R.id.menu_med_filter_all:
+                filter = "all";
+                break;
+            case R.id.menu_med_filter_active:
+                filter = "active";
+                break;
+            case R.id.menu_med_filter_inactive:
+                filter = "inactive";
+                break;
         }
+        refreshDisplay();
+//        return true;
 
         return super.onOptionsItemSelected(item);
     }
@@ -103,27 +121,43 @@ public class MedicationListActivity extends Activity {
             default:
                 menuItem = menu.findItem(R.id.menu_med_sort_order_name_asc);
         }
-        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.dose_list_sort_order_current) + ")");
+        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.list_item_current) + ")");
+
+        switch (filter) {
+            case "all":
+                menuItem = menu.findItem(R.id.menu_med_filter_all);
+                break;
+            case "active":
+                menuItem = menu.findItem(R.id.menu_med_filter_active);
+                break;
+            case "inactive":
+                menuItem = menu.findItem(R.id.menu_med_filter_inactive);
+                break;
+        }
+        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.list_item_current) + ")");
+
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, CONTEXT_DELETE_ALL, 0, "Delete all doses for this medication");
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        confirmDelete(info.position);
-        return true;
-    }
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        menu.add(0, CONTEXT_DELETE_ALL, 0, "Delete all doses for this medication");
+//    }
+//
+//    @Override
+//    public boolean onContextItemSelected(MenuItem item) {
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+//        confirmDeleteAllDoses(info.position);
+//        return true;
+//    }
 
     /**
      * Refreshes the listview display.  Used when the data list has changed.
      */
     private void refreshDisplay() {
         Log.d(MainActivity.LOGTAG, "refreshDisplay: Refreshing display");
+        medications = getMedications();
+
         ListView listView = (ListView) findViewById(R.id.lvMedList);
         adapter = new MedicationArrayAdapter(getBaseContext(), medications);
 
@@ -134,14 +168,41 @@ public class MedicationListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MedicationItem medicationItem = medications.get(position);
 
-                Intent intent = new Intent(getBaseContext(), DoseListActivity.class);
-                intent.putExtra("type", DoseItem.TYPE_SINGLE);
-                intent.putExtra("med_id", medicationItem.getId());
-                startActivity(intent);
+                if (medicationItem.isArchived()) {
+                    // Reactivate
+                    Intent intent = new Intent(getBaseContext(), AddDoseActivity.class);
+                    intent.putExtra("action", "reactivate");
+                    intent.putExtra("med_id", medicationItem.getId());
+                    intent.putExtra("sort_order", sortOrder);
+                    intent.putExtra("filter", filter);
+                    startActivity(intent);
+                } else {
+                    // View only this med
+                    Intent intent = new Intent(getBaseContext(), DoseListActivity.class);
+                    intent.putExtra("type", DoseItem.TYPE_SINGLE);
+                    intent.putExtra("med_id", medicationItem.getId());
+                    startActivity(intent);
+                }
             }
         });
 
-        registerForContextMenu(listView);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                MedicationItem medicationItem = medications.get(position);
+
+                if (medicationItem.isArchived()) {
+                    // Delete permanently
+                    confirmDeleteMed(position);
+                } else {
+                    // Delete doses
+                    confirmDeleteAllDoses(position);
+                }
+                return true;
+            }
+        });
+
+//        registerForContextMenu(listView);
     }
 
     /**
@@ -150,9 +211,19 @@ public class MedicationListActivity extends Activity {
      * @return Sorted list of medications
      */
     private List<MedicationItem> getMedications() {
+        List<MedicationItem> medications;
         db.open();
-
-        List<MedicationItem> medications = db.getAllMedications();
+        switch (filter) {
+            case "all":
+                medications = db.getAllMedications();
+                break;
+            case "inactive":
+                medications = db.getAllMedicationsArchived();
+                break;
+            default:
+                medications = db.getAllMedicationsUnarchived();
+        }
+        db.close();
 
         switch (sortOrder) {
             case "nameAsc":
@@ -161,7 +232,6 @@ public class MedicationListActivity extends Activity {
                 Collections.sort(medications, new MedicationItem.ReverseNameComparator());
                 break;
         }
-        db.close();
 
         return medications;
     }
@@ -171,7 +241,33 @@ public class MedicationListActivity extends Activity {
      *
      * @param pos Position in the array of the medication to delete
      */
-    private void confirmDelete(final int pos) {
+    private void confirmDeleteAllDoses(final int pos) {
+        // todo Give choice to keep taken doses
+        final Context context = this;
+        final MedicationItem medicationItem = medications.get(pos);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.alert_delete_doses_title);
+        alertDialogBuilder.setMessage(R.string.alert_delete_doses_message);
+        alertDialogBuilder.setPositiveButton(R.string.alert_delete_doses_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                db.open();
+                int numDeleted = db.removeAllDosesForMed(medicationItem);
+                db.close();
+                Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
+                medications.remove(pos);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.alert_delete_doses_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create().show();
+    }
+
+    private void confirmDeleteMed(final int pos) {
         final Context context = this;
         final MedicationItem medicationItem = medications.get(pos);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -181,10 +277,9 @@ public class MedicationListActivity extends Activity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                int numDeleted = db.removeAllDosesForMed(medicationItem);
+                db.removeMedication(context, medicationItem);
                 db.close();
-                Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
-//                medications.remove(pos);
+                medications.remove(pos);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -195,7 +290,6 @@ public class MedicationListActivity extends Activity {
                 dialog.dismiss();
             }
         }).create().show();
-
     }
 
 }

@@ -2,8 +2,6 @@ package net.innit.drugbug;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -12,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,14 +21,10 @@ import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.DoseArrayAdapter;
 import net.innit.drugbug.util.ReminderArrayAdapter;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-// future todo add dose in options
-// todo TYPE_SINGLE back pressed after add medication throws exception - something to do with passing med_id
 
 public class DoseListActivity extends Activity {
     private static final int CONTEXT_EDIT = 10001;
@@ -119,31 +112,6 @@ public class DoseListActivity extends Activity {
                 intent.putExtra("filter", filter);
                 startActivity(intent);
                 return true;
-            case R.id.menu_sort_order_date_asc:
-                sortOrder = "dateAsc";
-                doses = getDoses();
-                refreshDisplay();
-                return true;
-            case R.id.menu_sort_order_date_dsc:
-                sortOrder = "dateDsc";
-                doses = getDoses();
-                refreshDisplay();
-                return true;
-            case R.id.menu_sort_order_name:
-                sortOrder = "name";
-                doses = getDoses();
-                refreshDisplay();
-                return true;
-            case R.id.menu_filter_future:
-                filter = "future";
-                doses = getDoses();
-                refreshDisplay();
-                return true;
-            case R.id.menu_filter_taken:
-                filter = "taken";
-                doses = getDoses();
-                refreshDisplay();
-                return true;
             case R.id.menu_list_help:
                 Bundle bundle = new Bundle();
                 switch (type) {
@@ -167,11 +135,27 @@ public class DoseListActivity extends Activity {
                 fragment.setArguments(bundle);
                 fragment.show(getFragmentManager(), "Help Fragment");
                 return true;
-
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.menu_sort_order_date_asc:
+                sortOrder = "dateAsc";
+                break;
+            case R.id.menu_sort_order_date_dsc:
+                sortOrder = "dateDsc";
+                break;
+            case R.id.menu_sort_order_name:
+                sortOrder = "name";
+                break;
+            case R.id.menu_filter_future:
+                filter = "future";
+                break;
+            case R.id.menu_filter_taken:
+                filter = "taken";
+                break;
         }
+        doses = getDoses();
+        refreshDisplay();
 
         return super.onOptionsItemSelected(item);
     }
@@ -190,7 +174,7 @@ public class DoseListActivity extends Activity {
             default:
                 menuItem = menu.findItem(R.id.menu_sort_order_date_asc);
         }
-        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.dose_list_sort_order_current) + ")");
+        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.list_item_current) + ")");
         if (type.equals(DoseItem.TYPE_SINGLE))
             menu.findItem(R.id.menu_sort_order_name).setVisible(false);
 
@@ -204,7 +188,7 @@ public class DoseListActivity extends Activity {
             default:
                 menuItem = menu.findItem(R.id.menu_filter_none);
         }
-        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.dose_list_sort_order_current) + ")");
+        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.list_item_current) + ")");
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -224,7 +208,8 @@ public class DoseListActivity extends Activity {
                 if (now.before(doseItem.getDate()))
                     menu.add(0, CONTEXT_REMINDER_SET, 3, getString((doseItem.isReminderSet()) ? R.string.context_menu_reminder_unset : R.string.context_menu_reminder_set));
             case DoseItem.TYPE_TAKEN:
-                menu.add(0, CONTEXT_ONLY_THIS_MED, 4, getString(R.string.context_menu_only_med));
+                if (!type.equals(DoseItem.TYPE_SINGLE))
+                    menu.add(0, CONTEXT_ONLY_THIS_MED, 4, getString(R.string.context_menu_only_med));
                 break;
         }
     }

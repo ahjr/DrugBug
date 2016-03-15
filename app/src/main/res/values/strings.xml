@@ -51,14 +51,18 @@
     <string name="add_dose_error_blank_name">Medication name can not be blank</string>
     <string name="add_dose_error_image_cancel">User cancelled</string>
     <string name="error_update_dose">Unable to update dose</string>
-    <string name="dose_list_sort_order_current">Current</string>
+    <string name="list_item_current">Current</string>
     <string name="alert_delete_dose_title">Delete Dose</string>
     <string name="alert_delete_dose_message">Are you sure?</string>
     <string name="alert_delete_dose_positive">Yes, delete it</string>
     <string name="alert_delete_dose_negative">No, cancel</string>
-    <string name="alert_delete_med_title">Delete All Doses For Medication</string>
-    <string name="alert_delete_med_message">Continue? (Medication will be deleted)</string>
-    <string name="alert_delete_med_positive">Yes, delete them</string>
+    <string name="alert_delete_doses_title">Delete Doses</string>
+    <string name="alert_delete_doses_message">Delete all doses for this medication?\nMedication will be archived.</string>
+    <string name="alert_delete_doses_positive">Yes, delete them</string>
+    <string name="alert_delete_doses_negative">No, cancel</string>
+    <string name="alert_delete_med_title">Delete Medication</string>
+    <string name="alert_delete_med_message">Delete this medication?</string>
+    <string name="alert_delete_med_positive">Yes, delete it</string>
     <string name="alert_delete_med_negative">No, cancel</string>
     <string name="dose_list_toast_removed_ok">Dose has been removed</string>
     <string name="dose_list_toast_removed_error">Error removing dose</string>
@@ -81,8 +85,8 @@
     <string name="context_menu_taken">Dose is taken</string>
     <string name="context_menu_only_med">Show doses for only this medication</string>
     <string name="menu_list_filter">Filter</string>
-    <string name="menu_list_filter_taken">Show only taken doses</string>
-    <string name="menu_list_filter_future">Show only future doses</string>
+    <string name="menu_list_filter_taken">Taken doses</string>
+    <string name="menu_list_filter_future">Future doses</string>
     <string name="medication_list_title">Medications</string>
     <string name="help_main">
         <big>View Future doses:</big>\n
@@ -217,7 +221,7 @@
     <string name="main_meds_active">Active medications:</string>
     <string name="main_meds_inactive">Inactive medications:</string>
     <string name="add_dose_datetime_label">Dose due</string>
-    <string name="menu_list_filter_none">Show all doses</string>
+    <string name="menu_list_filter_none">All doses</string>
     <string name="add_med_datetime_label_first">Time of first dose</string>
     <string name="add_med_datetime_calendar_desc">Calendar button</string>
     <string name="dose_list_reminder_icon_desc">Reminder</string>

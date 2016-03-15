@@ -20,6 +20,7 @@ class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_IMAGE_PATH = "image_path";
     public static final String COLUMN_REMINDER = "reminder";
     public static final String COLUMN_TAKEN = "taken";
+    public static final String COLUMN_ARCHIVE = "archived";
 
     /**
      * View name definitions
@@ -40,7 +41,8 @@ class DBHelper extends SQLiteOpenHelper {
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NAME + " TEXT NOT NULL, " +
                     COLUMN_FREQUENCY + " TEXT, " +
-                    COLUMN_IMAGE_PATH + " TEXT " +
+                    COLUMN_IMAGE_PATH + " TEXT, " +
+                    COLUMN_ARCHIVE + " INTEGER DEFAULT 0" +
                     ")";
 
     private static final String CREATE_TABLE_DOSES =
@@ -70,11 +72,12 @@ class DBHelper extends SQLiteOpenHelper {
                     TABLE_MEDICATIONS + "." + COLUMN_FREQUENCY + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_IMAGE_PATH + " " +
                     "FROM " + TABLE_DOSES + " JOIN " + TABLE_MEDICATIONS + " " +
-                    "ON " + TABLE_DOSES + "." + COLUMN_MEDICATION_ID + "=" + TABLE_MEDICATIONS + "." + COLUMN_ID;
+                    "ON " + TABLE_DOSES + "." + COLUMN_MEDICATION_ID + "=" + TABLE_MEDICATIONS + "." + COLUMN_ID + " " +
+                    "WHERE " + COLUMN_ARCHIVE + "=0";
 
 
     private static final String DB_NAME = "drugbug.db";
-    private static final int DB_VERSION = 17;
+    private static final int DB_VERSION = 18;
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

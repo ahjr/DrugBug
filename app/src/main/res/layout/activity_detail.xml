@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/rlDetail"
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content">
+<RelativeLayout
+    android:id="@+id/rlDetail"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="20dp">
 
     <LinearLayout
@@ -85,7 +88,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:text="10mg"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/tvDetailFrequencyLabel"
@@ -102,7 +105,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:text="3x a day"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
@@ -127,14 +130,21 @@
         android:text="@string/detail_date_label"
         android:textSize="15sp"/>
 
+
     <LinearLayout
-        android:id="@+id/llDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvDetailDateLabel"
+        android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/llDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:paddingRight="20dp"
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/tvDetailDate"
@@ -144,18 +154,30 @@
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:text="00/00/0000 00:00 PM"
-            android:textSize="20sp"/>
+            android:textSize="18sp"
+            android:singleLine="true"/>
 
-        <TextView
-            android:id="@+id/tvDetailReminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_action_alarm_off"
-            android:gravity="center_vertical"
-            android:text="No reminder set"
-            android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/tvDetailReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:drawablePadding="5dp"
+                android:drawableStart="@drawable/ic_action_alarm_off"
+                android:gravity="center_vertical"
+                android:text="No reminder set"
+                android:textSize="15sp"/>
+
+    </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivDetailHelp"
+                android:src="@drawable/ic_action_help"
+                android:layout_gravity="bottom"
+                android:paddingEnd="20dp"/>
 
     </LinearLayout>
 
@@ -169,3 +191,4 @@
     <!--android:layout_marginTop="0dp"/>-->
 
 </RelativeLayout>
+</ScrollView>

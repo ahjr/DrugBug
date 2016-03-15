@@ -181,6 +181,32 @@ public class DetailFragment extends DialogFragment {
 
         }
 
+        ImageView imageView = (ImageView) view.findViewById(R.id.ivDetailHelp);
+        if (type.equals(DoseItem.TYPE_TAKEN)) {
+            imageView.setVisibility(View.INVISIBLE);
+        } else {
+            imageView.setClickable(true);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int source;
+                    switch (type) {
+                        case DoseItem.TYPE_TAKEN:
+                            source = HelpFragment.SOURCE_DETAIL_TAKEN;
+                            break;
+                        default:
+                            source = HelpFragment.SOURCE_DETAIL_FUTURE;
+                    }
+
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("source", source);
+                    HelpFragment fragment = new HelpFragment();
+                    fragment.setArguments(bundle);
+                    fragment.show(getFragmentManager(), "Help Fragment");
+                }
+            });
+        }
+
         return view;
     }
 

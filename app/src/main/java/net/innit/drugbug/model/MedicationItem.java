@@ -23,6 +23,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     private String name;    // Name of drug taken
     private String frequency; // Frequency of doses
     private String imagePath; // Picture of the pill or label
+    private boolean archived;
 
     public MedicationItem() {
     }
@@ -70,6 +71,14 @@ public class MedicationItem implements Comparable<MedicationItem> {
         this.frequency = frequency;
     }
 
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
     public String getImagePath() {
         return imagePath;
     }
@@ -94,18 +103,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     public Bitmap getBitmap(Context context, int width, int height) {
         ImageStorage imageStorage = ImageStorage.getInstance(context);
         String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
-        return orientBitmap(imageAbsPath, width, height);
-    }
-
-    public static Bitmap orientBitmap(String path, int width, int height) {
-        Log.d(MainActivity.LOGTAG, "orientBitmap: start");
-        try {
-            Log.d(MainActivity.LOGTAG, "orientBitmap: Trying to resolve orientation");
-            return applyOrientation(decodeSampledBitmapFromFile(path, width, height), resolveBitmapOrientation(path));
-        } catch (IOException e) {
-            Log.d(MainActivity.LOGTAG, "orientBitmap: Failed to resolve orientation");
-            return decodeSampledBitmapFromFile(path, width, height);
-        }
+        return decodeSampledBitmapFromFile(imageAbsPath, width, height);
     }
 
     private static int resolveBitmapOrientation(String path) throws IOException {
@@ -169,7 +167,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
         return inSampleSize;
     }
 
-    private static Bitmap decodeSampledBitmapFromFile(String imagePath, int reqWidth, int reqHeight) {
+    public static Bitmap decodeSampledBitmapFromFile(String imagePath, int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -212,7 +210,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
         }
     }
 
-    // future todo add sort list by last taken dose
+    // todo add sort list by last taken dose
 //    /**
 //     * A comparator so we can sort dosages by date, descending
 //     */
@@ -231,7 +229,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
         public BitmapWorkerTask(ImageView imageView, int width, int height) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
-            imageViewReference = new WeakReference<ImageView>(imageView);
+            imageViewReference = new WeakReference<>(imageView);
             this.width = width;
             this.height = height;
         }
