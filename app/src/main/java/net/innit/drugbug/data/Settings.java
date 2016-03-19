@@ -17,8 +17,6 @@ public enum Settings {
     private final String key;
     private String defaultValue;
 
-    // There must be a better way to do this, but for now I'll hard code it.
-    // Can't map instance 'key' to static 'Setting'
     private static final Map<String, Settings> keyToEnumMap = new ArrayMap<>();
     static {
         keyToEnumMap.put("NumFutureDoses", NUM_DOSES);

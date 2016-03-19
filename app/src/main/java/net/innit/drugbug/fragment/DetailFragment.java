@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 
 import net.innit.drugbug.AddDoseActivity;
 import net.innit.drugbug.DoseListActivity;
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.DoseItem;
@@ -30,6 +28,16 @@ import net.innit.drugbug.model.DoseItem;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static net.innit.drugbug.util.Constants.ACTION;
+import static net.innit.drugbug.util.Constants.ACTION_EDIT;
+import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
+import static net.innit.drugbug.util.Constants.SORT;
+import static net.innit.drugbug.util.Constants.TYPE;
+import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
+import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
 
 /**
  * Fragment for displaying the detail of a dose
@@ -52,13 +60,12 @@ public class DetailFragment extends DialogFragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
-        final String type = bundle.getString("type", DoseItem.TYPE_FUTURE);
-        id = bundle.getLong("dose_id");
-        sortOrder = bundle.getString("sort_order");
+        final String type = bundle.getString(TYPE, TYPE_FUTURE);
+        id = bundle.getLong(INTENT_DOSE_ID);
+        sortOrder = bundle.getString(SORT);
 
         db.open();
         dose = db.getDose(id);
-        Log.d(MainActivity.LOGTAG, "onCreateView: medication is " + dose.getMedication().getName());
         db.close();
 
         View view = inflater.inflate(R.layout.activity_detail, container, false);
@@ -106,21 +113,20 @@ public class DetailFragment extends DialogFragment {
         String dateString = simpleDateFormat.format(dose.getDate());
         textView = (TextView) view.findViewById(R.id.tvDetailDate);
         textView.setText(dateString);
-        if (type.equals(DoseItem.TYPE_FUTURE) && new Date().after(dose.getDate()))
+        if (type.equals(TYPE_FUTURE) && new Date().after(dose.getDate())) {
             textView.setTextColor(Color.RED);
+        }
 
         // Open the edit screen if we click on the edit button
         Button button = (Button) view.findViewById(R.id.btnDetailEdit);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db.open();
                 Intent intent = new Intent(context, AddDoseActivity.class);
-                intent.putExtra("action", AddDoseActivity.ACTION_EDIT);
-                intent.putExtra("type", type);
-                intent.putExtra("dose_id", id);
-                intent.putExtra("sort_order", sortOrder);
-                db.close();
+                intent.putExtra(ACTION, ACTION_EDIT);
+                intent.putExtra(TYPE, type);
+                intent.putExtra(INTENT_DOSE_ID, id);
+                intent.putExtra(SORT, sortOrder);
 
                 startActivity(intent);
                 dismiss();
@@ -133,24 +139,23 @@ public class DetailFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DoseListActivity.class);
-                intent.putExtra("type", type);
-                intent.putExtra("sort_order", sortOrder);
-                if (type.equals(DoseItem.TYPE_SINGLE))
-                    intent.putExtra("med_id", dose.getMedication().getId());
+                intent.putExtra(TYPE, type);
+                intent.putExtra(SORT, sortOrder);
+                if (type.equals(TYPE_SINGLE))
+                    intent.putExtra(INTENT_MED_ID, dose.getMedication().getId());
                 dose.confirmDelete(context, intent);
             }
         });
 
-        // future todo Once taken, should dates of all future doses shift?
         button = (Button) view.findViewById(R.id.btnDetailTaken);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DoseListActivity.class);
-                intent.putExtra("type", DoseItem.TYPE_TAKEN);
-                intent.putExtra("sort_order", sortOrder);
-                if (type.equals(DoseItem.TYPE_SINGLE))
-                    intent.putExtra("med_id", dose.getMedication().getId());
+                intent.putExtra(TYPE, TYPE_TAKEN);
+                intent.putExtra(SORT, sortOrder);
+                if (type.equals(TYPE_SINGLE))
+                    intent.putExtra(INTENT_MED_ID, dose.getMedication().getId());
                 dose.confirmTaken(context, intent);
             }
         });
@@ -167,7 +172,7 @@ public class DetailFragment extends DialogFragment {
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    bundle.putLong("med_id", dose.getMedication().getId());
+                    bundle.putLong(INTENT_MED_ID, dose.getMedication().getId());
 
                     ImageFragment imageFragment = new ImageFragment();
                     imageFragment.setArguments(bundle);
@@ -182,7 +187,7 @@ public class DetailFragment extends DialogFragment {
         }
 
         ImageView imageView = (ImageView) view.findViewById(R.id.ivDetailHelp);
-        if (type.equals(DoseItem.TYPE_TAKEN)) {
+        if (type.equals(TYPE_TAKEN)) {
             imageView.setVisibility(View.INVISIBLE);
         } else {
             imageView.setClickable(true);
@@ -191,7 +196,7 @@ public class DetailFragment extends DialogFragment {
                 public void onClick(View v) {
                     int source;
                     switch (type) {
-                        case DoseItem.TYPE_TAKEN:
+                        case TYPE_TAKEN:
                             source = HelpFragment.SOURCE_DETAIL_TAKEN;
                             break;
                         default:

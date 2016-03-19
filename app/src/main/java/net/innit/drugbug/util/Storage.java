@@ -31,22 +31,15 @@ abstract class Storage {
 
     private static void copyAllFiles(File source, File target) throws IOException {
         if (source.isDirectory()) {
-            Log.d(MainActivity.LOGTAG, "copyAllFiles: " + source + " is a directory");
             if (!target.exists()) {
-                if (target.mkdir()) {
-                    Log.d(MainActivity.LOGTAG, "copyAllFiles: " + target + " was created");
-                } else {
-                    Log.d(MainActivity.LOGTAG, "copyAllFiles: " + target + " was not created");
-                }
+                boolean dirsCreated = target.mkdir();
             }
 
             String[] children = source.list();
-            Log.d(MainActivity.LOGTAG, "copyAllFiles: files: " + Arrays.toString(children));
             for (int i = 0; i < source.listFiles().length; i++) {
                 copyAllFiles(new File(source, children[i]), new File(target, children[i]));
             }
         } else {
-            Log.d(MainActivity.LOGTAG, "copyAllFiles: " + source + " is a file");
             InputStream in = new FileInputStream(source);
             OutputStream out = new FileOutputStream(target);
 
@@ -84,38 +77,34 @@ abstract class Storage {
     void prepareDirectory(Storage oldStorage) {
         if (!this.getAbsDir().exists()) {
             boolean created = absDir.mkdirs();
-            Log.d(MainActivity.LOGTAG, "prepareDirectory: Directory " + this.getAbsDir() + " (and any missing parents) have been created.");
         } else {
             // empty it if location has changed
             if (oldStorage != null) {
-                for (File file : absDir.listFiles()) //noinspection ResultOfMethodCallIgnored
-                    file.delete();
-                Log.d(MainActivity.LOGTAG, "prepareDirectory: Directory " + this.getAbsDir() + " has been emptied.");
+                for (File file : absDir.listFiles()) { //noinspection ResultOfMethodCallIgnored
+                    final boolean deleted = file.delete();
+                }
             }
         }
     }
 
-    public void revertToDefault(Context context, String key, String defaultLocation) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(key, defaultLocation);
-        editor.apply();
-        Log.d(MainActivity.LOGTAG, "revertToDefault: Storage location " + key + " reset to default: " + defaultLocation);
-    }
+    // Archived for future use
+//    public void revertToDefault(Context context, String key, String defaultLocation) {
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putString(key, defaultLocation);
+//        editor.apply();
+//    }
 
     boolean moveFiles(Storage oldStorage) {
         if (oldStorage.getAbsDir().canRead()) {
             // move files from old to new
             try {
                 copyAllFiles(oldStorage.getAbsDir(), absDir);
-                Log.d(MainActivity.LOGTAG, "moveFiles: Files copied from " + oldStorage.getDisplayText() + " to " + this.getDisplayText());
                 return true;
             } catch (IOException e) {
-                Log.d(MainActivity.LOGTAG, "moveFiles: Error copying files from " + oldStorage.getDisplayText() + " to " + this.getDisplayText());
+                Log.e(Constants.LOGTAG, "moveFiles: Error copying files from " + oldStorage.getDisplayText() + " to " + this.getDisplayText());
             }
 
-        } else {
-            Log.d(MainActivity.LOGTAG, "moveFiles: " + oldStorage.getDisplayText() + " directory not readable");
         }
         return false;
     }

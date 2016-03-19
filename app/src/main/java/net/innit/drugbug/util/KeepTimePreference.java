@@ -40,7 +40,6 @@ public class KeepTimePreference extends DialogPreference {
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
-        Log.d(MainActivity.LOGTAG, "onDialogClosed: start");
         if (positiveResult) {
             value = "" + yearPicker.getValue() + ":" + monthPicker.getValue() + ":" + dayPicker.getValue();
             persistString(value);
@@ -57,7 +56,6 @@ public class KeepTimePreference extends DialogPreference {
             value = (String) defaultValue;
             persistString(value);
         }
-        Log.d(MainActivity.LOGTAG, "onSetInitialValue: value: " + value);
     }
 
     @Override
@@ -76,7 +74,6 @@ public class KeepTimePreference extends DialogPreference {
         dayPicker = (NumberPicker) view.findViewById(R.id.npDay);
 
         int[] defaultKeep = splitString(value);
-        Log.d(MainActivity.LOGTAG, "onCreateDialogView: value: " + value);
 
         // Initialize state
         yearPicker.setMaxValue(YEAR_MAX_VALUE);

@@ -1,9 +1,5 @@
 [
     {
-        "merged": "/Users/alissa/Downloads/SlideDateTimePicker-master/slideDateTimePicker/build/intermediates/res/merged/release/drawable-hdpi-v4/selection_divider.9.png",
-        "source": "/Users/alissa/Downloads/SlideDateTimePicker-master/slideDateTimePicker/src/main/res/drawable-hdpi/selection_divider.9.png"
-    },
-    {
         "merged": "/Users/alissa/AndroidStudioProjects/DrugBug/slideDateTimePicker/build/intermediates/res/merged/release/drawable-hdpi-v4/selection_divider.9.png",
         "source": "/Users/alissa/AndroidStudioProjects/DrugBug/slideDateTimePicker/src/main/res/drawable-hdpi/selection_divider.9.png"
     }

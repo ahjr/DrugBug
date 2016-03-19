@@ -43,6 +43,9 @@
                 <item
                     android:id="@+id/menu_med_filter_inactive"
                     android:title="Inactive medications"/>
+                <item
+                    android:id="@+id/menu_med_filter_archived"
+                    android:title="Archived medications"/>
             </group>
         </menu>
     </item>

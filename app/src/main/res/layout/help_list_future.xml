@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="15dp">
+        android:padding="15dp"
+        >
 
         <TextView
             android:id="@+id/tv_help_list_future_title"
@@ -30,14 +31,14 @@
             android:id="@+id/tv_help_list_future_add_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:layout_marginTop="10dp"
             android:drawablePadding="3dp"
-            android:textSize="@dimen/abc_text_size_subhead"
-            android:textStyle="bold"
             android:drawableStart="@drawable/ic_content_add"
-            android:text="Add dose"
             android:gravity="fill"
-            android:layout_gravity="bottom"/>
+            android:text="Add dose"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_add_text"
@@ -51,14 +52,14 @@
             android:id="@+id/tv_help_list_future_sort_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:layout_marginTop="10dp"
             android:drawablePadding="3dp"
-            android:textSize="@dimen/abc_text_size_subhead"
-            android:textStyle="bold"
             android:drawableStart="@drawable/ic_action_sort_2"
-            android:text="Sort Order"
             android:gravity="fill"
-            android:layout_gravity="bottom"/>
+            android:text="Sort Order"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_sort_text"
@@ -92,6 +93,54 @@
             android:paddingStart="10dp"
             android:text=" - Medication name (alphabetical)"/>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/ic_action_alarm_on"
+                android:paddingBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tv_help_list_reminder_set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="Reminder is set for this dose"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="3dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/ic_action_alarm_off"
+                android:paddingBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tv_help_list_reminder_unset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="Reminder is not set for this dose"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tv_help_list_future_click_label"
             android:layout_width="wrap_content"
@@ -107,8 +156,8 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:textStyle="bold"
-            android:text="Dose taken"/>
+            android:text="Dose taken"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_click_taken_text"
@@ -123,9 +172,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
-            android:textStyle="bold"
             android:paddingStart="10dp"
-            android:text="Edit"/>
+            android:text="Edit"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_click_edit_text"
@@ -140,9 +189,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
-            android:textStyle="bold"
             android:paddingStart="10dp"
-            android:text="Delete"/>
+            android:text="Delete"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_click_delete_text"
@@ -167,8 +216,8 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:textStyle="bold"
-            android:text="Dose is taken"/>
+            android:text="Dose is taken"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_taken_text"
@@ -183,9 +232,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
-            android:textStyle="bold"
             android:paddingStart="10dp"
-            android:text="Edit dose"/>
+            android:text="Edit dose"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_edit_text"
@@ -200,9 +249,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
-            android:textStyle="bold"
             android:paddingStart="10dp"
-            android:text="Delete dose"/>
+            android:text="Delete dose"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_delete_text"
@@ -217,9 +266,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
-            android:textStyle="bold"
             android:paddingStart="10dp"
-            android:text="Set/unset Reminder"/>
+            android:text="Set/unset Reminder"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_reminder_text"
@@ -234,9 +283,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
-            android:textStyle="bold"
             android:paddingStart="10dp"
-            android:text="Show doses for only this medication"/>
+            android:text="Show doses for only this medication"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_only_text"

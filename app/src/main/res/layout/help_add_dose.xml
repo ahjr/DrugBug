@@ -136,7 +136,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Click Save Medication button to save this medication."
+            android:text="Touch Save Medication button to save this medication."
             android:textStyle="bold"/>
 
         <TextView
@@ -144,7 +144,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Clicking back will cancel."
+            android:text="Touching back will cancel."
             android:textStyle="bold"/>
 
     </LinearLayout>

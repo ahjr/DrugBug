@@ -17,12 +17,11 @@ import java.util.List;
 
 public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
     private final Context context;
-    private final List<MedicationItem> data;
+    private List<MedicationItem> data;
 
     public MedicationArrayAdapter(Context context, List<MedicationItem> medications) {
         super(context, R.layout.list_item_medication, medications);
 
-        Log.d(MainActivity.LOGTAG, "MedicationArrayAdapter: adapter created");
         this.context = context;
         data = medications;
     }
@@ -47,16 +46,15 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Log.d(MainActivity.LOGTAG, "getView: medication name is " + medicationItem.getName());
-
         String title = medicationItem.getName();
         if (medicationItem.isArchived())
             title += " (archived)";
+        else if (!medicationItem.isActive())
+            title += " (inactive)";
         mViewHolder.name.setText(title);
         mViewHolder.frequency.setText(medicationItem.getFrequency());
 
         if (medicationItem.hasImage()) {
-//            mViewHolder.image.setImageBitmap(medicationItem.getBitmap(context, 50, 50));
             medicationItem.new BitmapWorkerTask(mViewHolder.image, 50, 50).execute(context);
         }
 
@@ -72,6 +70,11 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
         private TextView name;
         private TextView frequency;
         private ImageView image;
+    }
+
+    public void updateList(List<MedicationItem> list){
+        this.data = list;
+        notifyDataSetChanged();
     }
 }
 

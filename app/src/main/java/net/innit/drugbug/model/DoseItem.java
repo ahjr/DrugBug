@@ -16,13 +16,6 @@ import java.util.Comparator;
 import java.util.Date;
 
 public class DoseItem implements Comparable<DoseItem> {
-    public static final String TYPE_TAKEN = "taken";
-    public static final String TYPE_FUTURE = "future";
-    public static final String TYPE_MISSED = "missed";
-    public static final String TYPE_REMINDER = "reminder";
-    public static final String TYPE_SINGLE = "single";
-    public static final String TYPE_NONE = "none";
-
     private long id;
     private Date date;
     private boolean reminder;
@@ -181,20 +174,13 @@ public class DoseItem implements Comparable<DoseItem> {
                 convertToTaken();
                 db.open();
                 if (db.updateDose(DoseItem.this)) {
-                    DoseItem newFutureItem = db.getNextFuture(DoseItem.this.getMedication());
-                    Log.d(MainActivity.LOGTAG, "TakenButton:onClick: newFutureItem generated with id " + newFutureItem.getId());
                     DoseItem firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
 
                     while ((firstFutureDose != null) && (firstFutureDose.getDate().getTime() <= DoseItem.this.getDate().getTime())) {
                         // First future dose date is before taken dose date
-                        Log.d(MainActivity.LOGTAG, "onClick: firstFutureDose id " + firstFutureDose.getId());
                         db.removeDose(firstFutureDose.getId(), true);
-//                        newFutureItem = db.getNextFuture(DoseItem.this.getMedication());
-                        Log.d(MainActivity.LOGTAG, "TakenButton:onClick: newFutureItem generated with id " + newFutureItem.getId());
                         firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
-
                     }
-
                     context.startActivity(intent);
                 }
                 db.close();

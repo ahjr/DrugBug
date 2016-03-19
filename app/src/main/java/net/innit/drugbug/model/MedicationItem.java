@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import net.innit.drugbug.MainActivity;
+import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.util.ImageStorage;
 
 import java.io.File;
@@ -23,6 +24,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     private String name;    // Name of drug taken
     private String frequency; // Frequency of doses
     private String imagePath; // Picture of the pill or label
+    private boolean active = true;
     private boolean archived;
 
     public MedicationItem() {
@@ -71,12 +73,32 @@ public class MedicationItem implements Comparable<MedicationItem> {
         this.frequency = frequency;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public boolean isArchived() {
         return archived;
     }
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+
+    public boolean hasTaken(Context context) {
+        DBDataSource db = new DBDataSource(context);
+        db.open();
+        if (db.getLatestTakenDose(MedicationItem.this) != null) {
+            db.close();
+            return true;
+        } else {
+            db.close();
+            return false;
+        }
     }
 
     public String getImagePath() {
@@ -107,13 +129,10 @@ public class MedicationItem implements Comparable<MedicationItem> {
     }
 
     private static int resolveBitmapOrientation(String path) throws IOException {
-        Log.d(MainActivity.LOGTAG, "resolveBitmapOrientation: start");
         return new ExifInterface(path).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
     }
 
     private static Bitmap applyOrientation(Bitmap bitmap, int orientation) {
-        Log.d(MainActivity.LOGTAG, "applyOrientation: start");
-        Log.d(MainActivity.LOGTAG, "applyOrientation: orientation is " + orientation);
         int rotate;
         switch (orientation) {
             case ExifInterface.ORIENTATION_ROTATE_270:
@@ -224,8 +243,8 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
     public class BitmapWorkerTask extends AsyncTask<Context, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
-        private int width;
-        private int height;
+        private final int width;
+        private final int height;
 
         public BitmapWorkerTask(ImageView imageView, int width, int height) {
             // Use a WeakReference to ensure the ImageView can be garbage collected

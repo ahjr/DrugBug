@@ -24,7 +24,6 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
     public ReminderArrayAdapter(Context context, List<DoseItem> doseItems) {
         super(context, R.layout.list_item_reminder, doseItems);
 
-        Log.d(MainActivity.LOGTAG, "ReminderArrayAdapter: adapter created");
         this.context = context;
         data = doseItems;
     }
@@ -49,8 +48,6 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Log.d(MainActivity.LOGTAG, "getView: dose name is " + doseItem.getMedication().getName());
-
         String display = doseItem.getMedication().getName() + " (" + doseItem.getDosage() + ")";
         mViewHolder.name.setText(display);
 
@@ -59,7 +56,6 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
         mViewHolder.date.setText(display);
 
         if (doseItem.getMedication().hasImage()) {
-//            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context, 50, 50));
             doseItem.getMedication().new BitmapWorkerTask(mViewHolder.image, 50, 50).execute(context);
         }
 

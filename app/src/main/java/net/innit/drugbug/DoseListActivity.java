@@ -3,7 +3,6 @@ package net.innit.drugbug;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +17,7 @@ import net.innit.drugbug.fragment.DetailFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
+import net.innit.drugbug.util.Constants;
 import net.innit.drugbug.util.DoseArrayAdapter;
 import net.innit.drugbug.util.ReminderArrayAdapter;
 
@@ -25,6 +25,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import static net.innit.drugbug.util.Constants.*;
+import static net.innit.drugbug.util.Constants.ACTION;
+import static net.innit.drugbug.util.Constants.ACTION_ADD;
+import static net.innit.drugbug.util.Constants.ACTION_EDIT;
+import static net.innit.drugbug.util.Constants.FILTER_DOSE;
+import static net.innit.drugbug.util.Constants.FILTER_NONE;
+import static net.innit.drugbug.util.Constants.FILTER_TAKEN;
+import static net.innit.drugbug.util.Constants.SORT;
+import static net.innit.drugbug.util.Constants.SORT_DATE_ASC;
+import static net.innit.drugbug.util.Constants.SORT_DATE_DESC;
+import static net.innit.drugbug.util.Constants.SORT_NAME;
+import static net.innit.drugbug.util.Constants.TYPE;
+import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.util.Constants.TYPE_REMINDER;
+import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
+import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
 
 public class DoseListActivity extends Activity {
     private static final int CONTEXT_EDIT = 10001;
@@ -48,29 +65,29 @@ public class DoseListActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Bundle bundle = getIntent().getExtras();
-        type = bundle.getString("type", DoseItem.TYPE_FUTURE);
-        medId = bundle.getLong("med_id");
-        sortOrder = bundle.getString("sort_order");
-        filter = bundle.getString("filter");
+        type = bundle.getString(TYPE, TYPE_FUTURE);
+        medId = bundle.getLong(INTENT_MED_ID);
+        sortOrder = bundle.getString(SORT);
+        filter = bundle.getString(FILTER_DOSE);
 
         setContentView(R.layout.activity_list_dose);
 
         // Set the sortOrder if it wasn't passed in
         if (sortOrder == null) {
             switch (type) {
-                case DoseItem.TYPE_TAKEN:
-                    sortOrder = "dateDsc";
+                case TYPE_TAKEN:
+                    sortOrder = SORT_DATE_DESC;
                     break;
                 default:
-                    sortOrder = "dateAsc";
+                    sortOrder = SORT_DATE_ASC;
             }
         }
 
         if (filter == null) {
-            filter = "none";
+            filter = FILTER_NONE;
         }
 
-        if (bundle.getBoolean("fromReminder", false) && bundle.getLong("dose_id") > 0) {
+        if (bundle.getBoolean(FROM_REMINDER, false) && (bundle.getLong(INTENT_DOSE_ID) > 0)) {
             showDetailFragment(bundle);
         }
     }
@@ -88,7 +105,7 @@ public class DoseListActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_list, menu);
-        if (!type.equals(DoseItem.TYPE_SINGLE)) {
+        if (!type.equals(TYPE_SINGLE)) {
             MenuItem menuItem = menu.findItem(R.id.menu_filter);
             menuItem.setVisible(false);
         } else {
@@ -105,26 +122,26 @@ public class DoseListActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.menu_list_add:
                 Intent intent = new Intent(DoseListActivity.this, AddDoseActivity.class);
-                intent.putExtra("action", AddDoseActivity.ACTION_ADD);
-                intent.putExtra("type", type);
-                intent.putExtra("med_id", medId);
-                intent.putExtra("sort_order", sortOrder);
-                intent.putExtra("filter", filter);
+                intent.putExtra(ACTION, ACTION_ADD);
+                intent.putExtra(TYPE, type);
+                intent.putExtra(INTENT_MED_ID, medId);
+                intent.putExtra(SORT, sortOrder);
+                intent.putExtra(FILTER_DOSE, filter);
                 startActivity(intent);
                 return true;
             case R.id.menu_list_help:
                 Bundle bundle = new Bundle();
                 switch (type) {
-                    case DoseItem.TYPE_FUTURE:
+                    case TYPE_FUTURE:
                         bundle.putInt("source", HelpFragment.SOURCE_LIST_FUTURE);
                         break;
-                    case DoseItem.TYPE_TAKEN:
+                    case TYPE_TAKEN:
                         bundle.putInt("source", HelpFragment.SOURCE_LIST_TAKEN);
                         break;
-                    case DoseItem.TYPE_SINGLE:
+                    case TYPE_SINGLE:
                         bundle.putInt("source", HelpFragment.SOURCE_LIST_SINGLE_MED);
                         break;
-                    case DoseItem.TYPE_REMINDER:
+                    case TYPE_REMINDER:
                         bundle.putInt("source", HelpFragment.SOURCE_LIST_REMINDERS);
                         break;
                     default:
@@ -139,19 +156,19 @@ public class DoseListActivity extends Activity {
                 onBackPressed();
                 return true;
             case R.id.menu_sort_order_date_asc:
-                sortOrder = "dateAsc";
+                sortOrder = SORT_DATE_ASC;
                 break;
             case R.id.menu_sort_order_date_dsc:
-                sortOrder = "dateDsc";
+                sortOrder = SORT_DATE_DESC;
                 break;
             case R.id.menu_sort_order_name:
-                sortOrder = "name";
+                sortOrder = SORT_NAME;
                 break;
             case R.id.menu_filter_future:
-                filter = "future";
+                filter = FILTER_FUTURE;
                 break;
             case R.id.menu_filter_taken:
-                filter = "taken";
+                filter = FILTER_TAKEN;
                 break;
         }
         doses = getDoses();
@@ -165,24 +182,24 @@ public class DoseListActivity extends Activity {
         MenuItem menuItem;
         // Indicate which sort order is currently in use
         switch (sortOrder) {
-            case "dateDsc":
+            case SORT_DATE_DESC:
                 menuItem = menu.findItem(R.id.menu_sort_order_date_dsc);
                 break;
-            case "name":
+            case SORT_NAME:
                 menuItem = menu.findItem(R.id.menu_sort_order_name);
                 break;
             default:
                 menuItem = menu.findItem(R.id.menu_sort_order_date_asc);
         }
         menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.list_item_current) + ")");
-        if (type.equals(DoseItem.TYPE_SINGLE))
+        if (type.equals(TYPE_SINGLE))
             menu.findItem(R.id.menu_sort_order_name).setVisible(false);
 
         switch (filter) {
-            case "taken":
+            case FILTER_TAKEN:
                 menuItem = menu.findItem(R.id.menu_filter_taken);
                 break;
-            case "future":
+            case FILTER_FUTURE:
                 menuItem = menu.findItem(R.id.menu_filter_future);
                 break;
             default:
@@ -197,9 +214,9 @@ public class DoseListActivity extends Activity {
         DoseItem doseItem = doses.get(listItemPressedPos);
 
         switch (type) {
-            case DoseItem.TYPE_FUTURE:
-            case DoseItem.TYPE_REMINDER:
-            case DoseItem.TYPE_SINGLE:
+            case TYPE_FUTURE:
+            case TYPE_REMINDER:
+            case TYPE_SINGLE:
                 if (doseItem.isTaken()) break;      // no context options for taken items as yet
                 menu.add(0, CONTEXT_TAKEN, 0, getString(R.string.context_menu_taken));
                 menu.add(0, CONTEXT_EDIT, 1, getString(R.string.doselist_context_edit));
@@ -207,8 +224,8 @@ public class DoseListActivity extends Activity {
                 Date now = new Date();
                 if (now.before(doseItem.getDate()))
                     menu.add(0, CONTEXT_REMINDER_SET, 3, getString((doseItem.isReminderSet()) ? R.string.context_menu_reminder_unset : R.string.context_menu_reminder_set));
-            case DoseItem.TYPE_TAKEN:
-                if (!type.equals(DoseItem.TYPE_SINGLE))
+            case TYPE_TAKEN:
+                if (!type.equals(TYPE_SINGLE))
                     menu.add(0, CONTEXT_ONLY_THIS_MED, 4, getString(R.string.context_menu_only_med));
                 break;
         }
@@ -222,18 +239,18 @@ public class DoseListActivity extends Activity {
         switch (item.getItemId()) {
             case CONTEXT_EDIT:
                 Intent intent = new Intent(this, AddDoseActivity.class);
-                intent.putExtra("dose_id", doseItem.getId());
-                intent.putExtra("action", AddDoseActivity.ACTION_EDIT);
-                intent.putExtra("type", type);
-                intent.putExtra("sort_order", sortOrder);
-                intent.putExtra("med_id", medId);
+                intent.putExtra(INTENT_DOSE_ID, doseItem.getId());
+                intent.putExtra(ACTION, ACTION_EDIT);
+                intent.putExtra(TYPE, type);
+                intent.putExtra(SORT, sortOrder);
+                intent.putExtra(INTENT_MED_ID, medId);
                 startActivity(intent);
                 return true;
             case CONTEXT_DELETE:
                 intent = new Intent(getApplication(), DoseListActivity.class);
-                intent.putExtra("type", type);
-                intent.putExtra("sort_order", sortOrder);
-                if (medId != null) intent.putExtra("med_id", medId);
+                intent.putExtra(TYPE, type);
+                intent.putExtra(SORT, sortOrder);
+                if (medId != null) intent.putExtra(INTENT_MED_ID, medId);
                 doseItem.confirmDelete(this, intent);
                 return true;
             case CONTEXT_REMINDER_SET:
@@ -252,15 +269,15 @@ public class DoseListActivity extends Activity {
                 return true;
             case CONTEXT_TAKEN:
                 intent = new Intent(getApplication(), DoseListActivity.class);
-                intent.putExtra("type", DoseItem.TYPE_TAKEN);
-                intent.putExtra("sort_order", sortOrder);
+                intent.putExtra(TYPE, TYPE_TAKEN);
+                intent.putExtra(SORT, sortOrder);
                 doseItem.confirmTaken(this, intent);
                 return true;
             case CONTEXT_ONLY_THIS_MED:
                 intent = new Intent(getApplication(), DoseListActivity.class);
-                intent.putExtra("type", DoseItem.TYPE_SINGLE);
-                intent.putExtra("med_id", doseItem.getMedication().getId());
-                intent.putExtra("sort_order", sortOrder);
+                intent.putExtra(TYPE, TYPE_SINGLE);
+                intent.putExtra(INTENT_MED_ID, doseItem.getMedication().getId());
+                intent.putExtra(SORT, sortOrder);
                 startActivity(intent);
                 return true;
             default:
@@ -274,7 +291,7 @@ public class DoseListActivity extends Activity {
         super.onBackPressed();
         Intent intent;
         switch (type) {
-            case DoseItem.TYPE_SINGLE:
+            case TYPE_SINGLE:
                 intent = new Intent(this, MedicationListActivity.class);
                 startActivity(intent);
                 break;
@@ -289,18 +306,16 @@ public class DoseListActivity extends Activity {
         ListView listView = (ListView) findViewById(R.id.lvDoseList);
         ArrayAdapter<?> adapter;
         switch (type) {
-            case DoseItem.TYPE_REMINDER:
+            case TYPE_REMINDER:
                 setTitle(getString(R.string.doselist_title_reminders));
                 adapter = new ReminderArrayAdapter(getBaseContext(), doses);
-                Log.d(MainActivity.LOGTAG, "refreshDisplay: adapter is " + adapter.toString());
                 break;
-            case DoseItem.TYPE_SINGLE:
+            case TYPE_SINGLE:
                 setTitle(medication.getName());
                 adapter = new DoseArrayAdapter(getBaseContext(), doses);
-                Log.d(MainActivity.LOGTAG, "refreshDisplay: adapter is " + adapter.toString());
                 break;
             default:
-                String title = (type.equals(DoseItem.TYPE_TAKEN)) ? getString(R.string.doselist_title_doses_taken) : getString(R.string.doselist_title_doses_future);
+                String title = (type.equals(TYPE_TAKEN)) ? getString(R.string.doselist_title_doses_taken) : getString(R.string.doselist_title_doses_future);
                 setTitle(title);
                 adapter = new DoseArrayAdapter(getBaseContext(), doses);
         }
@@ -312,9 +327,9 @@ public class DoseListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 DoseItem doseItem = doses.get(position);
                 Bundle bundle = new Bundle();
-                bundle.putString("type", type);
-                bundle.putLong("dose_id", doseItem.getId());
-                bundle.putString("sort_order", sortOrder);
+                bundle.putString(TYPE, type);
+                bundle.putLong(INTENT_DOSE_ID, doseItem.getId());
+                bundle.putString(SORT, sortOrder);
 
                 showDetailFragment(bundle);
             }
@@ -348,19 +363,19 @@ public class DoseListActivity extends Activity {
 
         List<DoseItem> doses;
         switch (type) {
-            case DoseItem.TYPE_TAKEN:
+            case TYPE_TAKEN:
                 doses = db.getAllTaken(this);
                 break;
-            case DoseItem.TYPE_REMINDER:
+            case TYPE_REMINDER:
                 doses = db.getAllFutureWithReminder(this);
                 break;
-            case DoseItem.TYPE_SINGLE:
+            case TYPE_SINGLE:
                 medication = db.getMedication(medId);
                 switch (filter) {
-                    case "taken":
+                    case FILTER_TAKEN:
                         doses = db.getAllTakenForMed(this, medication);
                         break;
-                    case "future":
+                    case FILTER_FUTURE:
                         doses = db.getAllFutureForMed(this, medication);
                         break;
                     default:
@@ -374,12 +389,12 @@ public class DoseListActivity extends Activity {
         db.close();
 
         switch (sortOrder) {
-            case "dateAsc":
+            case SORT_DATE_ASC:
                 break;
-            case "dateDsc":
+            case SORT_DATE_DESC:
                 Collections.sort(doses, new DoseItem.ReverseDateComparator());
                 break;
-            case "name":
+            case SORT_NAME:
                 Collections.sort(doses, new DoseItem.NameComparator());
                 break;
         }

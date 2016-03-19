@@ -32,8 +32,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/main_future_header"
                     android:textColor="@android:color/primary_text_dark"
-                    android:textStyle="bold"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
             </TableRow>
 
             <TableRow
@@ -51,7 +51,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/background"
                         android:layout_marginBottom="5dp"
                         android:text="@string/main_future_description"/>
 
@@ -67,9 +66,9 @@
                             android:text="@string/main_future_due_today"/>
 
                         <TextView
+                            android:id="@+id/tvMainFutureDueToday"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tvMainFutureDueToday"
                             android:text="0"/>
 
                     </LinearLayout>
@@ -86,9 +85,9 @@
                             android:text="@string/main_future_missed"/>
 
                         <TextView
+                            android:id="@+id/tvMainFutureMissed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tvMainFutureMissed"
                             android:text="0"/>
 
                     </LinearLayout>
@@ -105,9 +104,9 @@
                             android:text="@string/main_future_num_doses"/>
 
                         <TextView
+                            android:id="@+id/tvMainFutureNumDoses"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/tvMainFutureNumDoses"
                             android:text="0"/>
 
                     </LinearLayout>
@@ -149,8 +148,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/main_taken_header"
                     android:textColor="@android:color/primary_text_dark"
-                    android:textStyle="bold"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
             </TableRow>
 
             <TableRow
@@ -200,8 +199,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/main_header_reminders"
                     android:textColor="@android:color/primary_text_dark"
-                    android:textStyle="bold"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
             </TableRow>
 
             <TableRow
@@ -222,8 +221,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/ic_action_list_2"
-                    android:paddingBottom="10dp"
                     android:onClick="onClickMainReminders"
+                    android:paddingBottom="10dp"
                     android:text="@string/main_view_list"
                     android:textSize="12sp"/>
 
@@ -251,8 +250,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/main_meds_header"
                     android:textColor="@android:color/primary_text_dark"
-                    android:textStyle="bold"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
             </TableRow>
 
             <TableRow
@@ -273,24 +272,24 @@
                         android:layout_marginBottom="5dp"
                         android:text="@string/main_meds_description"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:text="@string/main_meds_active"/>
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tvMainMedActive"
-                        android:text="0"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/main_meds_active"/>
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvMainMedActive"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"/>
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -305,6 +304,25 @@
 
                         <TextView
                             android:id="@+id/tvMainMedInactive"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/main_meds_archived"/>
+
+                        <TextView
+                            android:id="@+id/tvMainMedArchived"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"/>

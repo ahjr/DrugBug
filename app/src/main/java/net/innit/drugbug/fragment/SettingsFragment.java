@@ -29,7 +29,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(MainActivity.LOGTAG, "SettingsFragment:onCreate: start");
 
         context = getActivity().getApplicationContext();
         settingsHelper = new SettingsHelper(context);
@@ -41,7 +40,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(MainActivity.LOGTAG, "SettingsFragment:onResume: start");
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
@@ -54,10 +52,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         Map<String, String> locations = imageStorage.getAvailableLocations();
         Collection<String> values = locations.values();
         listPreference.setEntries(values.toArray(new String[values.size()]));
-        Log.d(MainActivity.LOGTAG, "SettingsFragment: Entries -> " + Arrays.toString(locations.values().toArray(new String[values.size()])));
         values = locations.keySet();
         listPreference.setEntryValues(values.toArray(new String[values.size()]));
-        Log.d(MainActivity.LOGTAG, "SettingsFragment: Values -> " + Arrays.toString(locations.keySet().toArray(new String[values.size()])));
 
         imageStorage.setLocationType(sharedPreferences.getString(Settings.IMAGE_STORAGE.getKey(), Settings.IMAGE_STORAGE.getDefault(context)));
 
@@ -66,7 +62,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.d(MainActivity.LOGTAG, "SettingsFragment:onSharedPreferenceChanged: start");
         Settings changedSetting = Settings.keyToEnum(key);
         switch (changedSetting) {
             case NUM_DOSES:

@@ -24,7 +24,7 @@ import java.util.Locale;
  */
 public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
     private final Context context;
-    private final List<DoseItem> data;
+    private List<DoseItem> data;
     private int defaultColor;
 
     public DoseArrayAdapter(Context context, List<DoseItem> doseItems) {
@@ -39,6 +39,10 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         return data.size();
     }
 
+    public void updateList(List<DoseItem> doses) {
+        this.data = doses;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder mViewHolder;
@@ -46,7 +50,6 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         DoseItem doseItem = data.get(position);
 
         if (convertView == null) {
-            Log.d(MainActivity.LOGTAG, "getView: convertView == null");
             mViewHolder = new ViewHolder();
 
             LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

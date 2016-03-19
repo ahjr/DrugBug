@@ -6,31 +6,34 @@ import android.util.Log;
 import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
-import net.innit.drugbug.util.ExternalStorage;
+//import net.innit.drugbug.util.ExternalStorage;
 import net.innit.drugbug.util.ImageStorage;
 
 import java.util.List;
 
-public class SettingsHelper {
-    public static final String KEY_NUM_DOSES = "NumFutureDoses";
-    public static final String DEFAULT_NUM_DOSES = "5";
-    public static final String KEY_KEEP_TIME_TAKEN = "KeepTimeTaken";
-    public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
-    public static final String KEY_KEEP_TIME_MISSED = "KeepTimeMissed";
-    public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
-    public static final String KEY_IMAGE_STORAGE = "StorageLoc";
+import static net.innit.drugbug.util.Constants.TYPE_MISSED;
+import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
 
-    private final String DEFAULT_IMAGE_STORAGE;
+public class SettingsHelper {
+//    public static final String KEY_NUM_DOSES = "NumFutureDoses";
+//    public static final String DEFAULT_NUM_DOSES = "5";
+//    public static final String KEY_KEEP_TIME_TAKEN = "KeepTimeTaken";
+//    public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
+//    public static final String KEY_KEEP_TIME_MISSED = "KeepTimeMissed";
+//    public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
+//    public static final String KEY_IMAGE_STORAGE = "StorageLoc";
+//
+//    private final String DEFAULT_IMAGE_STORAGE;
 
     private final DBDataSource db;
 
     public SettingsHelper(Context context) {
         db = new DBDataSource(context);
-        if (ExternalStorage.getInstance(context, ImageStorage.IMAGE_DIR).isAvailable()) {
-            DEFAULT_IMAGE_STORAGE = "EXTERNAL";
-        } else {
-            DEFAULT_IMAGE_STORAGE = "INTERNAL";
-        }
+//        if (ExternalStorage.getInstance(context, ImageStorage.IMAGE_DIR).isAvailable()) {
+//            DEFAULT_IMAGE_STORAGE = "EXTERNAL";
+//        } else {
+//            DEFAULT_IMAGE_STORAGE = "INTERNAL";
+//        }
     }
 
     public static int[] parseKeepTime(String keepTimeString) {
@@ -72,14 +75,13 @@ public class SettingsHelper {
 
     public void numDosesChanged(int maxNumDoses, int oldNumDoses) {
         db.open();
-        List<MedicationItem> medications = db.getAllMedications();
+        List<MedicationItem> medications = db.getAllMedicationsActive();
         for (MedicationItem medication : medications) {
             int difference = maxNumDoses - oldNumDoses;
             if (difference > 0) {
                 // number of doses has increased
                 // add $DIFFERENCE doses based on lastDose
                 // Get last dose
-                Log.d(MainActivity.LOGTAG, "numDosesChanged: medId " + medication.getId());
                 DoseItem lastFutureDose = db.getLastDose(medication);
                 if (lastFutureDose != null) {
                     int doseCount = (int) db.getFutureDoseCount(medication);
@@ -110,21 +112,18 @@ public class SettingsHelper {
 
     public void keepTimeTakenChanged(String keepTimeString) {
         db.open();
-        int numRemoved = db.removeOldDoses(DoseItem.TYPE_TAKEN, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "keepTimeTakenChanged: " + numRemoved + " taken doses removed");
+        int numRemoved = db.removeOldDoses(TYPE_TAKEN, keepTimeString);
         db.close();
     }
 
     public void keepTimeMissedChanged(String keepTimeString) {
         db.open();
-        int numRemoved = db.removeOldDoses(DoseItem.TYPE_MISSED, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "keepTimeMissedChanged: " + numRemoved + " missed doses removed");
+        int numRemoved = db.removeOldDoses(TYPE_MISSED, keepTimeString);
         db.close();
     }
 
     public void imageStorageChanged(ImageStorage imageStorage) {
         // Nothing here yet, but extracted it to keep everything together
-        Log.d(MainActivity.LOGTAG, "imageStorageChanged: Image storage location changed to " + imageStorage.getDisplayText());
     }
 
 }

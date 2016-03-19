@@ -88,123 +88,6 @@
     <string name="menu_list_filter_taken">Taken doses</string>
     <string name="menu_list_filter_future">Future doses</string>
     <string name="medication_list_title">Medications</string>
-    <string name="help_main">
-        <big>View Future doses:</big>\n
-            &#160;&#160;&#160;&#160;Takes user to the list of doses due in the future, as well as missed doses in the past\n\n
-        <big>View Taken doses:</big>\n
-            &#160;&#160;&#160;&#160;Takes user to the list of doses already taken\n\n
-        <big>View Reminders:</big>\n
-            &#160;&#160;&#160;&#160;Takes the user to the list of doses which have reminders set\n\n
-        <big>View Medications:</big>\n
-            &#160;&#160;&#160;&#160;Takes the user to the list of all medications
-    </string>
-    <string name="help_add_dose">
-        <big>Medication name:</big>\n
-        &#160;&#160;&#160;&#160;Medication name can not be blank\n\n
-        <big>Dosage:</big>\n
-        &#160;&#160;&#160;&#160;Dosage can not be blank\n\n
-        <big>Add Image:</big>\n
-        &#160;&#160;&#160;&#160;Enables user to add a picture taken from the camera\n\n
-        <big>Frequency:</big>\n
-        &#160;&#160;&#160;&#160;Drop down list for choosing medication frequency \n
-        &#160;&#160;&#160;&#160;(Currently hard coded)\n\n
-        <big>Set Reminder:</big>\n
-        &#160;&#160;&#160;&#160;Sets a reminder for the created doses
-    </string>
-    <string name="help_edit_dose">
-        <big>Medication name:</big>\n &#160;&#160;&#160;&#160;Medication name can not be blank\n\n
-        <big>Dosage:</big>\n &#160;&#160;&#160;&#160;Dosage can not be blank\n\n
-        <big>Add/Change Image:</big>\n &#160;&#160;&#160;&#160;Enables user to add a picture taken from the camera\n\n
-        <big>Frequency:</big>\n &#160;&#160;&#160;&#160;Drop down list for choosing medication frequency\n
-        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(Currently hard coded)\n\n
-        <big>Set Reminder:</big>\n &#160;&#160;&#160;&#160;Sets a reminder for the created doses
-    </string>
-    <string name="help_settings">
-        <big>Number of future doses to generate:</big>\n &#160;&#160;&#160;&#160;When medication is created, this setting determines how many future doses to create\n\n
-        <big>How long should taken doses be kept?:</big>\n &#160;&#160;&#160;&#160;Determines how long to keep taken doses\n\n
-        <big>How long should missed doses be kept?:</big>\n &#160;&#160;&#160;&#160;Determines how long to keep missed doses\n\n
-        <big>Image storage location:</big>\n &#160;&#160;&#160;&#160;External - SD Card, Internal - device memory
-    </string>
-    <string name="help_list_future">
-        <big>Sort Order:\n</big>
-        &#160;&#160;&#160;&#160;Sorts list by date ascending, date descending, and medication name\n\n
-        <big>Click on list item to bring up detail screen</big>\n
-        &#160;&#160;&#160;&#160;<b>Button bar:</b>\n
-        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Dose taken:</b>\n
-        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets dose to taken\n
-        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Edit:</b>\n
-        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Brings up edit dose activity for selected dose\n
-        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Delete:</b>\n
-        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Deletes dose\n\n
-        <big>Long click on list item shows the context menu:</big>\n
-            &#160;&#160;&#160;&#160;<b>Dose is taken:</b>\n
-            &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets dose to taken\n
-            &#160;&#160;&#160;&#160;<b>Edit dose: </b>\n
-            &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Brings up edit dose activity for selected dose\n
-            &#160;&#160;&#160;&#160;<b>Delete dose: </b>\n
-            &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Deletes dose\n
-            &#160;&#160;&#160;&#160;<b>Set/Unset reminder:</b>\n
-            &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets reminder if it\'s not set, unsets it when it\'s not\n
-            &#160;&#160;&#160;&#160;<b>Show doses for only this medication:</b>\n
-            &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Shows dose list for only medication of selected dose
-    </string>
-    <string name="help_list_taken">
-        <big>Sort Order:</big> \n
-            &#160;&#160;&#160;&#160;Sorts list by date ascending, date descending, and medication name\n\n
-        <big>Click on list item to bring up detail screen</big>
-    </string>
-    <string name="help_reminders">
-        <big>Sort Order: </big>\n
-            &#160;&#160;&#160;&#160;Sorts list by date ascending, date descending, and medication name\n\n
-        <big>Click on list item to bring up detail screen</big>\n
-            &#160;&#160;&#160;&#160;<b>Button bar:</b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Dose taken: </b>\n
-                    &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets dose to taken\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Edit: </b>\n
-                    &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Brings up edit dose activity for selected dose\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Delete: </b>\n
-                    &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Deletes dose\n\n
-        <big>Long click on list item shows the context menu:</big>\n
-            &#160;&#160;&#160;&#160;<b>Dose is taken: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets dose to taken\n
-            &#160;&#160;&#160;&#160;<b>Edit dose: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Brings up edit dose activity for selected dose\n
-            &#160;&#160;&#160;&#160;<b>Delete dose: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Deletes dose\n
-            &#160;&#160;&#160;&#160;<b>Set/Unset reminder: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets reminder if it\'s not set, unsets it when it\'s not\n
-            &#160;&#160;&#160;&#160;<b>Show doses for only this medication: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Shows dose list for only medication of selected dose
-    </string>
-    <string name="help_medications">
-        <big>Sort Order: </big>\n
-            &#160;&#160;&#160;&#160;Sorts list alphabetically or reverse alphabetically\n\n
-        <big>Click on list item to show list of doses for selected medication</big>\n
-    </string>
-    <string name="help_single_med">
-        <big>Sort Order: </big>\n
-            &#160;&#160;&#160;&#160;Sorts list by date ascending, date descending, and medication name\n\n
-        <big>Click on list item to bring up detail screen</big>\n
-            &#160;&#160;&#160;&#160;<b>Button bar for future and missed doses:</b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Dose taken: </b>\n
-                    &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets dose to taken\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Edit: </b>\n
-                    &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Brings up edit dose activity for selected dose\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<b>Delete: </b>\n
-                    &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Deletes dose\n\n
-        <big>Long click on list item shows the context menu for future doses and missed doses:</big>\n
-            &#160;&#160;&#160;&#160;<b>Dose is taken: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets dose to taken\n
-            &#160;&#160;&#160;&#160;<b>Edit dose: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Brings up edit dose activity for selected dose\n
-            &#160;&#160;&#160;&#160;<b>Delete dose:</b> \n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Deletes dose\n
-            &#160;&#160;&#160;&#160;<b>Set/Unset reminder: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Sets reminder if it\'s not set, unsets it when it\'s not\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(Only future doses)\n
-            &#160;&#160;&#160;&#160;<b>Show doses for only this medication: </b>\n
-                &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Shows dose list for only medication of selected dose
-</string>
     <string name="menu_default_help">Help</string>
     <string name="main_view_list">View List</string>
     <string name="main_future_header">Future Doses</string>
@@ -220,6 +103,7 @@
     <string name="main_meds_description">View a list of medications</string>
     <string name="main_meds_active">Active medications:</string>
     <string name="main_meds_inactive">Inactive medications:</string>
+    <string name="main_meds_archived">Archived medications:</string>
     <string name="add_dose_datetime_label">Dose due</string>
     <string name="menu_list_filter_none">All doses</string>
     <string name="add_med_datetime_label_first">Time of first dose</string>

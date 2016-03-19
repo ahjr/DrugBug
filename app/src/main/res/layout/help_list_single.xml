@@ -135,6 +135,54 @@
             android:paddingStart="15dp"
             android:text="Show only untaken doses"/>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/ic_action_alarm_on"
+                android:paddingBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tv_help_list_reminder_set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="Reminder is set for this dose"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="3dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/ic_action_alarm_off"
+                android:paddingBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tv_help_list_reminder_unset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="Reminder is not set for this dose"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tv_help_list_single_click_label"
             android:layout_width="wrap_content"
