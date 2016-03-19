@@ -16,9 +16,8 @@
             android:layout_height="wrap_content"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_action_help"
-            android:text="Help - Dose detail"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
+            android:text="@string/detail_future_detail"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <View
             android:layout_width="match_parent"
@@ -33,7 +32,7 @@
             android:layout_marginTop="10dp"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:text="Dose taken"/>
+            android:text="@string/detail_future_taken_label"/>
 
         <TextView
             android:id="@+id/tv_help_detail_future_taken_text"
@@ -41,7 +40,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Sets dose as taken, after confirmation"/>
+            android:text="@string/detail_future_taken_text"/>
 
         <TextView
             android:id="@+id/tv_help_detail_future_edit_label"
@@ -49,7 +48,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:text="Edit"
+            android:text="@string/detail_future_edit_label"
             android:layout_marginTop="10dp"/>
 
         <TextView
@@ -58,7 +57,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Opens the dose editor page"/>
+            android:text="@string/detail_future_edit_text"/>
 
         <TextView
             android:id="@+id/tv_help_detail_future_delete_label"
@@ -66,7 +65,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:text="Delete"
+            android:text="@string/detail_future_delete_label"
             android:layout_marginTop="10dp"/>
 
         <TextView
@@ -75,7 +74,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Deletes the dose, after confirmation"/>
+            android:text="@string/detail_future_delete_text"/>
 
     </LinearLayout>
 </ScrollView>

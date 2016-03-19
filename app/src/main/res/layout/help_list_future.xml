@@ -8,8 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="15dp"
-        >
+        android:padding="15dp">
 
         <TextView
             android:id="@+id/tv_help_list_future_title"
@@ -17,9 +16,8 @@
             android:layout_height="wrap_content"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_action_help"
-            android:text="Help - Future doses list"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
+            android:text="@string/list_future_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <View
             android:layout_width="match_parent"
@@ -36,7 +34,7 @@
             android:drawablePadding="3dp"
             android:drawableStart="@drawable/ic_content_add"
             android:gravity="fill"
-            android:text="Add dose"
+            android:text="@string/list_future_add_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -46,7 +44,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Create a new medication"/>
+            android:text="@string/list_future_add_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_sort_label"
@@ -57,7 +55,7 @@
             android:drawablePadding="3dp"
             android:drawableStart="@drawable/ic_action_sort_2"
             android:gravity="fill"
-            android:text="Sort Order"
+            android:text="@string/list_future_sort_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -67,7 +65,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Sort list by:"/>
+            android:text="@string/list_future_sort_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_sort_date_asc_text"
@@ -75,7 +73,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text=" - Date (ascending)"/>
+            android:text="@string/list_future_sort_date_asc_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_sort_date_desc_text"
@@ -83,7 +81,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text=" - Date (descending)"/>
+            android:text="@string/list_future_sort_date_desc_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_sort_name_text"
@@ -91,7 +89,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text=" - Medication name (alphabetical)"/>
+            android:text="@string/list_future_sort_name_text"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -111,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:text="Reminder is set for this dose"
+                android:text="@string/list_reminder_set"
                 android:textStyle="bold"
                 android:layout_marginStart="5dp"/>
 
@@ -135,7 +133,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:text="Reminder is not set for this dose"
+                android:text="@string/list_reminder_unset"
                 android:textStyle="bold"
                 android:layout_marginStart="5dp"/>
 
@@ -146,7 +144,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Touch list item to show details about the dose"
+            android:text="@string/list_future_click_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -156,7 +154,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Dose taken"
+            android:text="@string/list_future_click_taken_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -165,7 +163,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Sets dose as taken, after confirmation"/>
+            android:text="@string/list_future_click_taken_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_click_edit_label"
@@ -173,7 +171,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Edit"
+            android:text="@string/list_future_click_edit_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -182,7 +180,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Opens the dose editor page"/>
+            android:text="@string/list_future_click_edit_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_click_delete_label"
@@ -190,7 +188,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Delete"
+            android:text="@string/list_future_click_delete_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -199,14 +197,14 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Deletes the dose, after confirmation"/>
+            android:text="@string/list_future_click_delete_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Touch and hold on list item to show a menu of actions for that dose"
+            android:text="@string/list_future_longclick_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -216,7 +214,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Dose is taken"
+            android:text="@string/list_future_longclick_taken_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -225,7 +223,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Sets dose as taken, after confirmation"/>
+            android:text="@string/list_future_longclick_taken_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_edit_label"
@@ -233,7 +231,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Edit dose"
+            android:text="@string/list_future_longclick_edit_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -242,7 +240,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Opens the dose editor page"/>
+            android:text="@string/list_future_longclick_edit_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_delete_label"
@@ -250,7 +248,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Delete dose"
+            android:text="@string/list_future_longclick_delete_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -259,7 +257,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Deletes the dose, after confirmation"/>
+            android:text="@string/list_future_longclick_delete_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_reminder_label"
@@ -267,7 +265,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Set/unset Reminder"
+            android:text="@string/list_future_longclick_reminder_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -276,7 +274,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Toggles reminder, after confirmation"/>
+            android:text="@string/list_future_longclick_reminder_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_future_longclick_only_label"
@@ -284,7 +282,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Show doses for only this medication"
+            android:text="@string/list_future_longclick_only_label"
             android:textStyle="bold"/>
 
         <TextView
@@ -293,7 +291,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Show dose list for medication of selected dose"/>
+            android:text="@string/list_future_longclick_only_text"/>
 
     </LinearLayout>
 </ScrollView>

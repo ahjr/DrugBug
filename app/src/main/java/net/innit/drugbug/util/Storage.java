@@ -1,12 +1,7 @@
 package net.innit.drugbug.util;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.util.Log;
-
-import net.innit.drugbug.MainActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
+
+import static net.innit.drugbug.util.Constants.LOG;
 
 abstract class Storage {
     private final File rootDir;           // Root directory for the storage type
@@ -102,7 +98,7 @@ abstract class Storage {
                 copyAllFiles(oldStorage.getAbsDir(), absDir);
                 return true;
             } catch (IOException e) {
-                Log.e(Constants.LOGTAG, "moveFiles: Error copying files from " + oldStorage.getDisplayText() + " to " + this.getDisplayText());
+                Log.e(LOG, "moveFiles: Error copying files from " + oldStorage.getDisplayText() + " to " + this.getDisplayText());
             }
 
         }

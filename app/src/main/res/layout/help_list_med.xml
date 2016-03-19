@@ -16,9 +16,8 @@
             android:layout_height="wrap_content"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_action_help"
-            android:text="Help - Medication list"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
+            android:text="@string/list_med_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <View
             android:layout_width="match_parent"
@@ -27,7 +26,7 @@
             android:background="@color/background_dark"/>
 
         <TextView
-            android:id="@+id/tv_help_list_future_add_label"
+            android:id="@+id/tv_help_list_med_add_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -35,17 +34,17 @@
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
             android:drawableStart="@drawable/ic_content_add"
-            android:text="Add dose"
+            android:text="@string/list_med_add_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
 
         <TextView
-            android:id="@+id/tv_help_list_future_add_text"
+            android:id="@+id/tv_help_list_med_add_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Create a new medication"/>
+            android:text="@string/list_med_add_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_filter_label"
@@ -56,7 +55,7 @@
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
             android:drawableStart="@drawable/ic_content_filter_list"
-            android:text="Filter"
+            android:text="@string/list_med_filter_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
 
@@ -67,7 +66,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:textStyle="bold"
-            android:text="@string/menu_list_filter_none"/>
+            android:text="@string/list_med_filter_all_label"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_filter_all_text"
@@ -75,7 +74,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Show both taken and untaken doses"/>
+            android:text="@string/list_med_filter_all_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_filter_taken_label"
@@ -84,7 +83,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:textStyle="bold"
-            android:text="@string/menu_list_filter_taken"/>
+            android:text="@string/list_med_filter_taken_label"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_filter_taken_text"
@@ -92,7 +91,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Show only taken doses"/>
+            android:text="@string/list_med_filter_taken_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_filter_future_label"
@@ -101,7 +100,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:textStyle="bold"
-            android:text="@string/menu_list_filter_future"/>
+            android:text="@string/list_med_filter_future_label"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_filter_future_text"
@@ -109,7 +108,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
-            android:text="Show only untaken doses"/>
+            android:text="@string/list_med_filter_future_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_sort_label"
@@ -120,7 +119,7 @@
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
             android:drawableStart="@drawable/ic_action_sort_2"
-            android:text="Sort Order"
+            android:text="@string/list_med_sort_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
 
@@ -130,7 +129,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Sort list by:"/>
+            android:text="@string/list_med_sort_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_sort_date_asc_text"
@@ -138,7 +137,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text=" - Date (ascending)"/>
+            android:text="@string/list_med_sort_date_asc_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_sort_date_desc_text"
@@ -146,7 +145,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text=" - Date (descending)"/>
+            android:text="@string/list_med_sort_date_desc_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_sort_name_text"
@@ -154,14 +153,14 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text=" - Medication name (alphabetical)"/>
+            android:text="@string/list_med_sort_name_text"/>
 
         <TextView
             android:id="@+id/tv_help_list_med_click_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Touch list item to show list of doses for selected medicine"
+            android:text="@string/list_med_click_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -170,7 +169,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Touch and hold on any medication to archive it, after confirmation."
+            android:text="@string/list_med_longclick_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -180,7 +179,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="All doses for selected medication are deleted."/>
+            android:text="@string/list_med_longclick_text"/>
 
     </LinearLayout>
 </ScrollView>

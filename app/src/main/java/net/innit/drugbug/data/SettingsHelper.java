@@ -1,18 +1,17 @@
 package net.innit.drugbug.data;
 
 import android.content.Context;
-import android.util.Log;
 
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
-//import net.innit.drugbug.util.ExternalStorage;
 import net.innit.drugbug.util.ImageStorage;
 
 import java.util.List;
 
 import static net.innit.drugbug.util.Constants.TYPE_MISSED;
 import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
+
+//import net.innit.drugbug.util.ExternalStorage;
 
 public class SettingsHelper {
 //    public static final String KEY_NUM_DOSES = "NumFutureDoses";

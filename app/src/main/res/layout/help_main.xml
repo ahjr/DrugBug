@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_action_help"
-            android:text="Help - Home page"
+            android:text="@string/main_title"
             android:textAppearance="?android:attr/textAppearanceLarge"
             />
 
@@ -35,7 +35,7 @@
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
             android:drawableStart="@drawable/ic_content_add"
-            android:text="Add dose"
+            android:text="@string/main_add_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
 
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Create a new medication"/>
+            android:text="@string/main_add_text"/>
 
         <TextView
             android:id="@+id/tv_help_main_settings_label"
@@ -56,7 +56,7 @@
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
             android:drawableStart="@drawable/ic_action_settings"
-            android:text="Settings"
+            android:text="@string/main_settings_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
 
@@ -66,14 +66,14 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="App settings and preferences"/>
+            android:text="@string/main_settings_text"/>
 
         <TextView
             android:id="@+id/tv_help_main_future_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Future Doses"
+            android:text="@string/main_future_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Untaken doses"/>
+            android:text="@string/main_future_text1"/>
 
         <TextView
             android:id="@+id/tv_help_main_future_text2"
@@ -92,7 +92,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:drawableStart="@drawable/ic_action_list_2_24x24"
-            android:text="Touch list icon to view dose list"
+            android:text="@string/main_future_text2"
             android:gravity="center_vertical"/>
 
         <TextView
@@ -100,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Taken Doses"
+            android:text="@string/main_taken_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -111,7 +111,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:drawableStart="@drawable/ic_action_list_2_24x24"
-            android:text="Touch list icon to view dose list"
+            android:text="@string/main_taken_text"
             android:gravity="center_vertical"/>
 
         <TextView
@@ -119,7 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Reminders"
+            android:text="@string/main_reminder_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Doses with reminders set"/>
+            android:text="@string/main_reminder_text1"/>
 
         <TextView
             android:id="@+id/tv_help_main_reminder_text2"
@@ -138,7 +138,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:drawableStart="@drawable/ic_action_list_2_24x24"
-            android:text="Touch list icon to view reminder list"
+            android:text="@string/main_reminder_text2"
             android:gravity="center_vertical"/>
 
         <TextView
@@ -146,7 +146,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Medications"
+            android:text="@string/main_med_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -156,7 +156,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Active medications"/>
+            android:text="@string/main_med_text1"/>
 
         <TextView
             android:id="@+id/tv_help_main_med_text1a"
@@ -165,7 +165,7 @@
             android:paddingEnd="15dp"
             android:paddingStart="15dp"
             android:textStyle="italic"
-            android:text="Medications with associated doses"/>
+            android:text="@string/main_med_text1a"/>
 
         <TextView
             android:id="@+id/tv_help_main_med_text2"
@@ -173,7 +173,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Inactive medications"/>
+            android:text="@string/main_med_text2"/>
 
         <TextView
             android:id="@+id/tv_help_main_med_text2a"
@@ -182,7 +182,7 @@
             android:paddingEnd="15dp"
             android:textStyle="italic"
             android:paddingStart="15dp"
-            android:text="Medications with no associated doses"/>
+            android:text="@string/main_med_text2a"/>
 
         <TextView
             android:id="@+id/tv_help_main_med_text3"
@@ -191,7 +191,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:drawableStart="@drawable/ic_action_list_2_24x24"
-            android:text="Touch list icon to view reminder list"
+            android:text="@string/main_med_text3"
             android:gravity="center_vertical"/>
 
     </LinearLayout>

@@ -34,6 +34,9 @@ import static net.innit.drugbug.util.Constants.ACTION_EDIT;
 import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.util.Constants.SORT;
+import static net.innit.drugbug.util.Constants.SOURCE;
+import static net.innit.drugbug.util.Constants.SOURCE_DETAIL_FUTURE;
+import static net.innit.drugbug.util.Constants.SOURCE_DETAIL_TAKEN;
 import static net.innit.drugbug.util.Constants.TYPE;
 import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
 import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
@@ -197,14 +200,14 @@ public class DetailFragment extends DialogFragment {
                     int source;
                     switch (type) {
                         case TYPE_TAKEN:
-                            source = HelpFragment.SOURCE_DETAIL_TAKEN;
+                            source = SOURCE_DETAIL_TAKEN;
                             break;
                         default:
-                            source = HelpFragment.SOURCE_DETAIL_FUTURE;
+                            source = SOURCE_DETAIL_FUTURE;
                     }
 
                     Bundle bundle = new Bundle();
-                    bundle.putInt("source", source);
+                    bundle.putInt(SOURCE, source);
                     HelpFragment fragment = new HelpFragment();
                     fragment.setArguments(bundle);
                     fragment.show(getFragmentManager(), "Help Fragment");

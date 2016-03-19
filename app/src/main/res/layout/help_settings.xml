@@ -16,9 +16,8 @@
             android:layout_height="wrap_content"
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_action_help"
-            android:text="Help - Settings"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
+            android:text="@string/settings_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <View
             android:layout_width="match_parent"
@@ -32,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Number of future doses to generate"
+            android:text="@string/settings_num_future_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -42,14 +41,14 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="When medication is created, this setting determines how many future doses to generate."/>
+            android:text="@string/settings_num_future_text"/>
 
         <TextView
             android:id="@+id/tv_help_settings_keep_taken_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="How long should taken doses be kept?"
+            android:text="@string/settings_keep_taken_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -59,14 +58,14 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Determines how long to keep taken doses"/>
+            android:text="@string/settings_keep_taken_text"/>
 
         <TextView
             android:id="@+id/tv_help_settings_keep_missed_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="How long should missed doses be kept?"
+            android:text="@string/settings_keep_missed_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -76,14 +75,14 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Determines how long to keep missed doses"/>
+            android:text="@string/settings_keep_missed_text"/>
 
         <TextView
             android:id="@+id/tv_help_settings_storage_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Image storage location"
+            android:text="@string/settings_storage_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
 
@@ -93,7 +92,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:text="Determines which storage location to use to store images"/>
+            android:text="@string/settings_storage_text"/>
 
     </LinearLayout>
 </ScrollView>

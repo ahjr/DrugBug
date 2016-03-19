@@ -17,7 +17,6 @@ import net.innit.drugbug.fragment.DetailFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
-import net.innit.drugbug.util.Constants;
 import net.innit.drugbug.util.DoseArrayAdapter;
 import net.innit.drugbug.util.ReminderArrayAdapter;
 
@@ -26,17 +25,26 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static net.innit.drugbug.util.Constants.*;
 import static net.innit.drugbug.util.Constants.ACTION;
 import static net.innit.drugbug.util.Constants.ACTION_ADD;
 import static net.innit.drugbug.util.Constants.ACTION_EDIT;
 import static net.innit.drugbug.util.Constants.FILTER_DOSE;
+import static net.innit.drugbug.util.Constants.FILTER_FUTURE;
 import static net.innit.drugbug.util.Constants.FILTER_NONE;
 import static net.innit.drugbug.util.Constants.FILTER_TAKEN;
+import static net.innit.drugbug.util.Constants.FROM_REMINDER;
+import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.util.Constants.SORT;
 import static net.innit.drugbug.util.Constants.SORT_DATE_ASC;
 import static net.innit.drugbug.util.Constants.SORT_DATE_DESC;
 import static net.innit.drugbug.util.Constants.SORT_NAME;
+import static net.innit.drugbug.util.Constants.SOURCE;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_FUTURE;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_REMINDERS;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_SINGLE_MED;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_TAKEN;
+import static net.innit.drugbug.util.Constants.SOURCE_MAIN;
 import static net.innit.drugbug.util.Constants.TYPE;
 import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
 import static net.innit.drugbug.util.Constants.TYPE_REMINDER;
@@ -133,19 +141,19 @@ public class DoseListActivity extends Activity {
                 Bundle bundle = new Bundle();
                 switch (type) {
                     case TYPE_FUTURE:
-                        bundle.putInt("source", HelpFragment.SOURCE_LIST_FUTURE);
+                        bundle.putInt(SOURCE, SOURCE_LIST_FUTURE);
                         break;
                     case TYPE_TAKEN:
-                        bundle.putInt("source", HelpFragment.SOURCE_LIST_TAKEN);
+                        bundle.putInt(SOURCE, SOURCE_LIST_TAKEN);
                         break;
                     case TYPE_SINGLE:
-                        bundle.putInt("source", HelpFragment.SOURCE_LIST_SINGLE_MED);
+                        bundle.putInt(SOURCE, SOURCE_LIST_SINGLE_MED);
                         break;
                     case TYPE_REMINDER:
-                        bundle.putInt("source", HelpFragment.SOURCE_LIST_REMINDERS);
+                        bundle.putInt(SOURCE, SOURCE_LIST_REMINDERS);
                         break;
                     default:
-                        bundle.putInt("source", HelpFragment.SOURCE_MAIN);
+                        bundle.putInt(SOURCE, SOURCE_MAIN);
                 }
 
                 HelpFragment fragment = new HelpFragment();
@@ -219,8 +227,8 @@ public class DoseListActivity extends Activity {
             case TYPE_SINGLE:
                 if (doseItem.isTaken()) break;      // no context options for taken items as yet
                 menu.add(0, CONTEXT_TAKEN, 0, getString(R.string.context_menu_taken));
-                menu.add(0, CONTEXT_EDIT, 1, getString(R.string.doselist_context_edit));
-                menu.add(0, CONTEXT_DELETE, 2, getString(R.string.doselist_context_delete));
+                menu.add(0, CONTEXT_EDIT, 1, getString(R.string.dose_list_context_edit));
+                menu.add(0, CONTEXT_DELETE, 2, getString(R.string.dose_list_context_delete));
                 Date now = new Date();
                 if (now.before(doseItem.getDate()))
                     menu.add(0, CONTEXT_REMINDER_SET, 3, getString((doseItem.isReminderSet()) ? R.string.context_menu_reminder_unset : R.string.context_menu_reminder_set));
@@ -257,10 +265,10 @@ public class DoseListActivity extends Activity {
                 doseItem.toggleReminder();
                 db.open();
                 if (db.updateDose(doseItem)) {
-                    String message = ((doseItem.isReminderSet()) ? getString(R.string.doselist_toast_reminder_set) : getString(R.string.doselist_toast_reminder_unset));
+                    String message = ((doseItem.isReminderSet()) ? getString(R.string.dose_list_toast_reminder_set) : getString(R.string.dose_list_toast_reminder_unset));
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, R.string.doselist_toast_db_error_update, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.dose_list_toast_db_error_update, Toast.LENGTH_SHORT).show();
                 }
                 db.close();
 
@@ -307,7 +315,7 @@ public class DoseListActivity extends Activity {
         ArrayAdapter<?> adapter;
         switch (type) {
             case TYPE_REMINDER:
-                setTitle(getString(R.string.doselist_title_reminders));
+                setTitle(getString(R.string.dose_list_title_reminders));
                 adapter = new ReminderArrayAdapter(getBaseContext(), doses);
                 break;
             case TYPE_SINGLE:
@@ -315,7 +323,7 @@ public class DoseListActivity extends Activity {
                 adapter = new DoseArrayAdapter(getBaseContext(), doses);
                 break;
             default:
-                String title = (type.equals(TYPE_TAKEN)) ? getString(R.string.doselist_title_doses_taken) : getString(R.string.doselist_title_doses_future);
+                String title = (type.equals(TYPE_TAKEN)) ? getString(R.string.dose_list_title_doses_taken) : getString(R.string.dose_list_title_doses_future);
                 setTitle(title);
                 adapter = new DoseArrayAdapter(getBaseContext(), doses);
         }

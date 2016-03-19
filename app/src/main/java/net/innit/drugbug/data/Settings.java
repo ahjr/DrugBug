@@ -1,36 +1,27 @@
 package net.innit.drugbug.data;
 
 import android.content.Context;
-import android.util.ArrayMap;
 
 import net.innit.drugbug.util.ExternalStorage;
 import net.innit.drugbug.util.ImageStorage;
 
-import java.util.Map;
+import static net.innit.drugbug.util.Constants.DEFAULT_IMAGE_STORAGE_EXTERNAL;
+import static net.innit.drugbug.util.Constants.DEFAULT_IMAGE_STORAGE_INTERNAL;
+import static net.innit.drugbug.util.Constants.DEFAULT_KEEP_TIME_MISSED;
+import static net.innit.drugbug.util.Constants.DEFAULT_KEEP_TIME_TAKEN;
+import static net.innit.drugbug.util.Constants.DEFAULT_NUM_DOSES;
 
 public enum Settings {
-    NUM_DOSES("NumFutureDoses", "5"),
-    KEEP_TIME_TAKEN("KeepTimeTaken", "1:0:0"),
-    KEEP_TIME_MISSED("KeepTimeMissed", "0:1:0"),
-    IMAGE_STORAGE("StorageLoc", "EXTERNAL");
+    NUM_DOSES(DEFAULT_NUM_DOSES),
+    KEEP_TIME_TAKEN(DEFAULT_KEEP_TIME_TAKEN),
+    KEEP_TIME_MISSED(DEFAULT_KEEP_TIME_MISSED),
+    IMAGE_STORAGE(null);
 
     private final String key;
     private String defaultValue;
 
-    private static final Map<String, Settings> keyToEnumMap = new ArrayMap<>();
-    static {
-        keyToEnumMap.put("NumFutureDoses", NUM_DOSES);
-        keyToEnumMap.put("KeepTimeTaken", KEEP_TIME_TAKEN);
-        keyToEnumMap.put("KeepTimeMissed", KEEP_TIME_MISSED);
-        keyToEnumMap.put("StorageLoc", IMAGE_STORAGE);
-    }
-
-    public static Settings keyToEnum(String key) {
-        return keyToEnumMap.get(key);
-    }
-
-    Settings(String key, String defaultValue) {
-        this.key = key;
+    Settings(String defaultValue) {
+        this.key = this.name();
         this.defaultValue = defaultValue;
     }
 
@@ -39,13 +30,21 @@ public enum Settings {
     }
 
     public String getDefault(Context context) {
-        if (this.getKey().equals("StorageLoc")) {
+        if (defaultValue == null && this == IMAGE_STORAGE) {
             if (ExternalStorage.getInstance(context, ImageStorage.IMAGE_DIR).isAvailable()) {
-                defaultValue = "EXTERNAL";
+                defaultValue = DEFAULT_IMAGE_STORAGE_EXTERNAL;
             } else {
-                defaultValue = "INTERNAL";
+                defaultValue = DEFAULT_IMAGE_STORAGE_INTERNAL;
             }
         }
         return defaultValue;
+    }
+
+    public String getDefault() throws IllegalArgumentException {
+        if (this == IMAGE_STORAGE) {
+            throw new IllegalArgumentException("Settings.IMAGE_STORAGE.getDefault must be called with Context parameter");
+        } else {
+            return defaultValue;
+        }
     }
 }

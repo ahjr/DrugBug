@@ -16,6 +16,7 @@ import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
+import net.innit.drugbug.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -23,6 +24,8 @@ import java.util.List;
 
 import static net.innit.drugbug.util.Constants.ACTION;
 import static net.innit.drugbug.util.Constants.ACTION_ADD;
+import static net.innit.drugbug.util.Constants.SOURCE;
+import static net.innit.drugbug.util.Constants.SOURCE_MAIN;
 import static net.innit.drugbug.util.Constants.TYPE;
 import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
 import static net.innit.drugbug.util.Constants.TYPE_REMINDER;
@@ -31,26 +34,35 @@ import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
 // todo Swipe right goes back
 // -- This is more complicated than I anticipated
 // -- http://androidexample.com/Swipe_screen_left__right__top_bottom/index.php?view=article_discription&aid=95&aaid=118
+
 // todo Handle missed doses better
 // -- Show only one entry in list "Med Name - # missed"/"Last missed dose: Date/time"
 // -- Clicking shows list of all missed doses
+
 // todo Handle reminder changes better
 // -- Currently removing reminder from one dose changes all
 // -- Should probably give the option to remove all or one
+
 // todo Refactor settings enum
 // -- Change to singleton SharedPreferences access? https://gist.github.com/alphamu/8748537a3b73d9c58b4c
-// -- Need to get rid of hardcoded Map --> Can't map instance 'key' to static 'Setting'
+
 // todo Future dose list help screen is wrong --> Can't replicate this
+
 // todo Back from Medication list(inactive) -> dose list returns to default filter
 // -- Pretty sure the only way to change this is to have 2 different filter extras (med_filter and dose_filter?)
-// todo Move bitmap processing from MedicationItem class to it's own class
-// todo Move dialogs from MedicationListActivity to MedicationItem
+
 // todo Possible --> should taking dose shift all future doses?
+
 // todo Implement Frequency customization
+
 // todo Give user the ability to set meal and waking times for more accuracy
-// todo Extract strings from help layouts and put them into strings_help.xml
-// todo Fix logging
-// -- Possible option: Constant (STATUS = RELEASE/DEBUG) and if(Constants.STATUS == Constants.DEBUG) Log
+
+// todo Some Activity classes are doing too much.  Need to refactor.
+
+// todo Normalize drawables (size/color/name).  Remove unused.
+
+// todo Extract string resources from code (probably still some in xml too)
+// -- Find in Path (regular expression) ".*"
 
 public class MainActivity extends Activity {
 
@@ -68,10 +80,15 @@ public class MainActivity extends Activity {
 
         // Set SharedPreferences to default if setting is not set yet
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (Constants.CLEAR_SHARED_PREFS) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+        }
         SharedPreferences.Editor editor = sharedPreferences.edit();
         for (Settings setting : Settings.values()) {
             if (!sharedPreferences.contains(setting.getKey())) {
-                if (setting.equals(Settings.NUM_DOSES)) {
+                if (setting == Settings.NUM_DOSES) {
                     editor.putInt(setting.getKey(), Integer.parseInt(setting.getDefault(this)));
                 } else {
                     editor.putString(setting.getKey(), setting.getDefault(this));
@@ -126,7 +143,7 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.menu_main_help:
                 Bundle bundle = new Bundle();
-                bundle.putInt("source", HelpFragment.SOURCE_MAIN);
+                bundle.putInt(SOURCE, SOURCE_MAIN);
 
                 HelpFragment fragment = new HelpFragment();
                 fragment.setArguments(bundle);

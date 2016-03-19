@@ -14,7 +14,6 @@ import android.widget.ImageView;
 
 import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.MedicationItem;
-import net.innit.drugbug.util.Constants;
 
 import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
 

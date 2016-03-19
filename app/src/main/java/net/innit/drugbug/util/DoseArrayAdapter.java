@@ -2,7 +2,6 @@ package net.innit.drugbug.util;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.model.DoseItem;
 
@@ -58,7 +56,6 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
             mViewHolder.name = (TextView) convertView.findViewById(R.id.tvListItemName);
             mViewHolder.dateLabel = (TextView) convertView.findViewById(R.id.tvListItemDateLabel);
             mViewHolder.date = (TextView) convertView.findViewById(R.id.tvListItemDate);
-//            mViewHolder.reminder = (TextView) convertView.findViewById(R.id.tvListItemReminder);
             mViewHolder.reminderImg = (ImageView) convertView.findViewById(R.id.ivListItemReminder);
             mViewHolder.image = (ImageView) convertView.findViewById(R.id.ivDoseListImage);
 
@@ -107,7 +104,7 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
 
         // Replace placeholder image thumbnail with medication's image
         if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().new BitmapWorkerTask(mViewHolder.image, 50, 50).execute(context);
+            new BitmapHelper.BitmapWorkerTask(mViewHolder.image, doseItem.getMedication().getImagePath(), 50, 50).execute(context);
         } else {
             mViewHolder.image.setImageResource(R.drawable.default_image);
         }
@@ -122,7 +119,6 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         private TextView name;
         private TextView dateLabel;
         private TextView date;
-//        private TextView reminder;
         private ImageView reminderImg;
         private ImageView image;
     }

@@ -3,7 +3,6 @@ package net.innit.drugbug.fragment;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.SpannedString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,26 +12,24 @@ import android.widget.TextView;
 
 import net.innit.drugbug.R;
 
-import org.w3c.dom.Text;
+import static net.innit.drugbug.util.Constants.SOURCE;
+import static net.innit.drugbug.util.Constants.SOURCE_ADD_DOSE;
+import static net.innit.drugbug.util.Constants.SOURCE_DETAIL_FUTURE;
+import static net.innit.drugbug.util.Constants.SOURCE_EDIT_DOSE;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_FUTURE;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_MEDICATIONS;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_REMINDERS;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_SINGLE_MED;
+import static net.innit.drugbug.util.Constants.SOURCE_LIST_TAKEN;
+import static net.innit.drugbug.util.Constants.SOURCE_MAIN;
+import static net.innit.drugbug.util.Constants.SOURCE_SETTINGS;
 
 public class HelpFragment extends DialogFragment {
-    public static final int SOURCE_MAIN = 3001001;
-    public static final int SOURCE_ADD_DOSE = 3001002;
-    public static final int SOURCE_EDIT_DOSE = 3001003;
-    public static final int SOURCE_SETTINGS = 3001004;
-    public static final int SOURCE_LIST_FUTURE = 3001005;
-    public static final int SOURCE_LIST_TAKEN = 3001006;
-    public static final int SOURCE_LIST_REMINDERS = 3001007;
-    public static final int SOURCE_LIST_MEDICATIONS = 3001008;
-    public static final int SOURCE_LIST_SINGLE_MED = 3001009;
-    public static final int SOURCE_DETAIL_TAKEN = 3001010;
-    public static final int SOURCE_DETAIL_FUTURE = 3001011;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
-        int source = bundle.getInt("source", SOURCE_MAIN);
+        int source = bundle.getInt(SOURCE, SOURCE_MAIN);
         int layoutID, llID;
 
         switch (source) {

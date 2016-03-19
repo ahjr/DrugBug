@@ -1,7 +1,6 @@
 package net.innit.drugbug.util;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.model.DoseItem;
 
@@ -56,7 +54,7 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
         mViewHolder.date.setText(display);
 
         if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().new BitmapWorkerTask(mViewHolder.image, 50, 50).execute(context);
+            new BitmapHelper.BitmapWorkerTask(mViewHolder.image, doseItem.getMedication().getImagePath(), 50, 50).execute(context);
         }
 
         return convertView;

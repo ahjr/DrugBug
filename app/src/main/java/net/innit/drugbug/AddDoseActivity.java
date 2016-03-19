@@ -30,6 +30,7 @@ import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
+import net.innit.drugbug.util.BitmapHelper;
 import net.innit.drugbug.util.ImageStorage;
 import net.innit.drugbug.util.Reminder;
 
@@ -43,13 +44,17 @@ import java.util.List;
 import static net.innit.drugbug.util.Constants.ACTION;
 import static net.innit.drugbug.util.Constants.ACTION_ADD;
 import static net.innit.drugbug.util.Constants.ACTION_EDIT;
-import static net.innit.drugbug.util.Constants.ACTION_RESTORE;
 import static net.innit.drugbug.util.Constants.ACTION_REACTIVATE;
+import static net.innit.drugbug.util.Constants.ACTION_RESTORE;
 import static net.innit.drugbug.util.Constants.FILTER_DOSE;
 import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.util.Constants.SORT;
+import static net.innit.drugbug.util.Constants.SOURCE;
+import static net.innit.drugbug.util.Constants.SOURCE_ADD_DOSE;
+import static net.innit.drugbug.util.Constants.SOURCE_EDIT_DOSE;
 import static net.innit.drugbug.util.Constants.TYPE;
+import static net.innit.drugbug.util.Constants.TYPE_MEDICATION;
 import static net.innit.drugbug.util.Constants.TYPE_NONE;
 import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
 
@@ -135,7 +140,7 @@ public class AddDoseActivity extends FragmentActivity {
         super.onResume();
 
         if (imageLocationOK && tempPath.isFile()) {
-            Bitmap image = MedicationItem.decodeSampledBitmapFromFile(tempPath.getAbsolutePath(), 100, 100);
+            Bitmap image = BitmapHelper.decodeSampledBitmapFromFile(tempPath.getAbsolutePath(), 100, 100);
 
             mMedImage.setImageBitmap(image);
         }
@@ -154,7 +159,7 @@ public class AddDoseActivity extends FragmentActivity {
             wasChecked = doseItem.isReminderSet();
 
             mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
-        } else if (action.equals("reactivate")) {
+        } else if (action.equals(ACTION_REACTIVATE)) {
             mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
         }
     }
@@ -167,7 +172,7 @@ public class AddDoseActivity extends FragmentActivity {
         freqOrig = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().new BitmapWorkerTask(mMedImage, 100, 100).execute(this);
+            new BitmapHelper.BitmapWorkerTask(mMedImage, doseItem.getMedication().getImagePath(), 100, 100).execute(this);
         }
 
         setTitle("Reactivate Medication");
@@ -183,7 +188,7 @@ public class AddDoseActivity extends FragmentActivity {
         freqOrig = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().new BitmapWorkerTask(mMedImage, 100, 100).execute(this);
+            new BitmapHelper.BitmapWorkerTask(mMedImage, doseItem.getMedication().getImagePath(), 100, 100).execute(this);
         }
         mDateTime.setText(sdf.format(doseItem.getDate()));
         mMedName.setText(doseItem.getMedication().getName());
@@ -210,7 +215,7 @@ public class AddDoseActivity extends FragmentActivity {
         freqOrig = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().new BitmapWorkerTask(mMedImage, 100, 100).execute(this);
+            new BitmapHelper.BitmapWorkerTask(mMedImage, doseItem.getMedication().getImagePath(), 100, 100).execute(this);
         }
 
         mDateTimeLabel.setText(R.string.add_dose_datetime_label);
@@ -248,7 +253,7 @@ public class AddDoseActivity extends FragmentActivity {
         switch (item.getItemId()) {
             case R.id.menu_default_help:
                 Bundle bundle = new Bundle();
-                bundle.putInt("source", (action.equals(ACTION_EDIT)) ? HelpFragment.SOURCE_EDIT_DOSE : HelpFragment.SOURCE_ADD_DOSE);
+                bundle.putInt(SOURCE, (action.equals(ACTION_EDIT)) ? SOURCE_EDIT_DOSE : SOURCE_ADD_DOSE);
 
                 HelpFragment fragment = new HelpFragment();
                 fragment.setArguments(bundle);
@@ -266,7 +271,7 @@ public class AddDoseActivity extends FragmentActivity {
         super.onBackPressed();
 
         Intent intent;
-        if (type.equals("medication") || action.equals(ACTION_RESTORE)) {
+        if (type.equals(TYPE_MEDICATION) || action.equals(ACTION_RESTORE)) {
             intent = new Intent(this, MedicationListActivity.class);
         } else {
             intent = new Intent(this, DoseListActivity.class);
@@ -330,7 +335,7 @@ public class AddDoseActivity extends FragmentActivity {
 
             // Figure out how many future items to create
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            int numFutureDoses = preferences.getInt(Settings.NUM_DOSES.getKey(), Integer.parseInt(Settings.NUM_DOSES.getDefault(this)));
+            int numFutureDoses = preferences.getInt(Settings.NUM_DOSES.getKey(), Integer.parseInt(Settings.NUM_DOSES.getDefault()));
 
             // For # of future items, create a future item using the medication id created earlier
             doseItem.setDosage(mDosage.getText().toString());
