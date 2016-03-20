@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Add Dose Strings -->
+    <string name="add_title">Help - Add Dose</string>
+    <string name="add_medication_name_label">Medication Name</string>
+    <string name="add_medication_name_text1">Name of the medication. Can not be left blank.</string>
+    <string name="add_medication_name_text2">Click on image icon to add a picture to this medication.</string>
+    <string name="add_dosage_label">Dosage</string>
+    <string name="add_dosage_text">Dosage for this medication. Can not be left blank.</string>
+    <string name="add_time_label">Time of first dose</string>
+    <string name="add_time_text1">Set the time of the first dose.</string>
+    <string name="add_time_text2">Click on the calendar icon to bring up the picker window.</string>
+    <string name="add_frequency_label">Frequency</string>
+    <string name="add_frequency_text1">How often this medication should be taken.</string>
+    <string name="add_frequency_text2">Choose from the drop down menu.</string>
+    <string name="add_frequency_text3">(Currently hard coded.)</string>
+    <string name="add_save_button_text1">Touch Save Medication button to save this medication.</string>
+    <string name="add_save_button_text2">Touching back will cancel.</string>
+
+    <!-- Dose detail Strings -->
+    <string name="detail_future_detail">Help - Dose detail</string>
+    <string name="detail_future_taken_label">Dose taken</string>
+    <string name="detail_future_taken_text">Sets dose as taken, after confirmation</string>
+    <string name="detail_future_edit_text">Opens the dose editor page</string>
+    <string name="detail_future_edit_label">Edit</string>
+    <string name="detail_future_delete_label">Delete</string>
+    <string name="detail_future_delete_text">Deletes the dose, after confirmation</string>
+
+    <!-- Untaken dose list strings -->
+    <string name="list_future_title">Help - Future doses list</string>
+    <string name="list_future_add_label">Add dose</string>
+    <string name="list_future_add_text">Create a new medication</string>
+    <string name="list_future_sort_label">Sort Order</string>
+    <string name="list_future_sort_text">Sort list by:</string>
+    <string name="list_future_sort_date_asc_text">- Date (ascending)</string>
+    <string name="list_future_sort_date_desc_text">- Date (descending)</string>
+    <string name="list_future_sort_name_text">- Medication name (alphabetical)</string>
+    <string name="list_reminder_set">Reminder is set for this dose</string>
+    <string name="list_reminder_unset">Reminder is not set for this dose</string>
+    <string name="list_future_click_label">Touch list item to show details about the dose</string>
+    <string name="list_future_click_taken_label">Dose taken</string>
+    <string name="list_future_click_taken_text">Sets dose as taken, after confirmation</string>
+    <string name="list_future_click_edit_label">Edit</string>
+    <string name="list_future_click_edit_text">Opens the dose editor page</string>
+    <string name="list_future_click_delete_label">Delete</string>
+    <string name="list_future_click_delete_text">Deletes the dose, after confirmation</string>
+    <string name="list_future_longclick_label">Touch and hold on list item to show a menu of actions for that dose</string>
+    <string name="list_future_longclick_taken_label">Dose is taken</string>
+    <string name="list_future_longclick_taken_text">Sets dose as taken, after confirmation</string>
+    <string name="list_future_longclick_edit_label">Edit dose</string>
+    <string name="list_future_longclick_edit_text">Opens the dose editor page</string>
+    <string name="list_future_longclick_delete_label">Delete dose</string>
+    <string name="list_future_longclick_delete_text">Deletes the dose, after confirmation</string>
+    <string name="list_future_longclick_reminder_label">Set/unset Reminder</string>
+    <string name="list_future_longclick_reminder_text">Toggles reminder, after confirmation</string>
+    <string name="list_future_longclick_only_label">Show doses for only this medication</string>
+    <string name="list_future_longclick_only_text">Show dose list for medication of selected dose</string>
+
+    <!-- Medication list strings -->
+    <string name="list_med_title">Help - Medication list</string>
+    <string name="list_med_add_label">Add dose</string>
+    <string name="list_med_add_text">Create a new medication</string>
+    <string name="list_med_filter_label">Filter</string>
+    <string name="list_med_filter_all_label">All doses</string>
+    <string name="list_med_filter_all_text">Show both taken and untaken doses</string>
+    <string name="list_med_filter_taken_label">Taken doses</string>
+    <string name="list_med_filter_taken_text">Show only taken doses</string>
+    <string name="list_med_filter_future_label">Future doses</string>
+    <string name="list_med_filter_future_text">Show only untaken doses</string>
+    <string name="list_med_sort_label">Sort Order</string>
+    <string name="list_med_sort_text">Sort list by:</string>
+    <string name="list_med_sort_date_asc_text">- Date (ascending)</string>
+    <string name="list_med_sort_date_desc_text">- Date (descending)</string>
+    <string name="list_med_sort_name_text">- Medication name (alphabetical)</string>
+    <string name="list_med_click_label">Touch list item to show list of doses for selected medicine</string>
+    <string name="list_med_longclick_label">Touch and hold on any medication to archive it, after confirmation.</string>
+    <string name="list_med_longclick_text">All doses for selected medication are deleted.</string>
+
+    <!-- Single medication list strings -->
+    <string name="list_single_title">Help - Single medication list</string>
+    <string name="list_single_sort_label">Sort Order</string>
+    <string name="list_single_sort_text">Sort list by:</string>
+    <string name="list_single_sort_date_asc_text">- Date (ascending)</string>
+    <string name="list_single_sort_date_desc_text">- Date (descending)</string>
+    <string name="list_single_sort_name_text">- Medication name (alphabetical)</string>
+    <string name="list_single_filter_label">Filter</string>
+    <string name="list_single_filter_all_label">All doses</string>
+    <string name="list_single_filter_all_text">Show both taken and untaken doses</string>
+    <string name="list_single_filter_taken_label">Taken doses</string>
+    <string name="list_single_filter_taken_text">Show only taken doses</string>
+    <string name="list_single_filter_future_label">Future doses</string>
+    <string name="list_single_filter_future_text">Show only untaken doses</string>
+    <string name="list_single_click_label">Touch list item to show details about the dose</string>
+    <string name="list_single_longclick_label">Touch and hold on any untaken dose to show a menu of actions for that dose</string>
+    <string name="list_single_longclick_taken_label">Dose is taken</string>
+    <string name="list_single_longclick_taken_text">Sets dose as taken, after confirmation</string>
+    <string name="list_single_longclick_edit_label">Edit dose</string>
+    <string name="list_single_longclick_edit_text">Opens the dose editor page</string>
+    <string name="list_single_longclick_delete_label">Delete dose</string>
+    <string name="list_single_longclick_delete_text">Deletes the dose, after confirmation</string>
+    <string name="list_single_longclick_reminder_label">Set/unset Reminder</string>
+    <string name="list_single_longclick_reminder_text">Toggles reminder, after confirmation</string>
+
+    <!-- Image content description strings -->
+    <string name="content_desc_reminder_set">Alarm on icon</string>
+    <string name="content_desc_reminder_unset">Alarm off icon</string>
+
+    <!-- Taken dose list strings -->
+    <string name="list_taken_title">Help - Taken doses list</string>
+    <string name="list_taken_add_label">Add dose</string>
+    <string name="list_taken_add_text">Create a new medication</string>
+    <string name="list_taken_sort_label">Sort Order</string>
+    <string name="list_taken_sort_text">Sort list by:</string>
+    <string name="list_taken_sort_date_asc_text">- Date (ascending)</string>
+    <string name="list_taken_sort_date_desc_text">- Date (descending)</string>
+    <string name="list_taken_sort_name_text">- Medication name (alphabetical)</string>
+    <string name="list_taken_click_label">Touch list item to show details about the dose</string>
+    <string name="list_taken_longclick_label">Touch and hold on list item to show a menu of actions for that dose</string>
+    <string name="list_taken_longclick_only_label">Show doses for only this medication</string>
+    <string name="list_taken_longclick_only_text">Show dose list for medication of selected dose</string>
+
+    <!-- Main page strings -->
+    <string name="main_title">Help - Home page</string>
+    <string name="main_add_label">Add dose</string>
+    <string name="main_add_text">Create a new medication</string>
+    <string name="main_settings_label">Settings</string>
+    <string name="main_settings_text">App settings and preferences</string>
+    <string name="main_future_label">Future Doses</string>
+    <string name="main_future_text1">Untaken doses</string>
+    <string name="main_future_text2">Touch list icon to view dose list</string>
+    <string name="main_taken_label">Taken Doses</string>
+    <string name="main_taken_text">Touch list icon to view dose list</string>
+    <string name="main_reminder_label">Reminders</string>
+    <string name="main_reminder_text1">Doses with reminders set</string>
+    <string name="main_reminder_text2">Touch list icon to view reminder list</string>
+    <string name="main_med_label">Medications</string>
+    <string name="main_med_text1">Active medications</string>
+    <string name="main_med_text1a">Medications with associated doses</string>
+    <string name="main_med_text2">Inactive medications</string>
+    <string name="main_med_text2a">Medications with no associated doses</string>
+    <string name="main_med_text3">Touch list icon to view reminder list</string>
+
+    <!-- Settings strings -->
+    <string name="settings_title">Help - Settings</string>
+    <string name="settings_num_future_label">Number of future doses to generate</string>
+    <string name="settings_num_future_text">When medication is created, this setting determines how many future doses to generate.</string>
+    <string name="settings_keep_taken_label">How long should taken doses be kept?</string>
+    <string name="settings_keep_taken_text">Determines how long to keep taken doses</string>
+    <string name="settings_keep_missed_label">How long should missed doses be kept?</string>
+    <string name="settings_keep_missed_text">Determines how long to keep missed doses</string>
+    <string name="settings_storage_label">Image storage location</string>
+    <string name="settings_storage_text">Determines which storage location to use to store images</string>
+
+</resources>

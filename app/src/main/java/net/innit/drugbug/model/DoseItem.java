@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
 
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DBDataSource;
 
@@ -16,13 +14,6 @@ import java.util.Comparator;
 import java.util.Date;
 
 public class DoseItem implements Comparable<DoseItem> {
-    public static final String TYPE_TAKEN = "taken";
-    public static final String TYPE_FUTURE = "future";
-    public static final String TYPE_MISSED = "missed";
-    public static final String TYPE_REMINDER = "reminder";
-    public static final String TYPE_SINGLE = "single";
-    public static final String TYPE_NONE = "none";
-
     private long id;
     private Date date;
     private boolean reminder;
@@ -73,6 +64,12 @@ public class DoseItem implements Comparable<DoseItem> {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date nextDate(Context context) {
+        DBDataSource db = new DBDataSource(context);
+        long secs = date.getTime() + db.getInterval(medication.getFrequency()) * 1000;
+        return new Date(secs);
     }
 
     public boolean isReminderSet() {
@@ -136,9 +133,8 @@ public class DoseItem implements Comparable<DoseItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                switch (db.removeDose(id)) {
+                switch (db.removeDose(id, true)) {
                     case RESULT_OK:
-                        db.generateNextFuture(medication);
                         Toast.makeText(context, R.string.dose_list_toast_removed_ok, Toast.LENGTH_SHORT).show();
                         context.startActivity(intent);
                         break;
@@ -176,20 +172,13 @@ public class DoseItem implements Comparable<DoseItem> {
                 convertToTaken();
                 db.open();
                 if (db.updateDose(DoseItem.this)) {
-                    DoseItem newFutureItem = db.generateNextFuture(DoseItem.this.getMedication());
-                    Log.d(MainActivity.LOGTAG, "TakenButton:onClick: newFutureItem generated with id " + newFutureItem.getId());
                     DoseItem firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
 
                     while ((firstFutureDose != null) && (firstFutureDose.getDate().getTime() <= DoseItem.this.getDate().getTime())) {
                         // First future dose date is before taken dose date
-                        Log.d(MainActivity.LOGTAG, "onClick: firstFutureDose id " + firstFutureDose.getId());
-                        db.removeDose(firstFutureDose.getId());
-                        newFutureItem = db.generateNextFuture(DoseItem.this.getMedication());
-                        Log.d(MainActivity.LOGTAG, "TakenButton:onClick: newFutureItem generated with id " + newFutureItem.getId());
+                        db.removeDose(firstFutureDose.getId(), true);
                         firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
-
                     }
-
                     context.startActivity(intent);
                 }
                 db.close();

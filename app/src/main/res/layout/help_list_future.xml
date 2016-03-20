@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_help_list_future"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv_help_list_future_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_action_help"
+            android:text="@string/list_future_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/background_dark"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_add_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="3dp"
+            android:drawableStart="@drawable/ic_content_add"
+            android:gravity="fill"
+            android:text="@string/list_future_add_label"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_add_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_add_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_sort_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="3dp"
+            android:drawableStart="@drawable/ic_action_sort_2"
+            android:gravity="fill"
+            android:text="@string/list_future_sort_label"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_sort_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_sort_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_sort_date_asc_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_sort_date_asc_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_sort_date_desc_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_sort_date_desc_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_sort_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_sort_name_text"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/ic_action_alarm_on"
+                android:paddingBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tv_help_list_reminder_set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="@string/list_reminder_set"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="3dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/ic_action_alarm_off"
+                android:paddingBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tv_help_list_reminder_unset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="@string/list_reminder_unset"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_click_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/list_future_click_label"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_click_taken_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_click_taken_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_click_taken_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_click_taken_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_click_edit_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_click_edit_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_click_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_click_edit_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_click_delete_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_click_delete_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_click_delete_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_click_delete_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/list_future_longclick_label"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_taken_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_longclick_taken_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_taken_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_longclick_taken_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_edit_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_longclick_edit_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_longclick_edit_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_delete_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_longclick_delete_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_delete_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_longclick_delete_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_reminder_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_longclick_reminder_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_reminder_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_longclick_reminder_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_only_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_future_longclick_only_label"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_future_longclick_only_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_future_longclick_only_text"/>
+
+    </LinearLayout>
+</ScrollView>

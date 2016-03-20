@@ -2,10 +2,11 @@ package net.innit.drugbug.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.ArrayMap;
 
-import net.innit.drugbug.data.SettingsHelper;
+import net.innit.drugbug.data.Settings;
 
 import java.io.File;
 import java.util.Map;
@@ -17,7 +18,7 @@ public class ImageStorage {
     public static final String IMAGE_DIR = "images/medications";
     private static ImageStorage instance;
     private String locationType;    // File storage location type - INTERNAL or EXTERNAL
-    private Map<String, Storage> locations = new ArrayMap<>();
+    private final Map<String, Storage> locations = new ArrayMap<>();
 
     /**
      * @param context Context for this object
@@ -27,7 +28,7 @@ public class ImageStorage {
         locations.put("EXTERNAL", ExternalStorage.getInstance(context, IMAGE_DIR));
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.locationType = sharedPreferences.getString(SettingsHelper.KEY_IMAGE_STORAGE, new SettingsHelper(context).DEFAULT_IMAGE_STORAGE);
+        this.locationType = sharedPreferences.getString(Settings.IMAGE_STORAGE.getKey(), Settings.IMAGE_STORAGE.getDefault(context));
 
         setLocationType(locationType);
     }
@@ -39,6 +40,13 @@ public class ImageStorage {
         return instance;
     }
 
+    public String getDefault() {
+        if (locations.get("EXTERNAL").isAvailable()) {
+            return "EXTERNAL";
+        } else {
+            return "INTERNAL";
+        }
+    }
     /**
      * @return Text to display
      */
@@ -83,22 +91,24 @@ public class ImageStorage {
         locationType = type;
     }
 
-    public Map<Integer, String> getAllLocations() {
-        Map<Integer, String> returnMap = new ArrayMap<>();
-        int key = 0;
+    public Map<String, String> getAllLocations() {
+        Map<String, String> returnMap = new ArrayMap<>();
         for (Storage location : locations.values()) {
-            if (location.isAvailable()) returnMap.put(++key, location.getDisplayText());
+            if (location.isAvailable()) returnMap.put(location.getType(), location.getDisplayText());
         }
         return returnMap;
     }
 
     public Map<String, String> getAvailableLocations() {
         Map<String, String> returnMap = new ArrayMap<>();
-        int key = 0;
         for (Storage location : locations.values()) {
-            if (location.isAvailable()) returnMap.put("" + ++key, location.getDisplayText());
+            if (location.isAvailable()) returnMap.put(location.getType(), location.getDisplayText());
         }
         return returnMap;
+    }
+
+    public Uri getStorageUri(File file) {
+        return locations.get(locationType).getStorageUri(file);
     }
 
 }

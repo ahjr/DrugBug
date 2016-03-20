@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+      xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_main_add"
         android:orderInCategory="100"
         android:icon="@drawable/ic_content_add"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_add"/>
+        android:title="@string/menu_add"
+        tools:ignore="AppCompatResource"/>
 
     <item
         android:id="@+id/menu_main_prefs"
         android:orderInCategory="200"
         android:icon="@drawable/ic_action_settings"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_preferences"/>
+        android:title="@string/menu_preferences"
+        tools:ignore="AppCompatResource"/>
 
     <item
         android:id="@+id/menu_main_help"
         android:orderInCategory="300"
         android:icon="@drawable/ic_action_help"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_default_help"/>
+        android:title="@string/menu_default_help"
+        tools:ignore="AppCompatResource"/>
 
 </menu>

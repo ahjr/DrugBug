@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_help_list_taken"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_action_help"
+            android:text="@string/list_taken_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/background_dark"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_add_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="3dp"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"
+            android:drawableStart="@drawable/ic_content_add"
+            android:text="@string/list_taken_add_label"
+            android:gravity="fill"
+            android:layout_gravity="bottom"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_add_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_taken_add_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_sort_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="3dp"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"
+            android:drawableStart="@drawable/ic_action_sort_2"
+            android:text="@string/list_taken_sort_label"
+            android:gravity="fill"
+            android:layout_gravity="bottom"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_sort_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_taken_sort_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_sort_date_asc_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_taken_sort_date_asc_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_sort_date_desc_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_taken_sort_date_desc_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_sort_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/list_taken_sort_name_text"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_click_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/list_taken_click_label"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_longclick_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/list_taken_longclick_label"
+            android:textSize="@dimen/abc_text_size_subhead"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_longclick_only_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:textStyle="bold"
+            android:paddingStart="10dp"
+            android:text="@string/list_taken_longclick_only_label"/>
+
+        <TextView
+            android:id="@+id/tv_help_list_taken_longclick_only_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:text="@string/list_taken_longclick_only_text"/>
+
+    </LinearLayout>
+</ScrollView>

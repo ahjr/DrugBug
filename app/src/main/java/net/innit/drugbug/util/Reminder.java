@@ -11,6 +11,10 @@ import net.innit.drugbug.model.DoseItem;
 
 import java.util.Calendar;
 
+import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.util.Constants.REMINDER_TEXT;
+import static net.innit.drugbug.util.Constants.REMINDER_TITLE;
+
 /**
  * Object class used for creating a system reminder
  */
@@ -64,9 +68,9 @@ public class Reminder {
         }
 
         // Put title and text into the intent
-        intent.putExtra("title", title);
-        intent.putExtra("text", text);
-        intent.putExtra("dose_id", doseItem.getId());
+        intent.putExtra(REMINDER_TITLE, title);
+        intent.putExtra(REMINDER_TEXT, text);
+        intent.putExtra(INTENT_DOSE_ID, doseItem.getId());
 
         // Add the intent to the alarm manager
         PendingIntent pendingIntent = PendingIntent.getService(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);

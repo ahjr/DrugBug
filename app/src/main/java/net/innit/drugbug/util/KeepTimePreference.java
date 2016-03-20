@@ -39,7 +39,8 @@ public class KeepTimePreference extends DialogPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            persistString("" + yearPicker.getValue() + ":" + monthPicker.getValue() + ":" + dayPicker.getValue());
+            value = "" + yearPicker.getValue() + ":" + monthPicker.getValue() + ":" + dayPicker.getValue();
+            persistString(value);
         }
     }
 

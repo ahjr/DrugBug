@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import net.innit.drugbug.data.DBDataSource;
 import net.innit.drugbug.model.MedicationItem;
 
+import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
+
 /**
  * Displays an image in a clickable, borderless popup
  */
@@ -32,7 +34,7 @@ public class ImageFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
 //        String imagePath = bundle.getString("imagePath");
-        long medId = bundle.getLong("med_id");
+        long medId = bundle.getLong(INTENT_MED_ID);
 
         DBDataSource db = new DBDataSource(context);
         db.open();
@@ -43,7 +45,7 @@ public class ImageFragment extends DialogFragment {
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        final Bitmap image = medicationItem.getBitmap(context);
+        final Bitmap image = medicationItem.getBitmap(context, 0, 0);
         ImageView imageView = new ImageView(context);
         imageView.setClickable(true);
         imageView.setImageBitmap(image);

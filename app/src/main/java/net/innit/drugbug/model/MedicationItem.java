@@ -1,12 +1,19 @@
 package net.innit.drugbug.model;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import net.innit.drugbug.R;
+import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.util.BitmapHelper;
 import net.innit.drugbug.util.ImageStorage;
 
+import java.io.File;
 import java.util.Comparator;
 
 public class MedicationItem implements Comparable<MedicationItem> {
@@ -14,6 +21,8 @@ public class MedicationItem implements Comparable<MedicationItem> {
     private String name;    // Name of drug taken
     private String frequency; // Frequency of doses
     private String imagePath; // Picture of the pill or label
+    private boolean active = true;
+    private boolean archived;
 
     public MedicationItem() {
     }
@@ -61,12 +70,44 @@ public class MedicationItem implements Comparable<MedicationItem> {
         this.frequency = frequency;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
+    public boolean hasTaken(Context context) {
+        DBDataSource db = new DBDataSource(context);
+        db.open();
+        if (db.getLatestTakenDose(MedicationItem.this) != null) {
+            db.close();
+            return true;
+        } else {
+            db.close();
+            return false;
+        }
+    }
+
     public String getImagePath() {
         return imagePath;
     }
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public boolean deleteImageFile(Context context) {
+        return imagePath != null && new File(ImageStorage.getInstance(context).getAbsDir(), imagePath).delete();
     }
 
     public boolean hasImage() {
@@ -78,9 +119,32 @@ public class MedicationItem implements Comparable<MedicationItem> {
         return name;
     }
 
-    public Bitmap getBitmap(Context context) {
+    /**
+     * Returns the image associated with this medication as a Bitmap
+     *
+     * @param context Context for this bitmap
+     * @param width Width of the image
+     * @param height Height of the image
+     * @return the medication image as a bitmap
+     */
+    public Bitmap getBitmap(Context context, int width, int height) {
         ImageStorage imageStorage = ImageStorage.getInstance(context);
-        return BitmapFactory.decodeFile(imageStorage.getAbsDir() + "/" + imagePath);
+        String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
+        return BitmapHelper.decodeSampledBitmapFromFile(imageAbsPath, width, height);
+    }
+
+    /**
+     * Loads the medication image into given ImageView in the background
+     *
+     * @param context Context for this bitmap
+     * @param imageView ImageView to update when bitmap is loaded
+     * @param width Width of the image
+     * @param height Height of the image
+     */
+    public void getBitmap(Context context, ImageView imageView, int width, int height) {
+        ImageStorage imageStorage = ImageStorage.getInstance(context);
+        String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
+        new BitmapHelper.BitmapWorkerTask(imageView, imageAbsPath, width, height).execute(context);
     }
 
     /**
@@ -105,7 +169,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
         }
     }
 
-    // future todo add sort list by last taken dose
+    // todo add sort list by last taken dose
 //    /**
 //     * A comparator so we can sort dosages by date, descending
 //     */
@@ -117,4 +181,82 @@ public class MedicationItem implements Comparable<MedicationItem> {
 //        }
 //    }
 
+    /**
+     * Deletes doses for medication & medication after confirmation from user
+     *
+     */
+    public void confirmSetInactive(final Context context) {
+        final DBDataSource db = new DBDataSource(context);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Deactivate medication?");
+        alertDialogBuilder.setMessage("All untaken doses will be removed.");
+        alertDialogBuilder.setPositiveButton("Yes, deactivate", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                db.open();
+                int numDeleted = db.removeAllFutureDosesForMed(MedicationItem.this);
+                MedicationItem.this.setActive(false);
+                db.updateMedication(MedicationItem.this);
+                db.close();
+                Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.alert_delete_doses_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create().show();
+    }
+
+    /**
+     * Deletes doses for medication & medication after confirmation from user
+     *
+     */
+    public void confirmArchive(final Context context) {
+        final DBDataSource db = new DBDataSource(context);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Archive medication?");
+        alertDialogBuilder.setMessage("All doses taken and untaken doses will be removed.");
+        alertDialogBuilder.setPositiveButton("Yes, archive", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                db.open();
+                int numDeleted = db.removeAllDosesForMed(MedicationItem.this);
+                MedicationItem.this.setActive(false);
+                MedicationItem.this.setArchived(true);
+                db.updateMedication(MedicationItem.this);
+                db.close();
+                Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.alert_delete_doses_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create().show();
+    }
+
+    public void confirmDeleteMed(final Context context) {
+        final DBDataSource db = new DBDataSource(context);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(R.string.alert_delete_med_title);
+        alertDialogBuilder.setMessage(R.string.alert_delete_med_message);
+        alertDialogBuilder.setPositiveButton(R.string.alert_delete_med_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                db.open();
+                db.removeMedication(context, MedicationItem.this);
+                db.close();
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.alert_delete_med_negative, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create().show();
+    }
 }

@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+      xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_list_add"
+        android:icon="@drawable/ic_content_add"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_add"
+        tools:ignore="AppCompatResource"/>
+
     <item
         android:id="@+id/menu_sort_order"
         android:icon="@drawable/ic_action_sort_2"
-        android:showAsAction="always"
-        android:title="@string/menu_list_sort">
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_list_sort"
+        tools:ignore="AppCompatResource">
         <menu>
             <group>
                 <item
@@ -24,9 +33,13 @@
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_content_filter_list"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_list_filter">
+        android:title="@string/menu_list_filter"
+        tools:ignore="AppCompatResource">
         <menu>
             <group>
+                <item
+                    android:id="@+id/menu_filter_none"
+                    android:title="@string/menu_list_filter_none"/>
                 <item
                     android:id="@+id/menu_filter_taken"
                     android:title="@string/menu_list_filter_taken"/>
@@ -42,6 +55,7 @@
         android:orderInCategory="300"
         android:icon="@drawable/ic_action_help"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_default_help"/>
+        android:title="@string/menu_default_help"
+        tools:ignore="AppCompatResource"/>
 
 </menu>

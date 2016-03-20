@@ -1,7 +1,6 @@
 package net.innit.drugbug.util;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.model.DoseItem;
 
@@ -24,7 +22,6 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
     public ReminderArrayAdapter(Context context, List<DoseItem> doseItems) {
         super(context, R.layout.list_item_reminder, doseItems);
 
-        Log.d(MainActivity.LOGTAG, "ReminderArrayAdapter: adapter created");
         this.context = context;
         data = doseItems;
     }
@@ -49,8 +46,6 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Log.d(MainActivity.LOGTAG, "getView: dose name is " + doseItem.getMedication().getName());
-
         String display = doseItem.getMedication().getName() + " (" + doseItem.getDosage() + ")";
         mViewHolder.name.setText(display);
 
@@ -59,7 +54,7 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
         mViewHolder.date.setText(display);
 
         if (doseItem.getMedication().hasImage()) {
-            mViewHolder.image.setImageBitmap(doseItem.getMedication().getBitmap(context));
+            new BitmapHelper.BitmapWorkerTask(mViewHolder.image, doseItem.getMedication().getImagePath(), 50, 50).execute(context);
         }
 
         return convertView;

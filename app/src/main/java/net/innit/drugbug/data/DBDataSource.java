@@ -1,5 +1,6 @@
 package net.innit.drugbug.data;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,9 +8,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 
@@ -24,27 +23,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static net.innit.drugbug.util.Constants.TYPE_MISSED;
+import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
+
 public class DBDataSource {
     /**
      * Array of columns in medication table
      */
     private static final String[] medicationsAllColumns = {
-            DBHelper.COLUMN_ID,
+            DBHelper.COLUMN_MED_ID,
             DBHelper.COLUMN_NAME,
             DBHelper.COLUMN_FREQUENCY,
-            DBHelper.COLUMN_IMAGE_PATH
+            DBHelper.COLUMN_IMAGE_PATH,
+            DBHelper.COLUMN_ACTIVE,
+            DBHelper.COLUMN_ARCHIVED
     };
     /**
      * Array of columns in doses table
      */
     private static final String[] dosesAllColumns = {
             DBHelper.COLUMN_ID,
-            DBHelper.COLUMN_MEDICATION_ID,
+            DBHelper.COLUMN_MED_ID,
             DBHelper.COLUMN_DATE,
             DBHelper.COLUMN_REMINDER,
             DBHelper.COLUMN_TAKEN,
             DBHelper.COLUMN_DOSAGE
     };
+    private static final String[] dosesWithMedAllColumns = {
+            DBHelper.COLUMN_MED_ID,
+            DBHelper.COLUMN_NAME,
+            DBHelper.COLUMN_FREQUENCY,
+            DBHelper.COLUMN_IMAGE_PATH,
+            DBHelper.COLUMN_ACTIVE,
+            DBHelper.COLUMN_ID,
+            DBHelper.COLUMN_DATE,
+            DBHelper.COLUMN_REMINDER,
+            DBHelper.COLUMN_TAKEN,
+            DBHelper.COLUMN_DOSAGE
+    };
+
     /**
      * Map of frequencies
      * Initialized in a static block
@@ -60,8 +77,8 @@ public class DBDataSource {
         frequencies.put("Every hour", hour);
         frequencies.put("Every 2 hours", 2 * hour);
         frequencies.put("Every 4 hours", 4 * hour);
-        frequencies.put("2x per day", 12 * hour);
-        frequencies.put("3x per day", 8 * hour);
+        frequencies.put("3x per day", day / 3);
+        frequencies.put("2x per day", day / 2);
         frequencies.put("Daily", day);
     }
 
@@ -72,7 +89,6 @@ public class DBDataSource {
      * @param context Context for this database
      */
     public DBDataSource(Context context) {
-        Log.d(MainActivity.LOGTAG, "DBDataSource: created");
         dbhelper = new DBHelper(context);
     }
 
@@ -91,33 +107,80 @@ public class DBDataSource {
     }
 
     /**
-     * Returns a List object with all medications in the database as MedicationItem objects
-     *
-     * @return list of MedicationItem objects
+     * Medication methods
      */
-    public List<MedicationItem> getAllMedications() {
-        Log.d(MainActivity.LOGTAG, "getAllMedications: start");
+
+    /**
+     * Get a MedicationItem from the DB, using the given Cursor
+     *
+     * @param cursor database cursor
+     * @return medication item cursor is pointing to
+     */
+    private MedicationItem getMedFromDB(Cursor cursor) {
+        MedicationItem medication = new MedicationItem();
+        medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MED_ID)));
+        medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
+        medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
+        medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
+        medication.setActive(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
+        medication.setArchived(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVED)) == 1);
+        if (cursor.isLast()) cursor.close();
+        return medication;
+    }
+
+    private MedicationItem getMedFromSelection(String selection) {
+        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, null);
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            return getMedFromDB(cursor);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Retrieve multiple medications from the DB based on a passed in selection String
+     * ** Currently only used once, so redundant, but split out in case of future growth
+     *
+     * @param selection SQL selection to retrieve from DB
+     * @return ArrayList of medications
+     */
+    private List<MedicationItem> getMedications(String selection) {
         List<MedicationItem> returnList = new ArrayList<>();
-        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, null, null, null, null, null);
-        Log.d(MainActivity.LOGTAG, "getAllMedications: query returned " + cursor.getCount() + " medications");
+        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, null);
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
-                MedicationItem medication = new MedicationItem();
-                medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-                medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-                medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-                Log.d(MainActivity.LOGTAG, "getAllMedications: medication id " + medication.getId());
-                returnList.add(medication);
+                returnList.add(getMedFromDB(cursor));
             }
         }
-        cursor.close();
+//        cursor.close();
         return returnList;
     }
 
     /**
-     * Medication methods
+     * Returns a List object with all medications in the database as MedicationItem objects
+     * Basically a wrapper method for the private getMedications with selection == null
+     *
+     * @return list of MedicationItem objects
      */
+    public List<MedicationItem> getAllMedications() {
+        return getMedications(null);
+    }
+
+    public List<MedicationItem> getAllMedicationsInactive() {
+        String selection = DBHelper.COLUMN_ACTIVE + "=0" + " AND " + DBHelper.COLUMN_ARCHIVED + "=0";
+        return getMedications(selection);
+    }
+
+    public List<MedicationItem> getAllMedicationsActive() {
+        String selection = DBHelper.COLUMN_ACTIVE + "=1";
+        return getMedications(selection);
+    }
+
+    public List<MedicationItem> getAllMedicationsArchived() {
+        String selection = DBHelper.COLUMN_ARCHIVED + "=1";
+        return getMedications(selection);
+    }
 
     /**
      * Retrieves medication from database and returns values in a MedicationItem object
@@ -127,22 +190,8 @@ public class DBDataSource {
      */
     // Get one
     public MedicationItem getMedication(long medId) {
-        Log.d(MainActivity.LOGTAG, "getMedication: start");
-        String selection = DBHelper.COLUMN_ID + "=" + medId;
-        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, null);
-        Log.d(MainActivity.LOGTAG, "getMedication: query returned " + cursor.getCount() + " medications");
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            MedicationItem medication = new MedicationItem();
-            medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-            medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-            medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-            medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-            Log.d(MainActivity.LOGTAG, "getMedication: medication id " + medication.getId());
-            return medication;
-        }
-        cursor.close();
-        return null;
+        String selection = DBHelper.COLUMN_MED_ID + "=" + medId;
+        return getMedFromSelection(selection);
     }
 
     /**
@@ -153,23 +202,19 @@ public class DBDataSource {
      */
     // Get one
     private MedicationItem getMedicationForDose(long doseId) {
-        Log.d(MainActivity.LOGTAG, "getMedicationForDose: start");
         DoseItem dose = getDose(doseId);
-        String selection = DBHelper.COLUMN_ID + "=" + dose.getMedication().getId();
-        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, null);
-        Log.d(MainActivity.LOGTAG, "getMedicationForDose: query returned " + cursor.getCount() + " medications");
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            MedicationItem medication = new MedicationItem();
-            medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-            medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-            medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-            medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-            Log.d(MainActivity.LOGTAG, "getMedicationForDose: medication id " + medication.getId());
-            return medication;
-        }
-        cursor.close();
-        return null;
+        String selection = DBHelper.COLUMN_MED_ID + "=" + dose.getMedication().getId();
+        return getMedFromSelection(selection);
+    }
+
+    private ContentValues createMedCV(MedicationItem medication) {
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.COLUMN_NAME, medication.getName());
+        values.put(DBHelper.COLUMN_FREQUENCY, medication.getFrequency());
+        values.put(DBHelper.COLUMN_IMAGE_PATH, medication.getImagePath());
+        values.put(DBHelper.COLUMN_ACTIVE, medication.isActive());
+        values.put(DBHelper.COLUMN_ARCHIVED, medication.isArchived());
+        return values;
     }
 
     /**
@@ -180,14 +225,9 @@ public class DBDataSource {
      */
     // Create
     public MedicationItem createMedication(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "createMedication: start");
-        ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_NAME, medication.getName());
-        values.put(DBHelper.COLUMN_FREQUENCY, medication.getFrequency());
-        values.put(DBHelper.COLUMN_IMAGE_PATH, medication.getImagePath());
+        ContentValues values = createMedCV(medication);
         long insertId = database.insert(DBHelper.TABLE_MEDICATIONS, null, values);
         medication.setId(insertId);
-        Log.d(MainActivity.LOGTAG, "createMedication: id is " + insertId);
         return medication;
     }
 
@@ -199,14 +239,9 @@ public class DBDataSource {
      */
     // Update
     public boolean updateMedication(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "updateMedication: start");
-        ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_NAME, medication.getName());
-        values.put(DBHelper.COLUMN_FREQUENCY, medication.getFrequency());
-        values.put(DBHelper.COLUMN_IMAGE_PATH, medication.getImagePath());
-        String selection = DBHelper.COLUMN_ID + "=" + medication.getId();
+        ContentValues values = createMedCV(medication);
+        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId();
         int rows = database.update(DBHelper.TABLE_MEDICATIONS, values, selection, null);
-        Log.d(MainActivity.LOGTAG, "updateMedication: updated " + rows + " rows");
         return rows > 0;
     }
 
@@ -217,15 +252,13 @@ public class DBDataSource {
      * @return RESULT_OK if successful
      */
     // Delete
-    private Result removeMedication(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "removeMedication: start");
-        String where = DBHelper.COLUMN_ID + "=" + medication.getId();
+    public Result removeMedication(Context context, MedicationItem medication) {
+        String where = DBHelper.COLUMN_MED_ID + "=" + medication.getId();
         int result = database.delete(DBHelper.TABLE_MEDICATIONS, where, null);
         if (result == 1) {
-            Log.d(MainActivity.LOGTAG, "removeMedication: medication " + medication.getId() + " removed");
+            boolean imageDeleted = medication.deleteImageFile(context);
             return Result.RESULT_OK;
         } else {
-            Log.d(MainActivity.LOGTAG, "removeMedication: medication " + medication.getId() + " not removed");
             return Result.ERROR_UNKNOWN_ERROR;
         }
     }
@@ -234,187 +267,49 @@ public class DBDataSource {
      * Dose methods
      */
 
-    public List<DoseItem> getAllDosesForMed(long medId) {
-        Log.d(MainActivity.LOGTAG, "getAllDosesForMed: start");
-        List<DoseItem> returnList = new ArrayList<>();
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medId;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, orderBy);
-        Log.d(MainActivity.LOGTAG, "getAllDosesForMed: query returned " + cursor.getCount() + " doses");
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                MedicationItem medication = new MedicationItem();
-                medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MEDICATION_ID)));
-                medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-                medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-                medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-
-                DoseItem dose = new DoseItem();
-                dose.setMedication(medication);
-                dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-                dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-                dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-                dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-                Log.d(MainActivity.LOGTAG, "getAllDosesForMed: dose id " + dose.getId());
-                returnList.add(dose);
-            }
+    /**
+     * Given a cursor object, retrieve a dose from the database
+     * @param cursor Cursor pointing to line in db to retrieve
+     * @param medication (Optional) medication item for dose. Use null to get medication from db
+     * @return dose item
+     */
+    private DoseItem getDoseFromDB(Cursor cursor, MedicationItem medication) {
+        if (medication == null) {
+            medication = new MedicationItem();
+            medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MED_ID)));
+            medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
+            medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
+            medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
+            medication.setActive(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
         }
-        cursor.close();
-        return returnList;
+
+        DoseItem dose = new DoseItem();
+        dose.setMedication(medication);
+        dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
+        dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
+        dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
+        dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
+        dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
+        if (cursor.isLast()) {
+            cursor.close();
+        }
+        return dose;
     }
 
     /**
-     * Returns all future doses
-     *
-     * @param context Context for this method
-     * @return List of future doses as DoseItem objects
+     * Get a list of doses from the db, based on selection and orderBy parameters
+     * @param selection SQL selection string
+     * @param orderBy SQL orderBy clause
+     * @return ArrayList of doses
      */
-    public List<DoseItem> getAllFuture(Context context) {
-        Log.d(MainActivity.LOGTAG, "getAllFuture: start");
-        // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
-        String keepTimeString = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(SettingsHelper.KEY_KEEP_TIME_MISSED, SettingsHelper.DEFAULT_KEEP_TIME_MISSED);
-        int numDeleted = removeOldDoses(DoseItem.TYPE_MISSED, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "getAllFuture: " + numDeleted + " missed doses removed");
-
+    private List<DoseItem> getDoses(String selection, String orderBy) {
         List<DoseItem> returnList = new ArrayList<>();
-        String selection = DBHelper.COLUMN_TAKEN + "=" + 0;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
         Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, orderBy);
-        Log.d(MainActivity.LOGTAG, "getAllFuture: query returned " + cursor.getCount() + " doses");
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
-                MedicationItem medication = new MedicationItem();
-                medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MEDICATION_ID)));
-                medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-                medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-                medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-
-                DoseItem dose = new DoseItem();
-                dose.setMedication(medication);
-                dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-                dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-                dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-                dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-                Log.d(MainActivity.LOGTAG, "getAllFuture: dose id " + dose.getId());
-                returnList.add(dose);
+                returnList.add(getDoseFromDB(cursor, null));
             }
         }
-        cursor.close();
-        return returnList;
-    }
-
-    /**
-     * Return a list of all future doses for a single medication id
-     *
-     * @param medication medication to retrieve doses for
-     * @return List of DoseItem objects
-     */
-    public List<DoseItem> getAllFutureForMed(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "getAllFutureForMed: start");
-        List<DoseItem> returnList = new ArrayList<>();
-        String selection = DBHelper.COLUMN_TAKEN + "=" + 0 + " AND " + DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, orderBy);
-        Log.d(MainActivity.LOGTAG, "getAllFutureForMed: query returned " + cursor.getCount() + " doses");
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                DoseItem dose = new DoseItem();
-                dose.setMedication(medication);
-                dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-                dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-                dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-                dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-                Log.d(MainActivity.LOGTAG, "getAllFutureForMed: dose id " + dose.getId());
-                returnList.add(dose);
-            }
-        }
-        cursor.close();
-        return returnList;
-    }
-
-    /**
-     * Returns a list of all future doses with reminders
-     *
-     * @return List of DoseItem objects
-     */
-    public List<DoseItem> getAllFutureWithReminder() {
-        Log.d(MainActivity.LOGTAG, "getAllFutureWithReminder: start");
-        List<DoseItem> returnList = new ArrayList<>();
-        long date = new Date().getTime();
-        String selection = DBHelper.COLUMN_TAKEN + " = " + 0 +
-                " AND " + DBHelper.COLUMN_REMINDER + " = " + 1 +
-                " AND " + DBHelper.COLUMN_DATE + " >= " + date;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, orderBy);
-        Log.d(MainActivity.LOGTAG, "getAllFutureWithReminder: query returned " + cursor.getCount() + " doses");
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                MedicationItem medication = new MedicationItem();
-                medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MEDICATION_ID)));
-                medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-                medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-                medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-
-                DoseItem dose = new DoseItem();
-                dose.setMedication(medication);
-                dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-                dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-                dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-                dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-                Log.d(MainActivity.LOGTAG, "getAllFutureWithReminder: dose id " + dose.getId());
-                returnList.add(dose);
-            }
-        }
-        cursor.close();
-        return returnList;
-    }
-
-    /**
-     * Returns a list of all taken doses
-     *
-     * @param context Context for this method
-     * @return List of DoseItem objects
-     */
-    public List<DoseItem> getAllTaken(Context context) {
-        Log.d(MainActivity.LOGTAG, "getAllTaken: start");
-        // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
-        String keepTimeString = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(SettingsHelper.KEY_KEEP_TIME_TAKEN, SettingsHelper.DEFAULT_KEEP_TIME_TAKEN);
-        int numDeleted = removeOldDoses(DoseItem.TYPE_TAKEN, keepTimeString);
-        Log.d(MainActivity.LOGTAG, "getAllTaken: " + numDeleted + " old doses removed");
-
-        List<DoseItem> returnList = new ArrayList<>();
-        String selection = DBHelper.COLUMN_TAKEN + "=" + 1;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, orderBy);
-        Log.d(MainActivity.LOGTAG, "getAllTaken: query returned " + cursor.getCount() + " taken doses");
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                MedicationItem medication = new MedicationItem();
-                medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MEDICATION_ID)));
-                medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-                medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-                medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-
-                DoseItem dose = new DoseItem();
-                dose.setMedication(medication);
-                dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-                dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-                dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-                dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-                Log.d(MainActivity.LOGTAG, "getAllTaken: dose id " + dose.getId());
-                returnList.add(dose);
-            }
-        }
-        cursor.close();
         return returnList;
     }
 
@@ -426,7 +321,6 @@ public class DBDataSource {
      * @return number of doses removed
      */
     public int removeOldDoses(String type, String keepTimeString) {
-        Log.d(MainActivity.LOGTAG, "removeOldDoses: start");
         int[] keepTimeArray = SettingsHelper.parseKeepTime(keepTimeString);
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -434,13 +328,153 @@ public class DBDataSource {
         cal.add(Calendar.MONTH, keepTimeArray[1] * -1);
         cal.add(Calendar.DAY_OF_MONTH, keepTimeArray[2] * -1);
 
-
-        String selection = DBHelper.COLUMN_TAKEN + " = " + ((type.equals(DoseItem.TYPE_TAKEN)) ? 1 : 0) + " AND " +
+        String selection = DBHelper.COLUMN_TAKEN + " = " + ((type.equals(TYPE_TAKEN)) ? 1 : 0) + " AND " +
                 DBHelper.COLUMN_DATE + " < " + cal.getTime().getTime();
-        int numDeleted = database.delete(DBHelper.TABLE_DOSES, selection, null);
-        Log.d(MainActivity.LOGTAG, "removeOldDoses: " + numDeleted + " old doses deleted");
-        return numDeleted;
+        return database.delete(DBHelper.TABLE_DOSES, selection, null);
 
+    }
+
+    private void cleanDB(Context context) {
+        // Get missed keep time from SharedPreferences and convert it into an array: [y, m, d]
+        String keepTimeString = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getString(Settings.KEEP_TIME_MISSED.getKey(), Settings.KEEP_TIME_MISSED.getDefault(context));
+        int numDeleted = removeOldDoses(TYPE_MISSED, keepTimeString);
+
+        // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
+        keepTimeString = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getString(Settings.KEEP_TIME_TAKEN.getKey(), Settings.KEEP_TIME_TAKEN.getDefault(context));
+        numDeleted = removeOldDoses(TYPE_TAKEN, keepTimeString);
+    }
+
+    private List<DoseItem> getAllDoses(Context context, MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
+        cleanDB(context);
+
+        List<String> selection = new ArrayList<>();
+
+        if (medication != null) {
+            selection.add(DBHelper.COLUMN_MED_ID + "=" + medication.getId());
+        }
+
+        if (date != null) {
+            // Get day from date
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat daySDF = new SimpleDateFormat("yyyyMMdd");
+            String day = daySDF.format(date);
+            String midnight = day + " 00:00:00";
+            String endOfDay = day + " 23:59:59";
+
+            // Calculate epoch seconds for midnight and 11:59pm
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat datetimeSDF = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
+            long midnightDate;
+            long endOfDayDate;
+            try {
+                midnightDate = datetimeSDF.parse(midnight).getTime();
+                endOfDayDate = datetimeSDF.parse(endOfDay).getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            // Set selection
+            selection.add(DBHelper.COLUMN_DATE + ">" + midnightDate + " AND " +
+                    DBHelper.COLUMN_DATE + "<" + endOfDayDate);
+        }
+
+        if (reminderOnly) {
+            selection.add(DBHelper.COLUMN_REMINDER + " = " + 1);
+            selection.add(DBHelper.COLUMN_DATE + " >= " + new Date().getTime());
+        }
+
+        if (!(takenOnly == futureOnly)) {
+            // Both false doesn't make sense, so we'll assume if they're the same, we want all
+            if (takenOnly) {
+                selection.add(DBHelper.COLUMN_TAKEN + "=" + 1);
+            } else {
+                selection.add(DBHelper.COLUMN_TAKEN + "=" + 0);
+            }
+        }
+
+        String sel = null;
+        if (selection.size() > 0) {
+            sel = selection.get(0);
+            for (String str : selection) {
+                sel += " AND " + str;
+            }
+        }
+
+        String orderBy = DBHelper.COLUMN_DATE + " ASC";
+
+        return getDoses(sel, orderBy);
+    }
+
+    public List<DoseItem> getAllDosesForMed(Context context, MedicationItem medication) {
+        return getAllDoses(context, medication, null, false, false, false);
+    }
+
+    /**
+     * Returns all future doses
+     *
+     * @param context Context for this method
+     * @return List of future doses as DoseItem objects
+     */
+    public List<DoseItem> getAllFuture(Context context) {
+        return getAllDoses(context, null, null, false, true, false);
+    }
+
+    /**
+     * Return a list of all future doses for a single medication id
+     *
+     * @param medication medication to retrieve doses for
+     * @return List of DoseItem objects
+     */
+    public List<DoseItem> getAllFutureForMed(Context context, MedicationItem medication) {
+        return getAllDoses(context, medication, null, false, true, false);
+    }
+
+    public List<DoseItem> getAllTakenForMed(Context context, MedicationItem medication) {
+        return getAllDoses(context, medication, null, true, false, false);
+    }
+
+    /**
+     * Returns a list of all future doses with reminders
+     *
+     * @return List of DoseItem objects
+     */
+    public List<DoseItem> getAllFutureWithReminder(Context context) {
+        return getAllDoses(context, null, null, false, true, true);
+    }
+
+    /**
+     * Returns a list of all taken doses
+     *
+     * @param context Context for this method
+     * @return List of DoseItem objects
+     */
+    public List<DoseItem> getAllTaken(Context context) {
+        return getAllDoses(context, null, null, true, false, false);
+    }
+
+    public List<DoseItem> getAllDosesForDate(Context context, Date date) {
+        return getAllDoses(context, null, date, false, false, false);
+    }
+
+    private DoseItem getSingleDose(MedicationItem medication, String selection, String orderBy) {
+        String table;
+        String[] columns;
+        if (medication == null) {
+            table = DBHelper.VIEW_DOSE_WITH_MED;
+            columns = dosesWithMedAllColumns;
+        } else {
+            table = DBHelper.TABLE_DOSES;
+            columns = dosesAllColumns;
+        }
+        Cursor cursor = database.query(table, columns, selection, null, null, null, orderBy, "1");
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            return getDoseFromDB(cursor, medication);
+        }
+        return null;
     }
 
     /**
@@ -451,31 +485,8 @@ public class DBDataSource {
      */
     // Get one
     public DoseItem getDose(long id) {
-        Log.d(MainActivity.LOGTAG, "getDose: start");
         String selection = DBHelper.COLUMN_ID + "=" + id;
-        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, null);
-        Log.d(MainActivity.LOGTAG, "getDose: query returned " + cursor.getCount() + " doses");
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-
-            MedicationItem medication = new MedicationItem();
-            medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MEDICATION_ID)));
-            medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-            medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-            medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-
-            DoseItem dose = new DoseItem();
-            dose.setMedication(medication);
-            dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-            dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-            dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-            dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-            dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-            Log.d(MainActivity.LOGTAG, "getDose: dose id " + dose.getId());
-            return dose;
-        }
-        cursor.close();
-        return null;
+        return getSingleDose(null, selection, null);
     }
 
     /**
@@ -485,28 +496,10 @@ public class DBDataSource {
      * @return DoseItem with latest future dose
      */
     public DoseItem getLastDose(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "getLastDose: medication is " + medication.getName());
-        DoseItem dose = new DoseItem();
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
-        // Changed logic: now will return the dose with the highest date, untaken or not
-        //+ " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
+        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
         String orderBy = DBHelper.COLUMN_DATE + " DESC";
-        String limit = "1";
-        Cursor cursor = database.query(DBHelper.TABLE_DOSES, dosesAllColumns, selection, null, null, null, orderBy, limit);
-        Log.d(MainActivity.LOGTAG, "getLastDose: query returned " + cursor.getCount() + " doses");
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-            dose.setMedication(medication);
-            dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-            dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-            dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-            dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-            Log.d(MainActivity.LOGTAG, "getLastDose: dose id is " + dose.getId());
-            return dose;
-        }
-        cursor.close();
-        return null;
+        return getSingleDose(medication, selection, orderBy);
     }
 
     /**
@@ -516,26 +509,17 @@ public class DBDataSource {
      * @return DoseItem object with lowest future dose
      */
     public DoseItem getFirstFutureDose(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "getFirstFutureDose: medication id is " + medication.getId());
-        DoseItem dose = new DoseItem();
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
+        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
         String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        String limit = "1";
-        Cursor cursor = database.query(DBHelper.TABLE_DOSES, dosesAllColumns, selection, null, null, null, orderBy, limit);
-        Log.d(MainActivity.LOGTAG, "getFirstFutureDose: query returned " + cursor.getCount() + " doses");
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-            dose.setMedication(medication);
-            dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-            dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-            dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-            dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-            Log.d(MainActivity.LOGTAG, "getFirstFutureDose: dose id is " + dose.getId());
-            return dose;
-        }
-        cursor.close();
-        return null;
+        return getSingleDose(medication, selection, orderBy);
+    }
+
+    public DoseItem getLatestTakenDose(MedicationItem medication) {
+        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + 1;
+        String orderBy = DBHelper.COLUMN_DATE + " DESC";
+        return getSingleDose(medication, selection, orderBy);
     }
 
     /**
@@ -545,11 +529,9 @@ public class DBDataSource {
      * @return count of untaken doses
      */
     public long getFutureDoseCount(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "getFutureDoseCount: start");
-        String selection = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
-        long numEntries = DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection);
-        Log.d(MainActivity.LOGTAG, "getFutureDoseCount: " + numEntries + " future doses");
-        return numEntries;
+        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
+        return DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection);
     }
 
     /**
@@ -558,15 +540,11 @@ public class DBDataSource {
      * @param medication medication to generate a future dose for
      * @return DoseItem object for new dose
      */
-    public DoseItem generateNextFuture(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "generateNextFuture: start");
-
+    public DoseItem getNextFuture(MedicationItem medication) {
         // After successful update, add another future dose so we keep the same number in our future list
         // Get last future dose for medication
         DoseItem newFutureItem = getLastDose(medication);
         newFutureItem.setTaken(false);
-        Log.d(MainActivity.LOGTAG, "generateNextFuture: newFutureItem is " + newFutureItem);
-        Log.d(MainActivity.LOGTAG, "generateNextFuture: medication is " + medication);
         // Get frequency
         long interval = getInterval(medication.getFrequency());
         Calendar calendar = Calendar.getInstance();
@@ -587,58 +565,14 @@ public class DBDataSource {
 
     }
 
-    public List<DoseItem> getDosesForDate(Date date) {
-        Log.d(MainActivity.LOGTAG, "getDosesForDate: start");
-        List<DoseItem> doses = new ArrayList<>();
-        // Get day from date
-        SimpleDateFormat daySDF = new SimpleDateFormat("yyyyMMdd");
-        String day = daySDF.format(date);
-        String midnight = day + " 00:00:00";
-        String endOfDay = day + " 23:59:59";
-
-        // Calculate epoch seconds for midnight and 11:59pm
-        SimpleDateFormat datetimeSDF = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
-        long midnightDate;
-        long endOfDayDate;
-        try {
-            midnightDate = datetimeSDF.parse(midnight).getTime();
-            endOfDayDate = datetimeSDF.parse(endOfDay).getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        // Set selection
-        String selection = DBHelper.COLUMN_DATE + ">" + midnightDate + " AND " +
-                            DBHelper.COLUMN_DATE + "<" + endOfDayDate;
-
-        // Build the dose list to return
-        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, null);
-        Log.d(MainActivity.LOGTAG, "getDosesForDate: query returned " + cursor.getCount() + " doses");
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                MedicationItem medication = new MedicationItem();
-                medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MEDICATION_ID)));
-                medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-                medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-                medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-
-                DoseItem dose = new DoseItem();
-                dose.setMedication(medication);
-                dose.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID)));
-                dose.setDate(new Date(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_DATE))));
-                dose.setReminder(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_REMINDER)) == 1);
-                dose.setTaken(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_TAKEN)) == 1);
-                dose.setDosage(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DOSAGE)));
-                Log.d(MainActivity.LOGTAG, "getDosesForDate: dose id " + dose.getId());
-                doses.add(dose);
-            }
-        }
-        cursor.close();
-
-
-
-        return doses;
+    private ContentValues createDoseCV(DoseItem dose) {
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.COLUMN_MED_ID, dose.getMedication().getId());
+        values.put(DBHelper.COLUMN_DATE, dose.getDate().getTime());
+        values.put(DBHelper.COLUMN_REMINDER, dose.isReminderSet());
+        values.put(DBHelper.COLUMN_TAKEN, dose.isTaken());
+        values.put(DBHelper.COLUMN_DOSAGE, dose.getDosage());
+        return values;
     }
 
     /**
@@ -649,15 +583,8 @@ public class DBDataSource {
      */
     // Create
     public DoseItem createDose(DoseItem dose) {
-        Log.d(MainActivity.LOGTAG, "createDose: start");
-        ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_MEDICATION_ID, dose.getMedication().getId());
-        values.put(DBHelper.COLUMN_DATE, dose.getDate().getTime());
-        values.put(DBHelper.COLUMN_REMINDER, dose.isReminderSet());
-        values.put(DBHelper.COLUMN_TAKEN, dose.isTaken());
-        values.put(DBHelper.COLUMN_DOSAGE, dose.getDosage());
+        ContentValues values = createDoseCV(dose);
         long insertId = database.insert(DBHelper.TABLE_DOSES, null, values);
-        Log.d(MainActivity.LOGTAG, "createDose: dose id " + insertId);
         dose.setId(insertId);
         return dose;
     }
@@ -670,63 +597,52 @@ public class DBDataSource {
      */
     // Update
     public boolean updateDose(DoseItem dose) {
-        Log.d(MainActivity.LOGTAG, "updateDose: start");
-        ContentValues values = new ContentValues();
-        values.put(DBHelper.COLUMN_MEDICATION_ID, dose.getMedication().getId());
-        values.put(DBHelper.COLUMN_DATE, dose.getDate().getTime());
-        values.put(DBHelper.COLUMN_REMINDER, dose.isReminderSet());
-        values.put(DBHelper.COLUMN_TAKEN, dose.isTaken());
-        values.put(DBHelper.COLUMN_DOSAGE, dose.getDosage());
+        ContentValues values = createDoseCV(dose);
         String selection = DBHelper.COLUMN_ID + "=" + dose.getId();
         int rows = database.update(DBHelper.TABLE_DOSES, values, selection, null);
-        Log.d(MainActivity.LOGTAG, "updateDose: " + rows + " doses updated");
         return rows > 0;
     }
 
-    /**
-     * Remove medication if it has no doses attached to it
-     *
-     * @param medication medication to remove
-     * @return true if medication was removed
-     */
-    private boolean removeMedicationIfNoDoses(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "removeMedicationIfNoDoses: start");
-        // Remove medication if no doses are associated with it
-        String selection = DBHelper.COLUMN_ID + "=" + medication.getId();
-        Log.d(MainActivity.LOGTAG, "removeMedicationIfNoDoses: doses associated with this medication: " + DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection));
-        if (DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection) < 1) {
-            Log.d(MainActivity.LOGTAG, "removeMedicationIfNoDoses: medication deleted");
-            Result medResult = removeMedication(medication);
-            if (medResult == Result.RESULT_OK) {
-                return true;
-            }
-        }
-        // Return false if there are still doses or there was an error deleting the medication
-        return false;
-    }
+//      removeMedicationIfNoDoses() - Archived in case it's needed later
+//    /**
+//     * Remove medication if it has no doses attached to it
+//     *
+//     * @param medication medication to remove
+//     * @return true if medication was removed
+//     */
+//    private boolean removeMedicationIfNoDoses(Context context, MedicationItem medication) {
+//        // Remove medication if no doses are associated with it
+//        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId();
+//        if (DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection) < 1) {
+//            Result medResult = removeMedication(context, medication);
+//            if (medResult == Result.RESULT_OK) {
+//                return true;
+//            }
+//        }
+//        // Return false if there are still doses or there was an error deleting the medication
+//        return false;
+//    }
 
     /**
      * Remove a dose
      *
      * @param id id of dose to remove
+     * @param createNextDose True if next dose should be created
      * @return RESULT_OK if dose was removed successfully
      */
     // Delete one dose
-    public Result removeDose(long id) {
-        Log.d(MainActivity.LOGTAG, "removeDose: start");
-        // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
+    public Result removeDose(long id, boolean createNextDose) {
         String where = DBHelper.COLUMN_ID + "=" + id;
         // Get medication
         MedicationItem medication = getMedicationForDose(id);
 
+        if (createNextDose) {
+            getNextFuture(medication);
+        }
+
         boolean deleteOK = (database.delete(DBHelper.TABLE_DOSES, where, null) == 1);
         if (deleteOK) {
-            Log.d(MainActivity.LOGTAG, "removeDose: dose " + id + " removed");
             if (medication != null) {
-                long medId = medication.getId();
-                boolean medRemoved = removeMedicationIfNoDoses(medication);
-                if (medRemoved)
-                    Log.d(MainActivity.LOGTAG, "removeDose: medication " + medId + " removed");
                 return Result.RESULT_OK;
             } else {
                 return Result.ERROR_UNKNOWN_ERROR;
@@ -743,14 +659,8 @@ public class DBDataSource {
      * @return number of deleted doses
      */
     public int removeAllFutureDosesForMed(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: start");
-        // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
-        String where = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
-        int numDeleted = database.delete(DBHelper.TABLE_DOSES, where, null);
-        Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: " + numDeleted + " doses deleted");
-        boolean medRemoved = removeMedicationIfNoDoses(medication);
-        Log.d(MainActivity.LOGTAG, "removeAllFutureDosesForMed: medication removed " + medRemoved);
-        return numDeleted;
+        String where = DBHelper.COLUMN_MED_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
+        return database.delete(DBHelper.TABLE_DOSES, where, null);
     }
 
     /**
@@ -760,13 +670,10 @@ public class DBDataSource {
      * @return number of deleted doses
      */
     public int removeAllDosesForMed(MedicationItem medication) {
-        Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: start");
-        // FUTURE TODO (re: medication list) Keep medications but need to be able to archive/remove them
-        String where = DBHelper.COLUMN_MEDICATION_ID + "=" + medication.getId();
+        String where = DBHelper.COLUMN_MED_ID + "=" + medication.getId();
         int numDeleted = database.delete(DBHelper.TABLE_DOSES, where, null);
-        Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: " + numDeleted + " doses deleted");
-        boolean medRemoved = removeMedicationIfNoDoses(medication);
-        Log.d(MainActivity.LOGTAG, "removeAllDosesForMed: medication removed " + medRemoved);
+        medication.setActive(true);
+        boolean updated = updateMedication(medication);
         return numDeleted;
     }
 

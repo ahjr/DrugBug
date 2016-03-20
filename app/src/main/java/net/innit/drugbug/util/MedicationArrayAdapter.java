@@ -1,7 +1,6 @@
 package net.innit.drugbug.util;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.innit.drugbug.MainActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.model.MedicationItem;
 
@@ -17,12 +15,11 @@ import java.util.List;
 
 public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
     private final Context context;
-    private final List<MedicationItem> data;
+    private List<MedicationItem> data;
 
     public MedicationArrayAdapter(Context context, List<MedicationItem> medications) {
         super(context, R.layout.list_item_medication, medications);
 
-        Log.d(MainActivity.LOGTAG, "MedicationArrayAdapter: adapter created");
         this.context = context;
         data = medications;
     }
@@ -47,13 +44,16 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Log.d(MainActivity.LOGTAG, "getView: medication name is " + medicationItem.getName());
-
-        mViewHolder.name.setText(medicationItem.getName());
+        String title = medicationItem.getName();
+        if (medicationItem.isArchived())
+            title += " (archived)";
+        else if (!medicationItem.isActive())
+            title += " (inactive)";
+        mViewHolder.name.setText(title);
         mViewHolder.frequency.setText(medicationItem.getFrequency());
 
         if (medicationItem.hasImage()) {
-            mViewHolder.image.setImageBitmap(medicationItem.getBitmap(context));
+            new BitmapHelper.BitmapWorkerTask(mViewHolder.image, medicationItem.getImagePath(), 50, 50).execute(context);
         }
 
         return convertView;
@@ -68,6 +68,11 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
         private TextView name;
         private TextView frequency;
         private ImageView image;
+    }
+
+    public void updateList(List<MedicationItem> list){
+        this.data = list;
+        notifyDataSetChanged();
     }
 }
 

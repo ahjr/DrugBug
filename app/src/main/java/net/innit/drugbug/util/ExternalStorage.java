@@ -1,6 +1,7 @@
 package net.innit.drugbug.util;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
@@ -23,25 +24,26 @@ public class ExternalStorage extends Storage {
         return instance;
     }
 
-    public void setStorageLocation(Storage oldStorage) {
+    protected void setStorageLocation(Storage oldStorage) {
         // if sd card is read/write
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            // if external directory doesnt exist
-            this.prepareDirectory();
-
-            // Move files from old storage location to here
-            if (oldStorage != null) {
-                boolean success = this.moveFiles(oldStorage);
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                // if external directory doesnt exist
+                this.prepareDirectory(oldStorage);
+                if (oldStorage != null) {
+                    boolean success = this.moveFiles(oldStorage);
+                }
+            } else {
+                Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
+                //revertToDefault(context);
             }
-
-        } else {
-            Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
-            //revertToDefault(context);
-        }
     }
 
     @Override
     public boolean isAvailable() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    }
+
+    protected Uri getStorageUri(File file) {
+        return Uri.fromFile(file);
     }
 }
