@@ -40,7 +40,7 @@ public enum Settings {
         return defaultValue;
     }
 
-    public String getDefault() throws IllegalArgumentException {
+    public String getDefault() {
         if (this == IMAGE_STORAGE) {
             throw new IllegalArgumentException("Settings.IMAGE_STORAGE.getDefault must be called with Context parameter");
         } else {

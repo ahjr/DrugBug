@@ -108,9 +108,7 @@ public class BitmapHelper {
         // Decode image in background.
         @Override
         protected Bitmap doInBackground(Context... params) {
-            ImageStorage imageStorage = ImageStorage.getInstance(params[0]);
-            String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
-            return BitmapHelper.decodeSampledBitmapFromFile(imageAbsPath, width, height);
+            return BitmapHelper.decodeSampledBitmapFromFile(imagePath, width, height);
         }
 
         // Once complete, see if ImageView is still around and set bitmap.

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -140,9 +139,7 @@ public class AddDoseActivity extends FragmentActivity {
         super.onResume();
 
         if (imageLocationOK && tempPath.isFile()) {
-            Bitmap image = BitmapHelper.decodeSampledBitmapFromFile(tempPath.getAbsolutePath(), 100, 100);
-
-            mMedImage.setImageBitmap(image);
+            new BitmapHelper.BitmapWorkerTask(mMedImage, tempPath.getAbsolutePath(), 100, 100);
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getFreqLabels());

@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -165,9 +164,11 @@ public class DetailFragment extends DialogFragment {
 
         // Replace the detail image with the medication's image, if there is one
         if (dose.getMedication().hasImage()) {
-            final Bitmap image = dose.getMedication().getBitmap(context, 100, 100);
+//            final Bitmap image = dose.getMedication().getBitmap(context, 100, 100);
             ImageView imageView = (ImageView) view.findViewById(R.id.ivDetailImage);
-            imageView.setImageBitmap(image);
+//            imageView.setImageBitmap(image);
+
+            dose.getMedication().getBitmap(context, imageView, 100, 100);
 
             // Make the image thumbnail clickable and show it full size when it's clicked on
             imageView.setClickable(true);

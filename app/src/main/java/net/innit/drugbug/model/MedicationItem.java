@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import net.innit.drugbug.R;
@@ -118,10 +119,32 @@ public class MedicationItem implements Comparable<MedicationItem> {
         return name;
     }
 
+    /**
+     * Returns the image associated with this medication as a Bitmap
+     *
+     * @param context Context for this bitmap
+     * @param width Width of the image
+     * @param height Height of the image
+     * @return the medication image as a bitmap
+     */
     public Bitmap getBitmap(Context context, int width, int height) {
         ImageStorage imageStorage = ImageStorage.getInstance(context);
         String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
         return BitmapHelper.decodeSampledBitmapFromFile(imageAbsPath, width, height);
+    }
+
+    /**
+     * Loads the medication image into given ImageView in the background
+     *
+     * @param context Context for this bitmap
+     * @param imageView ImageView to update when bitmap is loaded
+     * @param width Width of the image
+     * @param height Height of the image
+     */
+    public void getBitmap(Context context, ImageView imageView, int width, int height) {
+        ImageStorage imageStorage = ImageStorage.getInstance(context);
+        String imageAbsPath = imageStorage.getAbsDir() + "/" + imagePath;
+        new BitmapHelper.BitmapWorkerTask(imageView, imageAbsPath, width, height).execute(context);
     }
 
     /**
@@ -236,6 +259,4 @@ public class MedicationItem implements Comparable<MedicationItem> {
             }
         }).create().show();
     }
-
-
 }
