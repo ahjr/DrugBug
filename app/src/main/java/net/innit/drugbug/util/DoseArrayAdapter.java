@@ -17,6 +17,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_LIST;
+import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_LIST;
+
 /**
  * Listview array adapter for taken and future doses
  */
@@ -104,7 +107,7 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
 
         // Replace placeholder image thumbnail with medication's image
         if (doseItem.getMedication().hasImage()) {
-            new BitmapHelper.BitmapWorkerTask(mViewHolder.image, doseItem.getMedication().getImagePath(), 50, 50).execute(context);
+            doseItem.getMedication().getBitmap(context, mViewHolder.image, IMAGE_WIDTH_LIST, IMAGE_HEIGHT_LIST);
         } else {
             mViewHolder.image.setImageResource(R.drawable.default_image);
         }

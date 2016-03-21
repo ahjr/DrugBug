@@ -30,6 +30,8 @@ import java.util.Date;
 
 import static net.innit.drugbug.util.Constants.ACTION;
 import static net.innit.drugbug.util.Constants.ACTION_EDIT;
+import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_PREVIEW;
+import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_PREVIEW;
 import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.util.Constants.SORT;
@@ -164,11 +166,9 @@ public class DetailFragment extends DialogFragment {
 
         // Replace the detail image with the medication's image, if there is one
         if (dose.getMedication().hasImage()) {
-//            final Bitmap image = dose.getMedication().getBitmap(context, 100, 100);
             ImageView imageView = (ImageView) view.findViewById(R.id.ivDetailImage);
-//            imageView.setImageBitmap(image);
 
-            dose.getMedication().getBitmap(context, imageView, 100, 100);
+            dose.getMedication().getBitmap(context, imageView, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
 
             // Make the image thumbnail clickable and show it full size when it's clicked on
             imageView.setClickable(true);

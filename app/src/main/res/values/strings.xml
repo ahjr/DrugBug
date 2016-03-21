@@ -109,4 +109,11 @@
     <string name="taken_dialog_negative">No, cancel</string>
     <string name="taken_dialog_positive">Yes, it\'s taken</string>
     <string name="taken_dialog_title">Take dose</string>
+    <string name="add_dose_error_invalid_date">Invalid date format</string>
+    <string name="settings_convert_string_year">" year "</string>
+    <string name="settings_convert_string_years">" years "</string>
+    <string name="settings_convert_string_month">" month "</string>
+    <string name="settings_convert_string_months">" months "</string>
+    <string name="settings_convert_string_day">" day"</string>
+    <string name="settings_convert_string_days">" days"</string>
 </resources>

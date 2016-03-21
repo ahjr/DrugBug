@@ -2,6 +2,7 @@ package net.innit.drugbug.data;
 
 import android.content.Context;
 
+import net.innit.drugbug.R;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.ImageStorage;
@@ -11,28 +12,11 @@ import java.util.List;
 import static net.innit.drugbug.util.Constants.TYPE_MISSED;
 import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
 
-//import net.innit.drugbug.util.ExternalStorage;
-
 public class SettingsHelper {
-//    public static final String KEY_NUM_DOSES = "NumFutureDoses";
-//    public static final String DEFAULT_NUM_DOSES = "5";
-//    public static final String KEY_KEEP_TIME_TAKEN = "KeepTimeTaken";
-//    public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
-//    public static final String KEY_KEEP_TIME_MISSED = "KeepTimeMissed";
-//    public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
-//    public static final String KEY_IMAGE_STORAGE = "StorageLoc";
-//
-//    private final String DEFAULT_IMAGE_STORAGE;
-
     private final DBDataSource db;
 
     public SettingsHelper(Context context) {
         db = new DBDataSource(context);
-//        if (ExternalStorage.getInstance(context, ImageStorage.IMAGE_DIR).isAvailable()) {
-//            DEFAULT_IMAGE_STORAGE = "EXTERNAL";
-//        } else {
-//            DEFAULT_IMAGE_STORAGE = "INTERNAL";
-//        }
     }
 
     public static int[] parseKeepTime(String keepTimeString) {
@@ -44,28 +28,23 @@ public class SettingsHelper {
         return a;
     }
 
-    public static String convertString(String input) {
+    public static String convertString(Context context, String input) {
         String[] splitString = input.split(":");
         String output = "";
-        if ((Integer.parseInt(splitString[0]) > 0)) {
-            if (Integer.parseInt(splitString[0]) == 1) {
-                output += splitString[0] + " year ";
-            } else {
-                output += splitString[0] + " years ";
-            }
-        }
-        if ((Integer.parseInt(splitString[1]) > 0)) {
-            if (Integer.parseInt(splitString[1]) == 1) {
-                output += splitString[1] + " month ";
-            } else {
-                output += splitString[1] + " months ";
-            }
-        }
-        if ((Integer.parseInt(splitString[2]) > 0)) {
-            if (Integer.parseInt(splitString[2]) == 1) {
-                output += splitString[2] + " day";
-            } else {
-                output += splitString[2] + " days";
+        String[] singleStrings = new String[] {
+                context.getString(R.string.settings_convert_string_year),
+                context.getString(R.string.settings_convert_string_month),
+                context.getString(R.string.settings_convert_string_day)
+        };
+        String[] pluralStrings = new String[] {
+                context.getString(R.string.settings_convert_string_years),
+                context.getString(R.string.settings_convert_string_months),
+                context.getString(R.string.settings_convert_string_days)
+        };
+
+        for (int i = 0; i < 3; i++) {
+            if ((Integer.parseInt(splitString[i]) > 0)) {
+                output += splitString[i] + (Integer.parseInt(splitString[i]) == 1 ? singleStrings[i] : pluralStrings[i]);
             }
         }
 
@@ -75,37 +54,41 @@ public class SettingsHelper {
     public void numDosesChanged(int maxNumDoses, int oldNumDoses) {
         db.open();
         List<MedicationItem> medications = db.getAllMedicationsActive();
+        db.close();
         for (MedicationItem medication : medications) {
             int difference = maxNumDoses - oldNumDoses;
             if (difference > 0) {
-                // number of doses has increased
-                // add $DIFFERENCE doses based on lastDose
-                // Get last dose
-                DoseItem lastFutureDose = db.getLastDose(medication);
-                if (lastFutureDose != null) {
-                    int doseCount = (int) db.getFutureDoseCount(medication);
-                    while (maxNumDoses > doseCount) {
-                        db.getNextFuture(medication);
-                        doseCount++;
-                    }
-                }
+                increaseDoses(maxNumDoses, medication);
 
             } else if (difference < 0) {
-                // number of doses has decreased
-                // Get current number of future doses and remove doses until the number equals new max number
-                int doseCount = (int) db.getFutureDoseCount(medication);
-                while (doseCount > maxNumDoses) {
-                    // Get last future dose for this medication
-                    DoseItem lastFutureDose = db.getLastDose(medication);
-                    // getLastDose returns null if there isn't one
-                    if (lastFutureDose != null) {
-                        db.removeDose(lastFutureDose.getId(), false);
-                    }
-                    doseCount--;
-                }
+                decreaseDoses(maxNumDoses, medication);
             } // if difference is 0, we'll do nothing
         }
+    }
 
+    private void decreaseDoses(int maxNumDoses, MedicationItem medication) {
+        db.open();
+        int doseCount = (int) db.getFutureDoseCount(medication);
+        while (doseCount > maxNumDoses) {
+            DoseItem lastFutureDose = db.getLastDose(medication);
+            if (lastFutureDose != null) {
+                db.removeDose(lastFutureDose.getId(), false);
+            }
+            doseCount--;
+        }
+        db.close();
+    }
+
+    private void increaseDoses(int maxNumDoses, MedicationItem medication) {
+        db.open();
+        DoseItem lastFutureDose = db.getLastDose(medication);
+        if (lastFutureDose != null) {
+            int doseCount = (int) db.getFutureDoseCount(medication);
+            while (maxNumDoses > doseCount) {
+                db.getNextFuture(medication);
+                doseCount++;
+            }
+        }
         db.close();
     }
 

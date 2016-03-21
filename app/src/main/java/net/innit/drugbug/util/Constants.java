@@ -88,12 +88,22 @@ public class Constants {
     public static final int SOURCE_DETAIL_FUTURE = 3001011;
 
     /**
-     * Settings defaults constants
+     * SettingsEnum defaults constants
      */
     public static final String DEFAULT_NUM_DOSES = "5";
     public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
     public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
     public static final String DEFAULT_IMAGE_STORAGE_EXTERNAL = "EXTERNAL";
     public static final String DEFAULT_IMAGE_STORAGE_INTERNAL = "INTERNAL";
+
+    /**
+     * Image size constants
+     */
+    public static final int IMAGE_HEIGHT_FULL = 0;
+    public static final int IMAGE_WIDTH_FULL = 0;
+    public static final int IMAGE_HEIGHT_LIST = 50;
+    public static final int IMAGE_WIDTH_LIST = 50;
+    public static final int IMAGE_HEIGHT_PREVIEW = 100;
+    public static final int IMAGE_WIDTH_PREVIEW = 100;
 
 }

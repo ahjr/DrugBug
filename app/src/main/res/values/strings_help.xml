@@ -140,7 +140,7 @@
     <string name="main_med_text2a">Medications with no associated doses</string>
     <string name="main_med_text3">Touch list icon to view reminder list</string>
 
-    <!-- Settings strings -->
+    <!-- SettingsEnum strings -->
     <string name="settings_title">Help - Settings</string>
     <string name="settings_num_future_label">Number of future doses to generate</string>
     <string name="settings_num_future_text">When medication is created, this setting determines how many future doses to generate.</string>

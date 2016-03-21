@@ -13,6 +13,9 @@ import net.innit.drugbug.model.MedicationItem;
 
 import java.util.List;
 
+import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_LIST;
+import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_LIST;
+
 public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
     private final Context context;
     private List<MedicationItem> data;
@@ -53,7 +56,7 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
         mViewHolder.frequency.setText(medicationItem.getFrequency());
 
         if (medicationItem.hasImage()) {
-            new BitmapHelper.BitmapWorkerTask(mViewHolder.image, medicationItem.getImagePath(), 50, 50).execute(context);
+            medicationItem.getBitmap(context, mViewHolder.image, IMAGE_WIDTH_LIST, IMAGE_HEIGHT_LIST);
         }
 
         return convertView;

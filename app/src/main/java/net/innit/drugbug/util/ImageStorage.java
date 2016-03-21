@@ -1,9 +1,7 @@
 package net.innit.drugbug.util;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.util.ArrayMap;
 
 import net.innit.drugbug.data.Settings;
@@ -27,8 +25,8 @@ public class ImageStorage {
         locations.put("INTERNAL", InternalStorage.getInstance(context, IMAGE_DIR));
         locations.put("EXTERNAL", ExternalStorage.getInstance(context, IMAGE_DIR));
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.locationType = sharedPreferences.getString(Settings.IMAGE_STORAGE.getKey(), Settings.IMAGE_STORAGE.getDefault(context));
+        Settings settings = Settings.getInstance();
+        this.locationType = settings.getString(Settings.Key.IMAGE_STORAGE);
 
         setLocationType(locationType);
     }

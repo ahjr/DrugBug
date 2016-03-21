@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.preference.PreferenceManager;
 
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
@@ -334,22 +333,17 @@ public class DBDataSource {
 
     }
 
-    private void cleanDB(Context context) {
+    private void cleanDB() {
+        Settings settings = Settings.getInstance();
         // Get missed keep time from SharedPreferences and convert it into an array: [y, m, d]
-        String keepTimeString = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(Settings.KEEP_TIME_MISSED.getKey(), Settings.KEEP_TIME_MISSED.getDefault(context));
-        int numDeleted = removeOldDoses(TYPE_MISSED, keepTimeString);
+        int numDeleted = removeOldDoses(TYPE_MISSED, settings.getString(Settings.Key.KEEP_TIME_MISSED));
 
         // Get taken keep time from SharedPreferences and convert it into an array: [y, m, d]
-        keepTimeString = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(Settings.KEEP_TIME_TAKEN.getKey(), Settings.KEEP_TIME_TAKEN.getDefault(context));
-        numDeleted = removeOldDoses(TYPE_TAKEN, keepTimeString);
+        numDeleted = removeOldDoses(TYPE_TAKEN, settings.getString(Settings.Key.KEEP_TIME_TAKEN));
     }
 
-    private List<DoseItem> getAllDoses(Context context, MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
-        cleanDB(context);
+    private List<DoseItem> getAllDoses(MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
+        cleanDB();
 
         List<String> selection = new ArrayList<>();
 
@@ -409,7 +403,7 @@ public class DBDataSource {
     }
 
     public List<DoseItem> getAllDosesForMed(Context context, MedicationItem medication) {
-        return getAllDoses(context, medication, null, false, false, false);
+        return getAllDoses(medication, null, false, false, false);
     }
 
     /**
@@ -419,7 +413,7 @@ public class DBDataSource {
      * @return List of future doses as DoseItem objects
      */
     public List<DoseItem> getAllFuture(Context context) {
-        return getAllDoses(context, null, null, false, true, false);
+        return getAllDoses(null, null, false, true, false);
     }
 
     /**
@@ -429,11 +423,11 @@ public class DBDataSource {
      * @return List of DoseItem objects
      */
     public List<DoseItem> getAllFutureForMed(Context context, MedicationItem medication) {
-        return getAllDoses(context, medication, null, false, true, false);
+        return getAllDoses(medication, null, false, true, false);
     }
 
     public List<DoseItem> getAllTakenForMed(Context context, MedicationItem medication) {
-        return getAllDoses(context, medication, null, true, false, false);
+        return getAllDoses(medication, null, true, false, false);
     }
 
     /**
@@ -442,7 +436,7 @@ public class DBDataSource {
      * @return List of DoseItem objects
      */
     public List<DoseItem> getAllFutureWithReminder(Context context) {
-        return getAllDoses(context, null, null, false, true, true);
+        return getAllDoses(null, null, false, true, true);
     }
 
     /**
@@ -452,11 +446,11 @@ public class DBDataSource {
      * @return List of DoseItem objects
      */
     public List<DoseItem> getAllTaken(Context context) {
-        return getAllDoses(context, null, null, true, false, false);
+        return getAllDoses(null, null, true, false, false);
     }
 
     public List<DoseItem> getAllDosesForDate(Context context, Date date) {
-        return getAllDoses(context, null, date, false, false, false);
+        return getAllDoses(null, date, false, false, false);
     }
 
     private DoseItem getSingleDose(MedicationItem medication, String selection, String orderBy) {
