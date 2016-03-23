@@ -94,13 +94,13 @@ public class SettingsHelper {
 
     public void keepTimeTakenChanged(String keepTimeString) {
         db.open();
-        int numRemoved = db.removeOldDoses(TYPE_TAKEN, keepTimeString);
+        db.removeOldDoses(TYPE_TAKEN, keepTimeString);
         db.close();
     }
 
     public void keepTimeMissedChanged(String keepTimeString) {
         db.open();
-        int numRemoved = db.removeOldDoses(TYPE_MISSED, keepTimeString);
+        db.removeOldDoses(TYPE_MISSED, keepTimeString);
         db.close();
     }
 

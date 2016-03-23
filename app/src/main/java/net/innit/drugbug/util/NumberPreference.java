@@ -10,11 +10,12 @@ import android.widget.NumberPicker;
 
 import net.innit.drugbug.R;
 
+import static net.innit.drugbug.util.Constants.DEFAULT_NUM_DOSES;
+
 /**
  * Preference type with a single number spinner
  */
 public class NumberPreference extends DialogPreference {
-    private static final int DEFAULT_VALUE = 10;
     private static final int MIN_VALUE = 1;
     private static final int MAX_VALUE = 30;
     private NumberPicker picker;
@@ -30,7 +31,7 @@ public class NumberPreference extends DialogPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            persistInt(picker.getValue());
+            persistString(String.valueOf(picker.getValue()));
         }
     }
 
@@ -38,17 +39,17 @@ public class NumberPreference extends DialogPreference {
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
             // Restore existing state
-            value = this.getPersistedInt(DEFAULT_VALUE);
+            value = Integer.parseInt(this.getPersistedString(DEFAULT_NUM_DOSES));
         } else {
             // Set default state from the XML attribute
             value = (Integer) defaultValue;
-            persistInt(value);
+            persistString(String.valueOf(value));
         }
     }
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getInteger(index, DEFAULT_VALUE);
+        return a.getString(index);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class NumberPreference extends DialogPreference {
         // Initialize state
         picker.setMaxValue(MAX_VALUE);
         picker.setMinValue(MIN_VALUE);
-        picker.setValue(value);
+        picker.setValue(Integer.parseInt(getPersistedString(DEFAULT_NUM_DOSES)));
         picker.setWrapSelectorWheel(false);
 
         return view;

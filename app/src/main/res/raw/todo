@@ -10,7 +10,7 @@ todo Handle reminder changes better
 -- Currently removing reminder from one dose changes all
 -- Should probably give the option to remove all or one
 
-todo Future dose list help screen is wrong --> Can't replicate this
+todo Future dose list help screen is wrong --> Can't replicate this, so probably a testing glitch
 
 todo Back from Medication list(inactive) -> dose list returns to default filter
 -- Pretty sure the only way to change this is to have 2 different filter extras (med_filter and dose_filter?)
@@ -31,3 +31,5 @@ todo Extract string resources from code (probably still some in xml too)
 todo Trace usage of Context
 -- I'm almost certainly using it wrong in some places
 -- https://possiblemobile.com/2013/06/context/
+
+todo All doses showing as red at the moment.  Not sure why.  May be related to the AddDoseActivity refactor.

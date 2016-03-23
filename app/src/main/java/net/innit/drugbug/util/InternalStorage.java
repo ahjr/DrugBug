@@ -7,17 +7,20 @@ import android.support.v4.content.FileProvider;
 import java.io.File;
 
 public class InternalStorage extends Storage {
+    public static final String DISPLAY = "Internal";
+    public static final String TYPE = "INTERNAL";
+
     private static InternalStorage instance;
 
     private static final String MED_IMAGE_FILE_PROVIDER = "net.innit.drugbug.med_image.fileprovider";
     private final Context context;
 
     private InternalStorage(Context context, String subDir) {
-        super(context.getFilesDir(), subDir, "Internal", "INTERNAL");
+        super(context.getFilesDir(), subDir, DISPLAY, TYPE);
         this.context = context;
     }
 
-    public static InternalStorage getInstance(Context context, String subDir) {
+    protected static InternalStorage getInstance(Context context, String subDir) {
         if (instance == null) {
             instance = new InternalStorage(context, subDir);
         }

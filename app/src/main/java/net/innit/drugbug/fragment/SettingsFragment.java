@@ -18,8 +18,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     private int oldNumDoses;                // Holder field for initial number of doses to keep
     private ImageStorage imageStorage;      // Image storage object
-    private SettingsHelper settingsHelper;  // SettingsEnum constants and methods
-    private Settings sharedPreferences;
+    private SettingsHelper settingsHelper;  // Settings constants and methods
+    private Settings settings;
     private Context context;
 
     @Override
@@ -29,8 +29,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         context = getActivity().getApplicationContext();
         settingsHelper = new SettingsHelper(context);
 
-        sharedPreferences = Settings.getInstance(context);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        settings = Settings.getInstance(context);
+        settings.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
-        oldNumDoses = sharedPreferences.getInt(Settings.Key.NUM_DOSES);
+        oldNumDoses = Integer.parseInt(settings.getString(Settings.Key.NUM_DOSES));
 
         imageStorage = ImageStorage.getInstance(context);
 
@@ -51,9 +51,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         values = locations.keySet();
         listPreference.setEntryValues(values.toArray(new String[values.size()]));
 
-        imageStorage.setLocationType(sharedPreferences.getString(Settings.Key.IMAGE_STORAGE));
+        imageStorage.setLocationType(settings.getString(Settings.Key.IMAGE_STORAGE));
 
-        setSummaries(sharedPreferences);
+        setSummaries(settings);
     }
 
     @Override
@@ -63,20 +63,20 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         Settings.Key key = Settings.Key.valueOf(keyString);
         switch (key) {
             case NUM_DOSES:
-                settingsHelper.numDosesChanged(sharedPreferences.getInt(key), oldNumDoses);
+                settingsHelper.numDosesChanged(Integer.parseInt(settings.getString(key)), oldNumDoses);
                 break;
             case KEEP_TIME_TAKEN:
-                settingsHelper.keepTimeTakenChanged(sharedPreferences.getString(key));
+                settingsHelper.keepTimeTakenChanged(settings.getString(key));
                 break;
             case KEEP_TIME_MISSED:
-                settingsHelper.keepTimeMissedChanged(sharedPreferences.getString(key));
+                settingsHelper.keepTimeMissedChanged(settings.getString(key));
                 break;
             case IMAGE_STORAGE:
-                imageStorage.setLocationType(sharedPreferences.getString(key));
+                imageStorage.setLocationType(settings.getString(key));
                 settingsHelper.imageStorageChanged(imageStorage);
                 break;
         }
-        setSummaries(sharedPreferences);
+        setSummaries(settings);
     }
 
     /**
@@ -87,7 +87,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private void setSummaries(Settings sharedPreferences) {
         // Set summary for number of untaken doses to keep
         findPreference(Settings.Key.NUM_DOSES.name())
-                .setSummary("Current: " + sharedPreferences.getInt(Settings.Key.NUM_DOSES));
+                .setSummary("Current: " + sharedPreferences.getString(Settings.Key.NUM_DOSES));
 
         // Set summary for taken dose keep time
         findPreference(Settings.Key.KEEP_TIME_TAKEN.name())

@@ -8,16 +8,19 @@ import android.widget.Toast;
 import java.io.File;
 
 public class ExternalStorage extends Storage {
+    public static final String DISPLAY = "SD Card";
+    public static final String TYPE = "EXTERNAL";
+
     private static ExternalStorage instance;
 
     private final Context context;
 
     private ExternalStorage(Context context, String subDir) {
-        super(new File(Environment.getExternalStorageDirectory(), context.getPackageName()), subDir, "SD Card", "EXTERNAL");
+        super(new File(Environment.getExternalStorageDirectory(), context.getPackageName()), subDir, DISPLAY, TYPE);
         this.context = context;
     }
 
-    public static ExternalStorage getInstance(Context context, String subDir) {
+    protected static ExternalStorage getInstance(Context context, String subDir) {
         if (instance == null) {
             instance = new ExternalStorage(context, subDir);
         }

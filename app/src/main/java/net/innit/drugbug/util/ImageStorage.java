@@ -13,7 +13,7 @@ import java.util.Map;
  * Object for manipulating the app image storage
  */
 public class ImageStorage {
-    public static final String IMAGE_DIR = "images/medications";
+    public static final String DIR = "images/medications";
     private static ImageStorage instance;
     private String locationType;    // File storage location type - INTERNAL or EXTERNAL
     private final Map<String, Storage> locations = new ArrayMap<>();
@@ -22,27 +22,27 @@ public class ImageStorage {
      * @param context Context for this object
      */
     private ImageStorage(Context context) {
-        locations.put("INTERNAL", InternalStorage.getInstance(context, IMAGE_DIR));
-        locations.put("EXTERNAL", ExternalStorage.getInstance(context, IMAGE_DIR));
+        locations.put(InternalStorage.TYPE, InternalStorage.getInstance(context, DIR));
+        locations.put(ExternalStorage.TYPE, ExternalStorage.getInstance(context, DIR));
 
-        Settings settings = Settings.getInstance();
-        this.locationType = settings.getString(Settings.Key.IMAGE_STORAGE);
+        Settings settings = Settings.getInstance(context.getApplicationContext());
+        this.locationType = settings.getString(Settings.Key.IMAGE_STORAGE, getDefault());
 
         setLocationType(locationType);
     }
 
     public static ImageStorage getInstance(Context context) {
         if (instance == null) {
-            instance = new ImageStorage(context);
+            instance = new ImageStorage(context.getApplicationContext());
         }
         return instance;
     }
 
     public String getDefault() {
-        if (locations.get("EXTERNAL").isAvailable()) {
-            return "EXTERNAL";
+        if (locations.get(ExternalStorage.TYPE).isAvailable()) {
+            return ExternalStorage.TYPE;
         } else {
-            return "INTERNAL";
+            return InternalStorage.TYPE;
         }
     }
     /**

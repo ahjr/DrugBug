@@ -8,7 +8,9 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +37,7 @@ import net.innit.drugbug.util.Reminder;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +53,7 @@ import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_PREVIEW;
 import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_PREVIEW;
 import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
+import static net.innit.drugbug.util.Constants.LOG;
 import static net.innit.drugbug.util.Constants.SORT;
 import static net.innit.drugbug.util.Constants.SOURCE;
 import static net.innit.drugbug.util.Constants.SOURCE_ADD_DOSE;
@@ -61,11 +65,12 @@ import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
 
 
 public class AddDoseActivity extends FragmentActivity {
-
     private static final int REQUEST_TAKE_PICTURE = 300;
 
     private final DBDataSource db = new DBDataSource(this);
+
     private String action;
+    private String type;
     private String sortOrder;
     private String filter;
 
@@ -74,8 +79,7 @@ public class AddDoseActivity extends FragmentActivity {
 
     private DoseItem doseItem = new DoseItem();
     private Date origDate;
-    private String freqOrig;
-    private String type;
+    private String origFreq;
 
     private boolean wasChecked;
     private boolean imageLocationOK;
@@ -86,9 +90,10 @@ public class AddDoseActivity extends FragmentActivity {
     private TextView mDosage;
     private TextView mDateTimeLabel;
     private EditText mDateTime;
-    private final DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
     private CheckBox mReminder;
     private Spinner mFrequency;
+
+    private final DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
 
     private final SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -96,7 +101,6 @@ public class AddDoseActivity extends FragmentActivity {
         public void onDateTimeSet(Date date) {
             // Do something with the date. This Date object contains
             // the date and time that the user has selected.
-            doseItem.setDate(date);
             mDateTime.setText(sdf.format(doseItem.getDate()));
         }
 
@@ -115,7 +119,6 @@ public class AddDoseActivity extends FragmentActivity {
         Bundle bundle = getIntent().getExtras();
         action = bundle.getString(ACTION, ACTION_ADD);
         type = bundle.getString(TYPE, TYPE_NONE);
-        Long medId = bundle.getLong(INTENT_MED_ID);
         sortOrder = bundle.getString(SORT);
         filter = bundle.getString(FILTER_DOSE);
 
@@ -123,17 +126,15 @@ public class AddDoseActivity extends FragmentActivity {
 
         switch (action) {
             case ACTION_EDIT:
-                populateOnEdit(bundle);
+                setupForEdit(bundle);
                 break;
             case ACTION_RESTORE:
-                restoreMed(medId);
+                setupForRestore(bundle);
                 break;
             case ACTION_REACTIVATE:
-                reactivateMed(bundle);
+                setupForReactivate(bundle);
                 break;
         }
-
-
     }
 
     @Override
@@ -141,61 +142,67 @@ public class AddDoseActivity extends FragmentActivity {
         super.onResume();
 
         if (imageLocationOK && tempPath.isFile()) {
-            // TODO: 3/19/16 This isn't working properly.  Could be related to it being an ImageButton rather than an ImageView.
-//            new BitmapHelper.BitmapWorkerTask(mMedImage, tempPath.getAbsolutePath(), 100, 100);
             Bitmap image = BitmapHelper.decodeSampledBitmapFromFile(tempPath.getAbsolutePath(), IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
-
-            mMedImage.setImageBitmap(image);        }
+            mMedImage.setImageBitmap(image);
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getFreqLabels());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mFrequency.setAdapter(adapter);
 
-        if (action.equals(ACTION_EDIT)) {
-            mMedName.setText(doseItem.getMedication().getName());
+        switch (action) {
+            case ACTION_EDIT:
+                mMedName.setText(doseItem.getMedication().getName());
 
-            mDosage.setText(doseItem.getDosage());
+                mDosage.setText(doseItem.getDosage());
 
-            mReminder.setChecked(doseItem.isReminderSet());
-            wasChecked = doseItem.isReminderSet();
-
-            mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
-        } else if (action.equals(ACTION_REACTIVATE)) {
-            mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
+                mReminder.setChecked(doseItem.isReminderSet());
+                wasChecked = doseItem.isReminderSet();
+            case ACTION_RESTORE:
+                mMedName.setText(doseItem.getMedication().getName());
+            case ACTION_REACTIVATE:
+                mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
         }
     }
 
-    private void reactivateMed(Bundle bundle) {
+    private void setupForEdit(Bundle bundle) {
         db.open();
         doseItem = db.getDose(bundle.getLong(INTENT_DOSE_ID));
         db.close();
 
-        freqOrig = doseItem.getMedication().getFrequency();
+        setupForAll(R.string.add_dose_title_edit);
 
-        if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().getBitmap(this, mMedImage, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
-        }
-
-        setTitle("Reactivate Medication");
+        mDateTimeLabel.setText(R.string.add_dose_datetime_label);
+        mDateTime.setText(sdf.format(doseItem.getDate()));
+        origDate = doseItem.getDate();
     }
 
-    private void restoreMed(Long medId) {
+    private void setupForReactivate(Bundle bundle) {
         db.open();
-        MedicationItem medicationItem = db.getMedication(medId);
+        doseItem = db.getDose(bundle.getLong(INTENT_DOSE_ID));
         db.close();
 
+        setupForAll(R.string.add_dose_title_reactivate);
+    }
+
+    private void setupForRestore(Bundle bundle) {
+        db.open();
+        MedicationItem medicationItem = db.getMedication(bundle.getLong(INTENT_MED_ID));
         doseItem.setMedication(medicationItem);
-        doseItem.setDate(new Date());       // set date to now
-        freqOrig = doseItem.getMedication().getFrequency();
+        db.close();
+
+        setupForAll(R.string.add_dose_title_restore);
+    }
+
+    private void setupForAll(int res) {
+        origFreq = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
             doseItem.getMedication().getBitmap(this, mMedImage, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
         }
-        mDateTime.setText(sdf.format(doseItem.getDate()));
-        mMedName.setText(doseItem.getMedication().getName());
 
-        setTitle("Restore Medication");
+        setTitle(getString(res));
     }
 
     private void setupViews() {
@@ -207,24 +214,6 @@ public class AddDoseActivity extends FragmentActivity {
         mReminder = (CheckBox) findViewById(R.id.cbAddMedReminder);
         mReminder.setChecked(true);
         mFrequency = (Spinner) findViewById(R.id.spAddMedFreq);
-    }
-
-    private void populateOnEdit(Bundle bundle) {
-        db.open();
-        doseItem = db.getDose(bundle.getLong(INTENT_DOSE_ID));
-        db.close();
-
-        freqOrig = doseItem.getMedication().getFrequency();
-
-        if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().getBitmap(this, mMedImage, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
-        }
-
-        mDateTimeLabel.setText(R.string.add_dose_datetime_label);
-        mDateTime.setText(sdf.format(doseItem.getDate()));
-        origDate = doseItem.getDate();
-
-        setTitle(R.string.add_dose_title_edit);
     }
 
     private boolean setupImageLocation() {
@@ -254,18 +243,22 @@ public class AddDoseActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_default_help:
-                Bundle bundle = new Bundle();
-                bundle.putInt(SOURCE, (action.equals(ACTION_EDIT)) ? SOURCE_EDIT_DOSE : SOURCE_ADD_DOSE);
-
-                HelpFragment fragment = new HelpFragment();
-                fragment.setArguments(bundle);
-                fragment.show(getFragmentManager(), "Help Fragment");
+                launchHelpDialog();
                 return true;
             case android.R.id.home:
                 onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void launchHelpDialog() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(SOURCE, (action.equals(ACTION_EDIT)) ? SOURCE_EDIT_DOSE : SOURCE_ADD_DOSE);
+
+        HelpFragment fragment = new HelpFragment();
+        fragment.setArguments(bundle);
+        fragment.show(getFragmentManager(), "Help Fragment");
     }
 
     @Override
@@ -289,6 +282,9 @@ public class AddDoseActivity extends FragmentActivity {
     public void onClickAddMedAddImage(View view) {
         // Delete any temp file left over from a previous addition
         boolean fileDeleted = tempPath.delete();
+        if (fileDeleted) {
+            Log.i(LOG, "onClickAddMedAddImage: Temporary file deleted: " + tempPath.toString());
+        }
         Uri outputFileUri = imageStorage.getStorageUri(tempPath);
         if (hasCamera()) {
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -300,111 +296,57 @@ public class AddDoseActivity extends FragmentActivity {
     }
 
     public void onClickAddMedSave(View view) {
+
+        MedicationItem medication = getMedicationItem();
+
         db.open();
-
-        MedicationItem medication = (action.equals(ACTION_ADD) ? new MedicationItem() : doseItem.getMedication());
-        medication.setArchived(false);
-        medication.setActive(true);
-
-        medication.setName(mMedName.getText().toString());
-
-        medication.setFrequency(mFrequency.getSelectedItem().toString());
-
-        boolean freqChanged = false;
-        // If frequency has changed, remove all old future doses
-        if (action.equals(ACTION_EDIT)) {
-            if (!medication.getFrequency().equals(freqOrig)) {
-                // frequency has changed, so delete all previous futures with this medId
-                int dosesRemoved = db.removeAllFutureDosesForMed(medication);
-                freqChanged = true;
-            }
-        }
-
-        // Rename temp image file to medication name
-        if (imageLocationOK && tempPath.isFile()) {
-            String filename = medication.getName().toLowerCase().replace(" ", "_") + ".jpg";
-            File path = new File(dir, filename);
-            boolean success = tempPath.renameTo(path);
-            medication.setImagePath(filename);
-        }
-
-        if (!medication.getName().equals("")) {
+        if (medication.getName().equals("")) {
+            // Medication name is empty
+            Toast.makeText(this, R.string.add_dose_error_blank_name, Toast.LENGTH_SHORT).show();
+        } else {
             if (action.equals(ACTION_ADD)) {
                 medication = db.createMedication(medication);
             } else {
-                boolean updateOK = (db.updateMedication(medication));
+                db.updateMedication(medication);
             }
 
-            // Figure out how many future items to create
-//            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-//            int numFutureDoses = preferences.getInt(SettingsEnum.NUM_DOSES.getKey(), Integer.parseInt(SettingsEnum.NUM_DOSES.getDefault()));
-            // Should be okay to call getInstance without context because it will always be called with from MainActivity
-            Settings preferences = Settings.getInstance();
-            int numFutureDoses = preferences.getInt(Settings.Key.NUM_DOSES);
-
-            // For # of future items, create a future item using the medication id created earlier
             doseItem.setDosage(mDosage.getText().toString());
 
             doseItem.setReminder(mReminder.isChecked());
 
-            if (DateUtil.determineDateFormat(mDateTime.getText().toString()) != null) {
-
-                if (!doseItem.getDosage().equals("")) {
-                    Date doseDate = doseItem.getDate();
-                    Calendar calendar;
-                    if (action.equals(ACTION_EDIT) && !freqChanged) {
-                        // todo Refactoring missed doses should help this.  Currently changing future dates doesn't handle changing time backwards at all.
+            if (!setDoseDate()) {
+                Toast.makeText(this, R.string.add_dose_error_invalid_date, Toast.LENGTH_SHORT).show();
+            } else {
+                if (doseItem.getDosage().equals("")) {
+                    // Dosage is empty
+                    Toast.makeText(this, R.string.add_dose_error_blank_dosage, Toast.LENGTH_SHORT).show();
+                } else {
+                    if (action.equals(ACTION_EDIT) && !checkFreqChanged(medication)) {
+                        // todo Changing future dates doesn't handle changing time backwards at all.
+                        // -- Refactoring missed doses might help fix this
                         List<DoseItem> doses = db.getAllFutureForMed(this, medication);
-                        DoseItem prevDose = doseItem;
+                        DoseItem nextDose = doseItem;
                         for (DoseItem futureDose : doses) {
-                            if (futureDose.getId() != doseItem.getId()) {
-                                // Only do the setting if this is not the dose currently being edited
-                                if (futureDose.getDate().getTime() > origDate.getTime()) {
-                                    futureDose.setDate(prevDose.nextDate(this));
-                                    prevDose = futureDose;
-                                }
-                                futureDose.setDosage(doseItem.getDosage());
-                                futureDose.setReminder(doseItem.isReminderSet());
-                            } else {
-                                futureDose = doseItem;
-                            }
-
-                            if (db.updateDose(futureDose)) {
-                                if (doseItem.isReminderSet() && !wasChecked) {
-                                    // if reminder is true and wasChecked is false
-                                    // create a reminder
-                                    new Reminder(this).startReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, futureDose);
-                                } else if (!doseItem.isReminderSet() && wasChecked) {
-                                    // if reminder is false and wasChecked is true
-                                    // remove reminder
-                                    new Reminder(this).killReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, futureDose);
-                                }
-                            } else {
-                                Toast.makeText(this, R.string.error_update_dose, Toast.LENGTH_SHORT).show();
-                            }
+                            nextDose = updateFutureDose(nextDose, futureDose);
                         }
                     } else {
+                        DoseItem futureItem = doseItem;
+                        int numFutureDoses = Integer.parseInt(Settings.getInstance().getString(Settings.Key.NUM_DOSES));
+                        Calendar calendar = Calendar.getInstance();
                         for (int i = 0; i < numFutureDoses; i++) {
-                            if (i == 0) {
-                                // Use current datetime as a starting point in first iteration
-                                calendar = Calendar.getInstance();
-                            } else {
+                            // TODO: 3/22/16 First dose is setting itself to the first *next* dose.  Obviously the .add is happening in the wrong plac
+                            calendar.setTime(futureItem.getDate());
+                            if (i > 0) {
                                 // Add interval to last date
-                                calendar = Calendar.getInstance();
-                                calendar.setTime(doseDate);
                                 calendar.add(Calendar.SECOND, (int) db.getInterval(medication.getFrequency()));
                             }
-                            doseDate = calendar.getTime();
-                            DoseItem futureItem = new DoseItem(medication, doseDate, doseItem.isReminderSet(), false, doseItem.getDosage());
+                            futureItem = new DoseItem(medication, calendar.getTime(), doseItem.isReminderSet(), false, doseItem.getDosage());
                             futureItem = db.createDose(futureItem);
-                            // if reminder is true set a reminder
-                            if (doseItem.isReminderSet()) {
-                                new Reminder(this).startReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, futureItem);
-                            }
+
+                            handleReminder(futureItem);
                         }
                     }
 
-                    db.close();
                     Intent intent = new Intent(this, DoseListActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra(TYPE, type);
@@ -419,17 +361,97 @@ public class AddDoseActivity extends FragmentActivity {
                     }
                     startActivity(intent);
                     finish(); // Call once you redirect to another activity
-                } else {
-                    // Dosage is empty
-                    Toast.makeText(this, R.string.add_dose_error_blank_dosage, Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(this, R.string.add_dose_error_invalid_date, Toast.LENGTH_SHORT).show();
             }
-        } else {
-            // Medication name is empty
-            Toast.makeText(this, R.string.add_dose_error_blank_name, Toast.LENGTH_SHORT).show();
         }
+        db.close();
+    }
+
+    private boolean setDoseDate() {
+        boolean dateOK = false;
+        String format = DateUtil.determineDateFormat(mDateTime.getText().toString());
+        if (format != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat(format);
+            try {
+                doseItem.setDate(formatter.parse(mDateTime.getText().toString()));
+                dateOK = true;
+            } catch (ParseException e) {
+                Log.e(LOG, "onClickAddMedSave: Unable to parse date");
+            }
+        }
+        return dateOK;
+    }
+
+    private DoseItem updateFutureDose(DoseItem nextDose, DoseItem thisDose) {
+        if (thisDose.getId() != doseItem.getId()) {
+            // Only do the setting if this is not the dose currently being edited
+            if (thisDose.getDate().getTime() > origDate.getTime()) {
+                thisDose.setDate(nextDose.nextDate(this));
+                nextDose = thisDose;
+            }
+            thisDose.setDosage(doseItem.getDosage());
+            thisDose.setReminder(doseItem.isReminderSet());
+        } else {
+            thisDose = doseItem;
+        }
+
+        if (db.updateDose(thisDose)) {
+            handleReminder(thisDose);
+        } else {
+            Toast.makeText(this, R.string.error_update_dose, Toast.LENGTH_SHORT).show();
+        }
+        return nextDose;
+    }
+
+    private void handleReminder(DoseItem mDose) {
+        if (doseItem.isReminderSet() && !wasChecked) {
+            // if reminder is true and wasChecked is false
+            // create a reminder
+            new Reminder(this).startReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, mDose);
+        } else if (!doseItem.isReminderSet() && wasChecked) {
+            // if reminder is false and wasChecked is true
+            // remove reminder
+            new Reminder(this).killReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, mDose);
+        }
+    }
+
+    @NonNull
+    private MedicationItem getMedicationItem() {
+        MedicationItem medication = (action.equals(ACTION_ADD) ? new MedicationItem() : doseItem.getMedication());
+        medication.setArchived(false);
+        medication.setActive(true);
+
+        medication.setName(mMedName.getText().toString());
+
+        medication.setFrequency(mFrequency.getSelectedItem().toString());
+
+        // Rename temp image file to medication name
+        if (imageLocationOK && tempPath.isFile()) {
+            renameTempImage(medication);
+        }
+        return medication;
+    }
+
+    private boolean checkFreqChanged(MedicationItem medication) {
+        // If frequency has changed, remove all old future doses
+        if (action.equals(ACTION_EDIT)) {
+            if (!medication.getFrequency().equals(origFreq)) {
+                // frequency has changed, so delete all previous futures with this medId
+                db.removeAllFutureDosesForMed(medication);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void renameTempImage(MedicationItem medication) {
+        String filename = medication.getName().toLowerCase().replace(" ", "_") + ".jpg";
+        File path = new File(dir, filename);
+        boolean b = tempPath.renameTo(path);
+        if (!b) {
+            Log.e(LOG, "Unable to rename " + tempPath.toString() + " to " + path.toString());
+        }
+        medication.setImagePath(filename);
     }
 
     @Override

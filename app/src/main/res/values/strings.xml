@@ -116,4 +116,6 @@
     <string name="settings_convert_string_months">" months "</string>
     <string name="settings_convert_string_day">" day"</string>
     <string name="settings_convert_string_days">" days"</string>
+    <string name="add_dose_title_restore">Restore Medication</string>
+    <string name="add_dose_title_reactivate">Reactivate Medication</string>
 </resources>

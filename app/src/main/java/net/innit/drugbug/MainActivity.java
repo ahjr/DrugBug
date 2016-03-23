@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
         new FutureWorkerTask(mFutureDueToday, mFutureMissed).execute();
 
         // Lookup number of doses from SharedPreferences
-        mFutureNumDoses.setText(String.format("%,d", settings.getInt(Settings.Key.NUM_DOSES)));
+        mFutureNumDoses.setText(settings.getString(Settings.Key.NUM_DOSES));
 
         new MedicationsWorkerTask(mMedActive, mMedInactive, mMedArchived).execute();
 

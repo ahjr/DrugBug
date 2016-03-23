@@ -88,13 +88,11 @@ public class Constants {
     public static final int SOURCE_DETAIL_FUTURE = 3001011;
 
     /**
-     * SettingsEnum defaults constants
+     * Settings defaults constants
      */
     public static final String DEFAULT_NUM_DOSES = "5";
     public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
     public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
-    public static final String DEFAULT_IMAGE_STORAGE_EXTERNAL = "EXTERNAL";
-    public static final String DEFAULT_IMAGE_STORAGE_INTERNAL = "INTERNAL";
 
     /**
      * Image size constants

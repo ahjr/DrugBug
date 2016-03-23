@@ -316,16 +316,16 @@ public class DoseListActivity extends Activity {
         switch (type) {
             case TYPE_REMINDER:
                 setTitle(getString(R.string.dose_list_title_reminders));
-                adapter = new ReminderArrayAdapter(getBaseContext(), doses);
+                adapter = new ReminderArrayAdapter(this, doses);
                 break;
             case TYPE_SINGLE:
                 setTitle(medication.getName());
-                adapter = new DoseArrayAdapter(getBaseContext(), doses);
+                adapter = new DoseArrayAdapter(this, doses);
                 break;
             default:
                 String title = (type.equals(TYPE_TAKEN)) ? getString(R.string.dose_list_title_doses_taken) : getString(R.string.dose_list_title_doses_future);
                 setTitle(title);
-                adapter = new DoseArrayAdapter(getBaseContext(), doses);
+                adapter = new DoseArrayAdapter(this, doses);
         }
 
         listView.setAdapter(adapter);

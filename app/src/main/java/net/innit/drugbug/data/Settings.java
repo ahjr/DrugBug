@@ -5,11 +5,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 
-import net.innit.drugbug.util.ExternalStorage;
 import net.innit.drugbug.util.ImageStorage;
 
-import static net.innit.drugbug.util.Constants.DEFAULT_IMAGE_STORAGE_EXTERNAL;
-import static net.innit.drugbug.util.Constants.DEFAULT_IMAGE_STORAGE_INTERNAL;
 import static net.innit.drugbug.util.Constants.DEFAULT_KEEP_TIME_MISSED;
 import static net.innit.drugbug.util.Constants.DEFAULT_KEEP_TIME_TAKEN;
 import static net.innit.drugbug.util.Constants.DEFAULT_NUM_DOSES;
@@ -51,11 +48,11 @@ public class Settings {
         doApply();
     }
 
-    public void put(Key key, int val) {
-        doEdit();
-        mEditor.putInt(key.name(), val);
-        doApply();
-    }
+//    public void put(Key key, int val) {
+//        doEdit();
+//        mEditor.putInt(key.name(), val);
+//        doApply();
+//    }
 
 //    public void put(Key key, boolean val) {
 //        doEdit();
@@ -100,13 +97,14 @@ public class Settings {
     }
 
     public int getInt(Key key) {
-        return mPref.getInt(key.name(), Integer.parseInt(key.getDefault()));
+        int def = Integer.parseInt(key.getDefault());
+        return mPref.getInt(key.name(), def);
     }
 
-    public int getInt(Key key, int defaultValue) {
-        return mPref.getInt(key.name(), defaultValue);
-    }
-
+//    public int getInt(Key key, int defaultValue) {
+//        return mPref.getInt(key.name(), defaultValue);
+//    }
+//
 //    public long getLong(Key key) {
 //        return mPref.getLong(key.name(), 0);
 //    }
@@ -166,13 +164,13 @@ public class Settings {
      *
      * @param keys The enum of the key(s) to be removed.
      */
-    public void remove(Key... keys) {
-        doEdit();
-        for (Key key : keys) {
-            mEditor.remove(key.name());
-        }
-        doApply();
-    }
+//    public void remove(Key... keys) {
+//        doEdit();
+//        for (Key key : keys) {
+//            mEditor.remove(key.name());
+//        }
+//        doApply();
+//    }
 
     /**
      * Remove all keys from SharedPreferences.
@@ -219,7 +217,7 @@ public class Settings {
      * Enum representing your setting names or key for your setting.
      */
     public enum Key {
-        NUM_DOSES(DEFAULT_NUM_DOSES),
+        NUM_DOSES(String.valueOf(DEFAULT_NUM_DOSES)),
         KEEP_TIME_TAKEN(DEFAULT_KEEP_TIME_TAKEN),
         KEEP_TIME_MISSED(DEFAULT_KEEP_TIME_MISSED),
         IMAGE_STORAGE(null);
@@ -232,13 +230,10 @@ public class Settings {
 
         public String getDefault(Context context) {
             if (this == IMAGE_STORAGE) {
-                if (ExternalStorage.getInstance(context, ImageStorage.IMAGE_DIR).isAvailable()) {
-                    defaultValue = DEFAULT_IMAGE_STORAGE_EXTERNAL;
-                } else {
-                    defaultValue = DEFAULT_IMAGE_STORAGE_INTERNAL;
-                }
+                // Pass off getting the default to ImageStorage object, as it can change depending on environment
+                return ImageStorage.getInstance(context).getDefault();
             }
-            return defaultValue;
+            return getDefault();
         }
 
         public String getDefault() {
@@ -246,7 +241,7 @@ public class Settings {
                 return defaultValue;
             }
 
-            throw new IllegalArgumentException("SettingsEnum.IMAGE_STORAGE.getDefault() must be called with Context parameter");
+            throw new IllegalArgumentException("Settings.IMAGE_STORAGE.getDefault() must be called with Context parameter");
         }
     }
 
