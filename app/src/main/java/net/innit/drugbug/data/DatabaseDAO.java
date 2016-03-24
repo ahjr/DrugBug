@@ -22,10 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.innit.drugbug.util.Constants.TYPE_MISSED;
-import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
+import static net.innit.drugbug.data.Constants.TYPE_MISSED;
+import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
-public class DBDataSource {
+public class DatabaseDAO {
     /**
      * Array of columns in medication table
      */
@@ -87,7 +87,7 @@ public class DBDataSource {
     /**
      * @param context Context for this database
      */
-    public DBDataSource(Context context) {
+    public DatabaseDAO(Context context) {
         dbhelper = new DBHelper(context);
     }
 

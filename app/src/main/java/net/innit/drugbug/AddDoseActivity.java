@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
@@ -42,32 +42,32 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-import static net.innit.drugbug.util.Constants.ACTION;
-import static net.innit.drugbug.util.Constants.ACTION_ADD;
-import static net.innit.drugbug.util.Constants.ACTION_EDIT;
-import static net.innit.drugbug.util.Constants.ACTION_REACTIVATE;
-import static net.innit.drugbug.util.Constants.ACTION_RESTORE;
-import static net.innit.drugbug.util.Constants.FILTER_DOSE;
-import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_PREVIEW;
-import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_PREVIEW;
-import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
-import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.util.Constants.LOG;
-import static net.innit.drugbug.util.Constants.SORT;
-import static net.innit.drugbug.util.Constants.SOURCE;
-import static net.innit.drugbug.util.Constants.SOURCE_ADD_DOSE;
-import static net.innit.drugbug.util.Constants.SOURCE_EDIT_DOSE;
-import static net.innit.drugbug.util.Constants.TYPE;
-import static net.innit.drugbug.util.Constants.TYPE_MEDICATION;
-import static net.innit.drugbug.util.Constants.TYPE_NONE;
-import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
+import static net.innit.drugbug.data.Constants.ACTION;
+import static net.innit.drugbug.data.Constants.ACTION_ADD;
+import static net.innit.drugbug.data.Constants.ACTION_EDIT;
+import static net.innit.drugbug.data.Constants.ACTION_REACTIVATE;
+import static net.innit.drugbug.data.Constants.ACTION_RESTORE;
+import static net.innit.drugbug.data.Constants.FILTER_DOSE;
+import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_PREVIEW;
+import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_PREVIEW;
+import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
+import static net.innit.drugbug.data.Constants.LOG;
+import static net.innit.drugbug.data.Constants.SORT;
+import static net.innit.drugbug.data.Constants.SOURCE_ADD_DOSE;
+import static net.innit.drugbug.data.Constants.SOURCE_EDIT_DOSE;
+import static net.innit.drugbug.data.Constants.TYPE;
+import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
+import static net.innit.drugbug.data.Constants.TYPE_NONE;
+import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 
 
 public class AddDoseActivity extends FragmentActivity {
     private static final int REQUEST_TAKE_PICTURE = 300;
 
-    private final DBDataSource db = new DBDataSource(this);
+    private final DatabaseDAO db = new DatabaseDAO(this);
 
     private String action;
     private String type;
@@ -93,15 +93,13 @@ public class AddDoseActivity extends FragmentActivity {
     private CheckBox mReminder;
     private Spinner mFrequency;
 
-    private final DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
+    private DateFormat sdf;
 
     private final SlideDateTimeListener listener = new SlideDateTimeListener() {
 
         @Override
         public void onDateTimeSet(Date date) {
-            // Do something with the date. This Date object contains
-            // the date and time that the user has selected.
-            mDateTime.setText(sdf.format(doseItem.getDate()));
+            mDateTime.setText(sdf.format(date));
         }
 
     };
@@ -113,6 +111,8 @@ public class AddDoseActivity extends FragmentActivity {
         setContentView(R.layout.activity_add_edit);
 
         setupViews();
+
+        sdf = new SimpleDateFormat(getString(R.string.date_format), Locale.getDefault());
 
         imageLocationOK = setupImageLocation();
 
@@ -126,13 +126,13 @@ public class AddDoseActivity extends FragmentActivity {
 
         switch (action) {
             case ACTION_EDIT:
-                setupForEdit(bundle);
+                onCreateEdit(bundle);
                 break;
             case ACTION_RESTORE:
-                setupForRestore(bundle);
+                onCreateRestore(bundle);
                 break;
             case ACTION_REACTIVATE:
-                setupForReactivate(bundle);
+                onCreateReactivate(bundle);
                 break;
         }
     }
@@ -166,36 +166,36 @@ public class AddDoseActivity extends FragmentActivity {
         }
     }
 
-    private void setupForEdit(Bundle bundle) {
+    private void onCreateEdit(Bundle bundle) {
         db.open();
         doseItem = db.getDose(bundle.getLong(INTENT_DOSE_ID));
         db.close();
 
-        setupForAll(R.string.add_dose_title_edit);
+        onCreateAll(R.string.add_dose_title_edit);
 
         mDateTimeLabel.setText(R.string.add_dose_datetime_label);
         mDateTime.setText(sdf.format(doseItem.getDate()));
         origDate = doseItem.getDate();
     }
 
-    private void setupForReactivate(Bundle bundle) {
+    private void onCreateReactivate(Bundle bundle) {
         db.open();
         doseItem = db.getDose(bundle.getLong(INTENT_DOSE_ID));
         db.close();
 
-        setupForAll(R.string.add_dose_title_reactivate);
+        onCreateAll(R.string.add_dose_title_reactivate);
     }
 
-    private void setupForRestore(Bundle bundle) {
+    private void onCreateRestore(Bundle bundle) {
         db.open();
         MedicationItem medicationItem = db.getMedication(bundle.getLong(INTENT_MED_ID));
         doseItem.setMedication(medicationItem);
         db.close();
 
-        setupForAll(R.string.add_dose_title_restore);
+        onCreateAll(R.string.add_dose_title_restore);
     }
 
-    private void setupForAll(int res) {
+    private void onCreateAll(int res) {
         origFreq = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
@@ -243,22 +243,13 @@ public class AddDoseActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_default_help:
-                launchHelpDialog();
+                HelpFragment.showHelp(getFragmentManager(), (action.equals(ACTION_EDIT)) ? SOURCE_EDIT_DOSE : SOURCE_ADD_DOSE);
                 return true;
             case android.R.id.home:
                 onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void launchHelpDialog() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(SOURCE, (action.equals(ACTION_EDIT)) ? SOURCE_EDIT_DOSE : SOURCE_ADD_DOSE);
-
-        HelpFragment fragment = new HelpFragment();
-        fragment.setArguments(bundle);
-        fragment.show(getFragmentManager(), "Help Fragment");
     }
 
     @Override
@@ -322,8 +313,6 @@ public class AddDoseActivity extends FragmentActivity {
                     Toast.makeText(this, R.string.add_dose_error_blank_dosage, Toast.LENGTH_SHORT).show();
                 } else {
                     if (action.equals(ACTION_EDIT) && !checkFreqChanged(medication)) {
-                        // todo Changing future dates doesn't handle changing time backwards at all.
-                        // -- Refactoring missed doses might help fix this
                         List<DoseItem> doses = db.getAllFutureForMed(this, medication);
                         DoseItem nextDose = doseItem;
                         for (DoseItem futureDose : doses) {
@@ -334,7 +323,6 @@ public class AddDoseActivity extends FragmentActivity {
                         int numFutureDoses = Integer.parseInt(Settings.getInstance().getString(Settings.Key.NUM_DOSES));
                         Calendar calendar = Calendar.getInstance();
                         for (int i = 0; i < numFutureDoses; i++) {
-                            // TODO: 3/22/16 First dose is setting itself to the first *next* dose.  Obviously the .add is happening in the wrong plac
                             calendar.setTime(futureItem.getDate());
                             if (i > 0) {
                                 // Add interval to last date
@@ -368,18 +356,17 @@ public class AddDoseActivity extends FragmentActivity {
     }
 
     private boolean setDoseDate() {
-        boolean dateOK = false;
         String format = DateUtil.determineDateFormat(mDateTime.getText().toString());
         if (format != null) {
             SimpleDateFormat formatter = new SimpleDateFormat(format);
             try {
                 doseItem.setDate(formatter.parse(mDateTime.getText().toString()));
-                dateOK = true;
+                return true;
             } catch (ParseException e) {
                 Log.e(LOG, "onClickAddMedSave: Unable to parse date");
             }
         }
-        return dateOK;
+        return false;
     }
 
     private DoseItem updateFutureDose(DoseItem nextDose, DoseItem thisDose) {

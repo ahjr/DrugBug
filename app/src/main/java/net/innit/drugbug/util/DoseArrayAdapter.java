@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_LIST;
-import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_LIST;
+import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_LIST;
+import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_LIST;
 
 /**
  * Listview array adapter for taken and future doses

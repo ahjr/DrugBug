@@ -1,35 +1,42 @@
-todo Swipe right goes back
+[FEATURE] todo Swipe right goes back
 -- This is more complicated than I had anticipated
 -- http://androidexample.com/Swipe_screen_left__right__top_bottom/index.php?view=article_discription&aid=95&aaid=118
 
-todo Handle missed doses better
--- Show only one entry in list "Med Name - # missed"/"Last missed dose: Date/time"
--- Clicking shows list of all missed doses
-
-todo Handle reminder changes better
+[FEATURE] todo Handle reminder changes better
 -- Currently removing reminder from one dose changes all
 -- Should probably give the option to remove all or one
 
-todo Future dose list help screen is wrong --> Can't replicate this, so probably a testing glitch
-
-todo Back from Medication list(inactive) -> dose list returns to default filter
+[FEATURE] todo Back from Medication list(inactive) -> dose list returns to default filter
 -- Pretty sure the only way to change this is to have 2 different filter extras (med_filter and dose_filter?)
 
-todo Possible --> should taking dose shift all future doses?
+[FEATURE] todo Possible --> should taking dose shift all future doses?
 
-todo Implement Frequency customization
+[FEATURE] todo Implement Frequency customization
 
-todo Give user the ability to set meal and waking times for more accuracy
+[FEATURE] todo Give user the ability to set meal and waking times for more accuracy
 
-todo Some Activity classes are doing too much.  Need to refactor.
+[FEATURE] todo Add sort medication list by last taken dose
 
-todo Normalize drawables (size/color/name).  Remove unused.
+[FEATURE] todo Handle missed doses better
+-- Show only one entry in list "Med Name - # missed"/"Last missed dose: Date/time"
+-- Clicking shows list of all missed doses
+-- This will fix the dose time change to the past bug
 
-todo Extract string resources from code (probably still some in xml too)
+[FEATURE] todo Add sort by id (creation date) to medication list sort order
+
+[BUG] todo Changing dose time backwards breaks generating new future doses
+
+[REFACTOR] todo Some Activity classes are doing too much.  Need to refactor.
+
+[REFACTOR] todo Normalize drawables (size/color/name).  Remove unused.
+
+[REFACTOR] todo Extract string resources from code (probably still some in xml too)
 -- Find in Path (regular expression) ".*"
 
-todo Trace usage of Context
+[REFACTOR] todo Trace usage of Context
 -- I'm almost certainly using it wrong in some places
 -- https://possiblemobile.com/2013/06/context/
 
-todo All doses showing as red at the moment.  Not sure why.  May be related to the AddDoseActivity refactor.
+[REFACTOR] todo Convert list activities to fragments
+
+[REFACTOR] todo Change add dose to dialog?  Would make formatting for tablets better.

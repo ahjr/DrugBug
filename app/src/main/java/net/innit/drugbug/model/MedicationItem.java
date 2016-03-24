@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.util.BitmapHelper;
 import net.innit.drugbug.util.ImageStorage;
 
@@ -87,7 +87,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     }
 
     public boolean hasTaken(Context context) {
-        DBDataSource db = new DBDataSource(context);
+        DatabaseDAO db = new DatabaseDAO(context);
         db.open();
         if (db.getLatestTakenDose(MedicationItem.this) != null) {
             db.close();
@@ -169,7 +169,6 @@ public class MedicationItem implements Comparable<MedicationItem> {
         }
     }
 
-    // todo add sort list by last taken dose
 //    /**
 //     * A comparator so we can sort dosages by date, descending
 //     */
@@ -186,7 +185,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
      *
      */
     public void confirmSetInactive(final Context context) {
-        final DBDataSource db = new DBDataSource(context);
+        final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Deactivate medication?");
         alertDialogBuilder.setMessage("All untaken doses will be removed.");
@@ -214,7 +213,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
      *
      */
     public void confirmArchive(final Context context) {
-        final DBDataSource db = new DBDataSource(context);
+        final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Archive medication?");
         alertDialogBuilder.setMessage("All doses taken and untaken doses will be removed.");
@@ -239,7 +238,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     }
 
     public void confirmDeleteMed(final Context context) {
-        final DBDataSource db = new DBDataSource(context);
+        final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(R.string.alert_delete_med_title);
         alertDialogBuilder.setMessage(R.string.alert_delete_med_message);

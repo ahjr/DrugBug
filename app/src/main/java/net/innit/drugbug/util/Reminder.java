@@ -6,14 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.model.DoseItem;
 
 import java.util.Calendar;
 
-import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
-import static net.innit.drugbug.util.Constants.REMINDER_TEXT;
-import static net.innit.drugbug.util.Constants.REMINDER_TITLE;
+import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.data.Constants.REMINDER_TEXT;
+import static net.innit.drugbug.data.Constants.REMINDER_TITLE;
 
 /**
  * Object class used for creating a system reminder
@@ -21,13 +21,13 @@ import static net.innit.drugbug.util.Constants.REMINDER_TITLE;
 public class Reminder {
     public static final int REQUEST_HEADER_FUTURE_DOSE = 10;
 
-    private final DBDataSource db;
+    private final DatabaseDAO db;
 
     private final Context context;
 
     public Reminder(Context context) {
         this.context = context;
-        db = new DBDataSource(context);
+        db = new DatabaseDAO(context);
     }
 
     /**

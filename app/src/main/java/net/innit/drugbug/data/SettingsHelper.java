@@ -9,14 +9,14 @@ import net.innit.drugbug.util.ImageStorage;
 
 import java.util.List;
 
-import static net.innit.drugbug.util.Constants.TYPE_MISSED;
-import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
+import static net.innit.drugbug.data.Constants.TYPE_MISSED;
+import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
 public class SettingsHelper {
-    private final DBDataSource db;
+    private final DatabaseDAO db;
 
     public SettingsHelper(Context context) {
-        db = new DBDataSource(context);
+        db = new DatabaseDAO(context);
     }
 
     public static int[] parseKeepTime(String keepTimeString) {

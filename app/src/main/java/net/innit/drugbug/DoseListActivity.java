@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.fragment.DetailFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
@@ -25,31 +25,30 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static net.innit.drugbug.util.Constants.ACTION;
-import static net.innit.drugbug.util.Constants.ACTION_ADD;
-import static net.innit.drugbug.util.Constants.ACTION_EDIT;
-import static net.innit.drugbug.util.Constants.FILTER_DOSE;
-import static net.innit.drugbug.util.Constants.FILTER_FUTURE;
-import static net.innit.drugbug.util.Constants.FILTER_NONE;
-import static net.innit.drugbug.util.Constants.FILTER_TAKEN;
-import static net.innit.drugbug.util.Constants.FROM_REMINDER;
-import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
-import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.util.Constants.SORT;
-import static net.innit.drugbug.util.Constants.SORT_DATE_ASC;
-import static net.innit.drugbug.util.Constants.SORT_DATE_DESC;
-import static net.innit.drugbug.util.Constants.SORT_NAME;
-import static net.innit.drugbug.util.Constants.SOURCE;
-import static net.innit.drugbug.util.Constants.SOURCE_LIST_FUTURE;
-import static net.innit.drugbug.util.Constants.SOURCE_LIST_REMINDERS;
-import static net.innit.drugbug.util.Constants.SOURCE_LIST_SINGLE_MED;
-import static net.innit.drugbug.util.Constants.SOURCE_LIST_TAKEN;
-import static net.innit.drugbug.util.Constants.SOURCE_MAIN;
-import static net.innit.drugbug.util.Constants.TYPE;
-import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
-import static net.innit.drugbug.util.Constants.TYPE_REMINDER;
-import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
-import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
+import static net.innit.drugbug.data.Constants.ACTION;
+import static net.innit.drugbug.data.Constants.ACTION_ADD;
+import static net.innit.drugbug.data.Constants.ACTION_EDIT;
+import static net.innit.drugbug.data.Constants.FILTER_DOSE;
+import static net.innit.drugbug.data.Constants.FILTER_FUTURE;
+import static net.innit.drugbug.data.Constants.FILTER_NONE;
+import static net.innit.drugbug.data.Constants.FILTER_TAKEN;
+import static net.innit.drugbug.data.Constants.FROM_REMINDER;
+import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
+import static net.innit.drugbug.data.Constants.SORT;
+import static net.innit.drugbug.data.Constants.SORT_DATE_ASC;
+import static net.innit.drugbug.data.Constants.SORT_DATE_DESC;
+import static net.innit.drugbug.data.Constants.SORT_NAME;
+import static net.innit.drugbug.data.Constants.SOURCE_LIST_FUTURE;
+import static net.innit.drugbug.data.Constants.SOURCE_LIST_REMINDERS;
+import static net.innit.drugbug.data.Constants.SOURCE_LIST_SINGLE_MED;
+import static net.innit.drugbug.data.Constants.SOURCE_LIST_TAKEN;
+import static net.innit.drugbug.data.Constants.SOURCE_MAIN;
+import static net.innit.drugbug.data.Constants.TYPE;
+import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.data.Constants.TYPE_REMINDER;
+import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
+import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
 public class DoseListActivity extends Activity {
     private static final int CONTEXT_EDIT = 10001;
@@ -58,7 +57,7 @@ public class DoseListActivity extends Activity {
     private static final int CONTEXT_TAKEN = 10004;
     private static final int CONTEXT_ONLY_THIS_MED = 10005;
 
-    private final DBDataSource db = new DBDataSource(this);
+    private final DatabaseDAO db = new DatabaseDAO(this);
     private List<DoseItem> doses = new ArrayList<>();
     private String type;
 
@@ -113,14 +112,52 @@ public class DoseListActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_list, menu);
+
         if (!type.equals(TYPE_SINGLE)) {
-            MenuItem menuItem = menu.findItem(R.id.menu_filter);
-            menuItem.setVisible(false);
+            menu.findItem(R.id.menu_filter).setVisible(false);
         } else {
-            MenuItem menuItem = menu.findItem(R.id.menu_list_add);
-            menuItem.setVisible(false);
+            menu.findItem(R.id.menu_list_add).setVisible(false);
+            menu.findItem(R.id.menu_sort_order_name).setVisible(false);
         }
+
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem;
+        String title;
+        switch (sortOrder) {
+            case SORT_DATE_DESC:
+                menuItem = menu.findItem(R.id.menu_sort_order_date_dsc);
+                title = getString(R.string.menu_list_sort_date_dsc) + " (" + getString(R.string.list_item_current) + ")";
+                break;
+            case SORT_NAME:
+                menuItem = menu.findItem(R.id.menu_sort_order_name);
+                title = getString(R.string.menu_list_sort_name) + " (" + getString(R.string.list_item_current) + ")";
+                break;
+            default:
+                menuItem = menu.findItem(R.id.menu_sort_order_date_asc);
+                title = getString(R.string.menu_list_sort_date_asc) + " (" + getString(R.string.list_item_current) + ")";
+        }
+        menuItem.setTitle(title);
+
+        switch (filter) {
+            case FILTER_TAKEN:
+                menuItem = menu.findItem(R.id.menu_filter_taken);
+                title = getString(R.string.menu_list_filter_taken) + " (" + getString(R.string.list_item_current) + ")";
+                break;
+            case FILTER_FUTURE:
+                menuItem = menu.findItem(R.id.menu_filter_future);
+                title = getString(R.string.menu_list_filter_future) + " (" + getString(R.string.list_item_current) + ")";
+                break;
+            default:
+                menuItem = menu.findItem(R.id.menu_filter_none);
+                title = getString(R.string.menu_list_filter_none) + " (" + getString(R.string.list_item_current) + ")";
+        }
+        menuItem.setTitle(title);
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -138,27 +175,22 @@ public class DoseListActivity extends Activity {
                 startActivity(intent);
                 return true;
             case R.id.menu_list_help:
-                Bundle bundle = new Bundle();
                 switch (type) {
                     case TYPE_FUTURE:
-                        bundle.putInt(SOURCE, SOURCE_LIST_FUTURE);
+                        HelpFragment.showHelp(getFragmentManager(), SOURCE_LIST_FUTURE);
                         break;
                     case TYPE_TAKEN:
-                        bundle.putInt(SOURCE, SOURCE_LIST_TAKEN);
+                        HelpFragment.showHelp(getFragmentManager(), SOURCE_LIST_TAKEN);
                         break;
                     case TYPE_SINGLE:
-                        bundle.putInt(SOURCE, SOURCE_LIST_SINGLE_MED);
+                        HelpFragment.showHelp(getFragmentManager(), SOURCE_LIST_SINGLE_MED);
                         break;
                     case TYPE_REMINDER:
-                        bundle.putInt(SOURCE, SOURCE_LIST_REMINDERS);
+                        HelpFragment.showHelp(getFragmentManager(), SOURCE_LIST_REMINDERS);
                         break;
                     default:
-                        bundle.putInt(SOURCE, SOURCE_MAIN);
+                        HelpFragment.showHelp(getFragmentManager(), SOURCE_MAIN);
                 }
-
-                HelpFragment fragment = new HelpFragment();
-                fragment.setArguments(bundle);
-                fragment.show(getFragmentManager(), "Help Fragment");
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -183,38 +215,6 @@ public class DoseListActivity extends Activity {
         refreshDisplay();
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItem;
-        // Indicate which sort order is currently in use
-        switch (sortOrder) {
-            case SORT_DATE_DESC:
-                menuItem = menu.findItem(R.id.menu_sort_order_date_dsc);
-                break;
-            case SORT_NAME:
-                menuItem = menu.findItem(R.id.menu_sort_order_name);
-                break;
-            default:
-                menuItem = menu.findItem(R.id.menu_sort_order_date_asc);
-        }
-        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.list_item_current) + ")");
-        if (type.equals(TYPE_SINGLE))
-            menu.findItem(R.id.menu_sort_order_name).setVisible(false);
-
-        switch (filter) {
-            case FILTER_TAKEN:
-                menuItem = menu.findItem(R.id.menu_filter_taken);
-                break;
-            case FILTER_FUTURE:
-                menuItem = menu.findItem(R.id.menu_filter_future);
-                break;
-            default:
-                menuItem = menu.findItem(R.id.menu_filter_none);
-        }
-        menuItem.setTitle(menuItem.getTitle() + " (" + getString(R.string.list_item_current) + ")");
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

@@ -10,7 +10,7 @@ import android.widget.NumberPicker;
 
 import net.innit.drugbug.R;
 
-import static net.innit.drugbug.util.Constants.DEFAULT_NUM_DOSES;
+import static net.innit.drugbug.data.Constants.DEFAULT_NUM_DOSES;
 
 /**
  * Preference type with a single number spinner

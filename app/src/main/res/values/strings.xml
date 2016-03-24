@@ -32,7 +32,7 @@
     <string name="context_menu_reminder_set">Set reminder</string>
     <string name="context_menu_reminder_unset">Unset reminder</string>
     <string name="context_menu_taken">Dose is taken</string>
-    <string name="date_format">MM/dd/yyyy h:mm a</string>
+    <string name="date_format">MMM dd, yyyy h:mm a</string>
     <string name="detail_button_delete">Delete</string>
     <string name="detail_button_edit">Edit</string>
     <string name="detail_button_taken">Dose taken</string>
@@ -118,4 +118,8 @@
     <string name="settings_convert_string_days">" days"</string>
     <string name="add_dose_title_restore">Restore Medication</string>
     <string name="add_dose_title_reactivate">Reactivate Medication</string>
+    <string name="menu_med_filter_all">Show all</string>
+    <string name="menu_med_filter_active">Active medications</string>
+    <string name="menu_med_filter_inactive">Inactive medications</string>
+    <string name="menu_med_filter_archived">Archived medications</string>
 </resources>

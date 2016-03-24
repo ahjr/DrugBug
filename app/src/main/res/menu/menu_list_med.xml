@@ -36,16 +36,16 @@
             <group>
                 <item
                     android:id="@+id/menu_med_filter_all"
-                    android:title="Show all"/>
+                    android:title="@string/menu_med_filter_all"/>
                 <item
                     android:id="@+id/menu_med_filter_active"
-                    android:title="Active medications"/>
+                    android:title="@string/menu_med_filter_active"/>
                 <item
                     android:id="@+id/menu_med_filter_inactive"
-                    android:title="Inactive medications"/>
+                    android:title="@string/menu_med_filter_inactive"/>
                 <item
                     android:id="@+id/menu_med_filter_archived"
-                    android:title="Archived medications"/>
+                    android:title="@string/menu_med_filter_archived"/>
             </group>
         </menu>
     </item>

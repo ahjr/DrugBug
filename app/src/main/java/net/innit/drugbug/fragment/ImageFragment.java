@@ -12,12 +12,12 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.model.MedicationItem;
 
-import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_FULL;
-import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_FULL;
-import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
+import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_FULL;
+import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_FULL;
+import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 
 /**
  * Displays an image in a clickable, borderless popup
@@ -37,7 +37,7 @@ public class ImageFragment extends DialogFragment {
         Bundle bundle = this.getArguments();
         long medId = bundle.getLong(INTENT_MED_ID);
 
-        DBDataSource db = new DBDataSource(context);
+        DatabaseDAO db = new DatabaseDAO(context);
         db.open();
         MedicationItem medicationItem = db.getMedication(medId);
         db.close();

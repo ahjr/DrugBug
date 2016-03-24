@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.MedicationArrayAdapter;
@@ -18,31 +18,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static net.innit.drugbug.util.Constants.ACTION;
-import static net.innit.drugbug.util.Constants.ACTION_ADD;
-import static net.innit.drugbug.util.Constants.ACTION_RESTORE;
-import static net.innit.drugbug.util.Constants.FILTER_ACTIVE;
-import static net.innit.drugbug.util.Constants.FILTER_ALL;
-import static net.innit.drugbug.util.Constants.FILTER_ARCHIVED;
-import static net.innit.drugbug.util.Constants.FILTER_DOSE;
-import static net.innit.drugbug.util.Constants.FILTER_INACTIVE;
-import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.util.Constants.SORT;
-import static net.innit.drugbug.util.Constants.SORT_DATE_DESC;
-import static net.innit.drugbug.util.Constants.SORT_NAME_ASC;
-import static net.innit.drugbug.util.Constants.SORT_NAME_DESC;
-import static net.innit.drugbug.util.Constants.SOURCE;
-import static net.innit.drugbug.util.Constants.SOURCE_LIST_MEDICATIONS;
-import static net.innit.drugbug.util.Constants.TYPE;
-import static net.innit.drugbug.util.Constants.TYPE_MEDICATION;
-import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
+import static net.innit.drugbug.data.Constants.ACTION;
+import static net.innit.drugbug.data.Constants.ACTION_ADD;
+import static net.innit.drugbug.data.Constants.ACTION_RESTORE;
+import static net.innit.drugbug.data.Constants.FILTER_ACTIVE;
+import static net.innit.drugbug.data.Constants.FILTER_ALL;
+import static net.innit.drugbug.data.Constants.FILTER_ARCHIVED;
+import static net.innit.drugbug.data.Constants.FILTER_DOSE;
+import static net.innit.drugbug.data.Constants.FILTER_INACTIVE;
+import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
+import static net.innit.drugbug.data.Constants.SORT;
+import static net.innit.drugbug.data.Constants.SORT_NAME_ASC;
+import static net.innit.drugbug.data.Constants.SORT_NAME_DESC;
+import static net.innit.drugbug.data.Constants.SOURCE_LIST_MEDICATIONS;
+import static net.innit.drugbug.data.Constants.TYPE;
+import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
+import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 
 /**
  * Activity to create a medication list
  */
 public class MedicationListActivity extends Activity {
     //    private static final int CONTEXT_DELETE_ALL = 1001;
-    private final DBDataSource db = new DBDataSource(this);
+    private final DatabaseDAO db = new DatabaseDAO(this);
     private List<MedicationItem> medications = new ArrayList<>();
     private MedicationArrayAdapter adapter;
     private String sortOrder;
@@ -55,10 +53,10 @@ public class MedicationListActivity extends Activity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            sortOrder = bundle.getString(SORT, SORT_DATE_DESC);
+            sortOrder = bundle.getString(SORT, SORT_NAME_ASC);
             filter = bundle.getString(FILTER_DOSE, FILTER_ACTIVE);
         } else {
-            sortOrder = SORT_DATE_DESC;
+            sortOrder = SORT_NAME_ASC;
             filter = FILTER_ACTIVE;
         }
 
@@ -92,12 +90,7 @@ public class MedicationListActivity extends Activity {
                 startActivity(intent);
                 return true;
             case R.id.menu_list_med_help:
-                Bundle bundle = new Bundle();
-                bundle.putInt(SOURCE, SOURCE_LIST_MEDICATIONS);
-
-                HelpFragment fragment = new HelpFragment();
-                fragment.setArguments(bundle);
-                fragment.show(getFragmentManager(), "Help Fragment");
+                HelpFragment.showHelp(getFragmentManager(), SOURCE_LIST_MEDICATIONS);
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -128,34 +121,48 @@ public class MedicationListActivity extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItemSort;
+        setCurrentSortOrder(menu);
+        setCurrentFilter(menu);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void setCurrentFilter(Menu menu) {
+        MenuItem menuItem;
+        String title;
+        switch (filter) {
+            case FILTER_ALL:
+                menuItem = menu.findItem(R.id.menu_med_filter_all);
+                title = getString(R.string.menu_med_filter_all) + " (" + getString(R.string.list_item_current) + ")";
+                break;
+            case FILTER_INACTIVE:
+                menuItem = menu.findItem(R.id.menu_med_filter_inactive);
+                title = getString(R.string.menu_med_filter_inactive) + " (" + getString(R.string.list_item_current) + ")";
+                break;
+            case FILTER_ARCHIVED:
+                menuItem = menu.findItem(R.id.menu_med_filter_archived);
+                title = getString(R.string.menu_med_filter_archived) + " (" + getString(R.string.list_item_current) + ")";
+                break;
+            default:
+                menuItem = menu.findItem(R.id.menu_med_filter_active);
+                title = getString(R.string.menu_med_filter_active) + " (" + getString(R.string.list_item_current) + ")";
+        }
+        menuItem.setTitle(title);
+    }
+
+    private void setCurrentSortOrder(Menu menu) {
+        MenuItem menuItem;
+        String title;
         // Indicate which sort order is currently in use
         switch (sortOrder) {
             case SORT_NAME_DESC:
-                menuItemSort = menu.findItem(R.id.menu_med_sort_order_name_dsc);
+                menuItem = menu.findItem(R.id.menu_med_sort_order_name_dsc);
+                title = getString(R.string.sort_order_name_dsc) + " (" + getString(R.string.list_item_current) + ")";
                 break;
             default:
-                menuItemSort = menu.findItem(R.id.menu_med_sort_order_name_asc);
+                menuItem = menu.findItem(R.id.menu_med_sort_order_name_asc);
+                title = getString(R.string.sort_order_name_asc) + " (" + getString(R.string.list_item_current) + ")";
         }
-        menuItemSort.setTitle(menuItemSort.getTitle() + " (" + getString(R.string.list_item_current) + ")");
-
-        MenuItem menuItemFilter;
-        switch (filter) {
-            case FILTER_ALL:
-                menuItemFilter = menu.findItem(R.id.menu_med_filter_all);
-                break;
-            case FILTER_INACTIVE:
-                menuItemFilter = menu.findItem(R.id.menu_med_filter_inactive);
-                break;
-            case FILTER_ARCHIVED:
-                menuItemFilter = menu.findItem(R.id.menu_med_filter_archived);
-                break;
-            default:
-                menuItemFilter = menu.findItem(R.id.menu_med_filter_active);
-        }
-        menuItemFilter.setTitle(menuItemFilter.getTitle() + " (" + getString(R.string.list_item_current) + ")");
-
-        return super.onPrepareOptionsMenu(menu);
+        menuItem.setTitle(title);
     }
 
 //    @Override
@@ -243,7 +250,9 @@ public class MedicationListActivity extends Activity {
         db.close();
 
         switch (sortOrder) {
+
             case SORT_NAME_ASC:
+                Collections.sort(medications);
                 break;
             case SORT_NAME_DESC:
                 Collections.sort(medications, new MedicationItem.ReverseNameComparator());

@@ -9,24 +9,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.Constants;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.model.DoseItem;
-import net.innit.drugbug.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.List;
 
-import static net.innit.drugbug.util.Constants.ACTION;
-import static net.innit.drugbug.util.Constants.ACTION_ADD;
-import static net.innit.drugbug.util.Constants.SOURCE;
-import static net.innit.drugbug.util.Constants.SOURCE_MAIN;
-import static net.innit.drugbug.util.Constants.TYPE;
-import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
-import static net.innit.drugbug.util.Constants.TYPE_REMINDER;
-import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
+import static net.innit.drugbug.data.Constants.ACTION;
+import static net.innit.drugbug.data.Constants.ACTION_ADD;
+import static net.innit.drugbug.data.Constants.SOURCE_MAIN;
+import static net.innit.drugbug.data.Constants.TYPE;
+import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.data.Constants.TYPE_REMINDER;
+import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
 public class MainActivity extends Activity {
 
@@ -113,12 +112,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 return true;
             case R.id.menu_main_help:
-                Bundle bundle = new Bundle();
-                bundle.putInt(SOURCE, SOURCE_MAIN);
-
-                HelpFragment fragment = new HelpFragment();
-                fragment.setArguments(bundle);
-                fragment.show(getFragmentManager(), "Help Fragment");
+                HelpFragment.showHelp(getFragmentManager(), SOURCE_MAIN);
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -181,7 +175,7 @@ public class MainActivity extends Activity {
 
         @Override
         protected String[] doInBackground(Void... params) {
-            DBDataSource db = new DBDataSource(MainActivity.this);
+            DatabaseDAO db = new DatabaseDAO(MainActivity.this);
             db.open();
             List<DoseItem> doses = db.getAllDosesForDate(MainActivity.this, new Date());
             db.close();
@@ -239,7 +233,7 @@ public class MainActivity extends Activity {
 
         @Override
         protected String[] doInBackground(Void... params) {
-            DBDataSource db = new DBDataSource(MainActivity.this);
+            DatabaseDAO db = new DatabaseDAO(MainActivity.this);
 
             db.open();
             String[] strings = new String[] {

@@ -1,4 +1,4 @@
-package net.innit.drugbug.util;
+package net.innit.drugbug.data;
 
 public class Constants {
     /**
@@ -41,6 +41,7 @@ public class Constants {
     public static final String SORT_DATE_DESC = "dateDsc";
     public static final String SORT_DATE_ASC = "dateAsc";
     public static final String SORT_NAME = "name";
+    public static final String SORT_CREATION = "creation";
     public static final String SORT_NAME_DESC = "nameDsc";
     public static final String SORT_NAME_ASC = "nameAsc";
 

@@ -13,8 +13,8 @@ import net.innit.drugbug.model.MedicationItem;
 
 import java.util.List;
 
-import static net.innit.drugbug.util.Constants.IMAGE_HEIGHT_LIST;
-import static net.innit.drugbug.util.Constants.IMAGE_WIDTH_LIST;
+import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_LIST;
+import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_LIST;
 
 public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
     private final Context context;

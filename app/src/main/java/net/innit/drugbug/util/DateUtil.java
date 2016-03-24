@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ** NOT IN USE **
- * Here in case we want to add support for date input in the future
  * Class to enable more options for date input
  */
 public class DateUtil {
@@ -29,47 +27,47 @@ public class DateUtil {
         put("^\\d{8}\\s\\d{4}$", "yyyyMMdd HHmm");
         put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
         put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}$", "MM-dd-yyyy HH:mm");
-        put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MM-dd-yyyy HH:mm a");
+        put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MM-dd-yyyy hh:mm a");
         put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy-MM-dd HH:mm");
-        put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "yyyy-MM-dd HH:mm a");
+        put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "yyyy-MM-dd hh:mm a");
         put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}$", "MM/dd/yyyy HH:mm");
-        put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MM/dd/yyyy HH:mm a");
+        put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MM/dd/yyyy hh:mm a");
         put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}$", "yyyy/MM/dd HH:mm");
-        put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "yyyy/MM/dd HH:mm a");
+        put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "yyyy/MM/dd hh:mm a");
         put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMM yyyy HH:mm");
-        put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "dd MMM yyyy HH:mm a");
+        put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "dd MMM yyyy hh:mm a");
         put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "dd MMMM yyyy HH:mm");
-        put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "dd MMMM yyyy HH:mm a");
+        put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "dd MMMM yyyy hh:mm a");
         put("^[a-z]{3}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "MMM dd yyyy HH:mm");
-        put("^[a-z]{3}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMM dd yyyy HH:mm a");
+        put("^[a-z]{3}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMM dd yyyy hh:mm a");
         put("^[a-z]{3}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "MMM dd, yyyy HH:mm");
-        put("^[a-z]{3}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMM dd, yyyy HH:mm a");
+        put("^[a-z]{3}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMM dd, yyyy hh:mm a");
         put("^[a-z]{4,}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "MMMM dd yyyy HH:mm");
-        put("^[a-z]{4,}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMMM dd yyyy HH:mm a");
+        put("^[a-z]{4,}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMMM dd yyyy hh:mm a");
         put("^[a-z]{4,}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}$", "MMMM dd, yyyy HH:mm");
-        put("^[a-z]{4,}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMMM dd, yyyy HH:mm a");
+        put("^[a-z]{4,}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}\\s[APap][Mm]$", "MMMM dd, yyyy hh:mm a");
         put("^\\d{14}$", "yyyyMMddHHmmss");
         put("^\\d{8}\\s\\d{6}$", "yyyyMMdd HHmmss");
         put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM-dd-yyyy HH:mm:ss");
-        put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MM-dd-yyyy HH:mm:ss a");
+        put("^\\d{1,2}-\\d{1,2}-\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MM-dd-yyyy hh:mm:ss a");
         put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss");
-        put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "yyyy-MM-dd HH:mm:ss a");
+        put("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "yyyy-MM-dd hh:mm:ss a");
         put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MM/dd/yyyy HH:mm:ss");
-        put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MM/dd/yyyy HH:mm:ss a");
+        put("^\\d{1,2}/\\d{1,2}/\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MM/dd/yyyy hh:mm:ss a");
         put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}$", "yyyy/MM/dd HH:mm:ss");
-        put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "yyyy/MM/dd HH:mm:ss a");
+        put("^\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "yyyy/MM/dd hh:mm:ss a");
         put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMM yyyy HH:mm:ss");
-        put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "dd MMM yyyy HH:mm:ss a");
+        put("^\\d{1,2}\\s[a-z]{3}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "dd MMM yyyy hh:mm:ss a");
         put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "dd MMMM yyyy HH:mm:ss");
-        put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "dd MMMM yyyy HH:mm:ss a");
+        put("^\\d{1,2}\\s[a-z]{4,}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "dd MMMM yyyy hh:mm:ss a");
         put("^[a-z]{3}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MMM dd yyyy HH:mm:ss");
-        put("^[a-z]{3}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMM dd yyyy HH:mm:ss a");
+        put("^[a-z]{3}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMM dd yyyy hh:mm:ss a");
         put("^[a-z]{3}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MMM dd, yyyy HH:mm:ss");
-        put("^[a-z]{3}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMM dd, yyyy HH:mm:ss a");
+        put("^[a-z]{3}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMM dd, yyyy hh:mm:ss a");
         put("^[a-z]{4,}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MMMM dd yyyy HH:mm:ss");
-        put("^[a-z]{4,}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMMM dd yyyy HH:mm:ss a");
+        put("^[a-z]{4,}\\s\\d{1,2}\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMMM dd yyyy hh:mm:ss a");
         put("^[a-z]{4,}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}$", "MMMM dd, yyyy HH:mm:ss");
-        put("^[a-z]{4,}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMMM dd, yyyy HH:mm:ss a");
+        put("^[a-z]{4,}\\s\\d{1,2},\\s\\d{4}\\s\\d{1,2}:\\d{2}:\\d{2}\\s[APap][Mm]$", "MMMM dd, yyyy hh:mm:ss a");
     }};
 
     /**

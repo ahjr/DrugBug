@@ -7,9 +7,9 @@ import android.preference.PreferenceManager;
 
 import net.innit.drugbug.util.ImageStorage;
 
-import static net.innit.drugbug.util.Constants.DEFAULT_KEEP_TIME_MISSED;
-import static net.innit.drugbug.util.Constants.DEFAULT_KEEP_TIME_TAKEN;
-import static net.innit.drugbug.util.Constants.DEFAULT_NUM_DOSES;
+import static net.innit.drugbug.data.Constants.DEFAULT_KEEP_TIME_MISSED;
+import static net.innit.drugbug.data.Constants.DEFAULT_KEEP_TIME_TAKEN;
+import static net.innit.drugbug.data.Constants.DEFAULT_NUM_DOSES;
 
 public class Settings {
     private static Settings sSharedPrefs;
@@ -96,11 +96,11 @@ public class Settings {
         return mPref.getString(key.name(), key.getDefault(context));
     }
 
-    public int getInt(Key key) {
-        int def = Integer.parseInt(key.getDefault());
-        return mPref.getInt(key.name(), def);
-    }
-
+//    public int getInt(Key key) {
+//        int def = Integer.parseInt(key.getDefault());
+//        return mPref.getInt(key.name(), def);
+//    }
+//
 //    public int getInt(Key key, int defaultValue) {
 //        return mPref.getInt(key.name(), defaultValue);
 //    }
@@ -158,12 +158,12 @@ public class Settings {
 //    public boolean getBoolean(Key key) {
 //        return mPref.getBoolean(key.name(), false);
 //    }
-
-    /**
-     * Remove keys from SharedPreferences.
-     *
-     * @param keys The enum of the key(s) to be removed.
-     */
+//
+//    /**
+//     * Remove keys from SharedPreferences.
+//     *
+//     * @param keys The enum of the key(s) to be removed.
+//     */
 //    public void remove(Key... keys) {
 //        doEdit();
 //        for (Key key : keys) {

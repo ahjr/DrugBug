@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -67,7 +67,7 @@ public class DoseItem implements Comparable<DoseItem> {
     }
 
     public Date nextDate(Context context) {
-        DBDataSource db = new DBDataSource(context);
+        DatabaseDAO db = new DatabaseDAO(context);
         long secs = date.getTime() + db.getInterval(medication.getFrequency()) * 1000;
         return new Date(secs);
     }
@@ -125,7 +125,7 @@ public class DoseItem implements Comparable<DoseItem> {
      * @param intent  intent to start after confirmation
      */
     public void confirmDelete(final Context context, final Intent intent) {
-        final DBDataSource db = new DBDataSource(context);
+        final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(R.string.alert_delete_dose_title);
         alertDialogBuilder.setMessage(R.string.alert_delete_dose_message);
@@ -162,7 +162,7 @@ public class DoseItem implements Comparable<DoseItem> {
      * @param intent  intent to start after confirmation
      */
     public void confirmTaken(final Context context, final Intent intent) {
-        final DBDataSource db = new DBDataSource(context);
+        final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(R.string.taken_dialog_title);
         alertDialogBuilder.setMessage(R.string.dialog_confirm);
