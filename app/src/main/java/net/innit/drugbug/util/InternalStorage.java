@@ -4,10 +4,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 
+import net.innit.drugbug.R;
+
 import java.io.File;
 
 public class InternalStorage extends Storage {
-    public static final String DISPLAY = "Internal";
     public static final String TYPE = "INTERNAL";
 
     private static InternalStorage instance;
@@ -16,7 +17,7 @@ public class InternalStorage extends Storage {
     private final Context context;
 
     private InternalStorage(Context context, String subDir) {
-        super(context.getFilesDir(), subDir, DISPLAY, TYPE);
+        super(context.getFilesDir(), subDir, context.getString(R.string.storage_internal_display), TYPE);
         this.context = context;
     }
 

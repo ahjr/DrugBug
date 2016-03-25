@@ -40,6 +40,7 @@ import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SORT_DATE_ASC;
 import static net.innit.drugbug.data.Constants.SORT_DATE_DESC;
 import static net.innit.drugbug.data.Constants.SORT_NAME;
+import static net.innit.drugbug.data.Constants.TAG_DETAIL;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
 import static net.innit.drugbug.data.Constants.TYPE_REMINDER;
@@ -155,7 +156,7 @@ public class DoseListFragment extends ListFragment {
     private void showDetailFragment(Bundle bundle) {
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(bundle);
-        fragment.show(getFragmentManager(), "Detail Fragment");
+        fragment.show(getFragmentManager(), TAG_DETAIL);
     }
 
     /**

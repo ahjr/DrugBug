@@ -24,6 +24,7 @@ import static net.innit.drugbug.data.Constants.SOURCE_LIST_SINGLE_MED;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_TAKEN;
 import static net.innit.drugbug.data.Constants.SOURCE_MAIN;
 import static net.innit.drugbug.data.Constants.SOURCE_SETTINGS;
+import static net.innit.drugbug.data.Constants.TAG_HELP;
 
 public class HelpFragment extends DialogFragment {
     @Nullable
@@ -95,10 +96,10 @@ public class HelpFragment extends DialogFragment {
         switch (source) {
             case SOURCE_EDIT_DOSE:
                 ((TextView) view.findViewById(R.id.tv_help_add_time_label)).setText(R.string.add_dose_datetime_label);
-                ((TextView) view.findViewById(R.id.tv_help_add_time_text1)).setText("Set time of this dose");
+                ((TextView) view.findViewById(R.id.tv_help_add_time_text1)).setText(R.string.add_time_text1_edit);
                 break;
             case SOURCE_LIST_REMINDERS:
-                ((TextView)view.findViewById(R.id.tv_help_list_future_title)).setText("Help - Reminders list");
+                ((TextView)view.findViewById(R.id.tv_help_list_future_title)).setText(R.string.help_list_reminder_title);
                 break;
         }
     }
@@ -109,7 +110,7 @@ public class HelpFragment extends DialogFragment {
 
         HelpFragment fragment = new HelpFragment();
         fragment.setArguments(bundle);
-        fragment.show(fm, "Help Fragment");
+        fragment.show(fm, TAG_HELP);
 
     }
 }

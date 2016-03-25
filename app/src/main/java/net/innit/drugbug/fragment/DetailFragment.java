@@ -37,6 +37,7 @@ import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_FUTURE;
 import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_TAKEN;
+import static net.innit.drugbug.data.Constants.TAG_DETAIL;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
 import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
@@ -182,7 +183,7 @@ public class DetailFragment extends DialogFragment {
 
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.add(imageFragment, "Detail Fragment");
+                    ft.add(imageFragment, TAG_DETAIL);
                     ft.commit();
                 }
             });

@@ -70,7 +70,7 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         String display = doseItem.getMedication().getName() + " (" + doseItem.getDosage() + ")";
         mViewHolder.name.setText(display);
 
-        mViewHolder.dateLabel.setText((doseItem.isTaken()) ? "Taken:" : "Due:");
+        mViewHolder.dateLabel.setText((doseItem.isTaken()) ? context.getString(R.string.dose_adapter_date_label_taken) : context.getString(R.string.dose_adapter_date_label_due));
 
         boolean missedDose = false;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context.getString(R.string.date_format), Locale.getDefault());

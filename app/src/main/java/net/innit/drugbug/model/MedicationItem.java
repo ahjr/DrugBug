@@ -188,9 +188,9 @@ public class MedicationItem implements Comparable<MedicationItem> {
     public void confirmSetInactive(final Context context, final OnListUpdatedListener listener) {
         final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Deactivate medication?");
-        alertDialogBuilder.setMessage("All untaken doses will be removed.");
-        alertDialogBuilder.setPositiveButton("Yes, deactivate", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setTitle(R.string.alert_deactivate_med_title);
+        alertDialogBuilder.setMessage(R.string.alert_deactivate_med_message);
+        alertDialogBuilder.setPositiveButton(R.string.alert_deactivate_med_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
@@ -201,7 +201,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
                 if (listener != null) {
                     listener.onListUpdated();
                 }
-                Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "" + numDeleted + context.getString(R.string.alert_med_toast_num_deleted), Toast.LENGTH_SHORT).show();
             }
         });
         alertDialogBuilder.setNegativeButton(R.string.alert_delete_doses_negative, new DialogInterface.OnClickListener() {
@@ -223,9 +223,9 @@ public class MedicationItem implements Comparable<MedicationItem> {
     public void confirmArchive(final Context context, final OnListUpdatedListener listener) {
         final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Archive medication?");
-        alertDialogBuilder.setMessage("All doses taken and untaken doses will be removed.");
-        alertDialogBuilder.setPositiveButton("Yes, archive", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setTitle(R.string.alert_archive_med_title);
+        alertDialogBuilder.setMessage(R.string.alert_archive_med_message);
+        alertDialogBuilder.setPositiveButton(R.string.alert_archive_med_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
@@ -237,7 +237,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
                 if (listener != null) {
                     listener.onListUpdated();
                 }
-                Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "" + numDeleted + context.getString(R.string.alert_med_toast_num_deleted), Toast.LENGTH_SHORT).show();
             }
         });
         alertDialogBuilder.setNegativeButton(R.string.alert_delete_doses_negative, new DialogInterface.OnClickListener() {

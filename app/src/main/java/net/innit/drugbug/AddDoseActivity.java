@@ -282,7 +282,7 @@ public class AddDoseActivity extends FragmentActivity {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
             startActivityForResult(intent, REQUEST_TAKE_PICTURE);
         } else {
-            Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -449,7 +449,7 @@ public class AddDoseActivity extends FragmentActivity {
                     case Activity.RESULT_OK:
                         break;
                     case Activity.RESULT_CANCELED:
-                        Toast.makeText(this, "User cancelled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.user_canceled, Toast.LENGTH_SHORT).show();
                 }
         }
     }

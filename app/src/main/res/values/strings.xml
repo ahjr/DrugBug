@@ -100,6 +100,7 @@
     <string name="preference_keep_time_days">Days:</string>
     <string name="preference_keep_time_months">Months:</string>
     <string name="preference_keep_time_years">Years:</string>
+    <string name="preference_current">"Current: "</string>
     <string name="reminder_list_set_negative">No Reminder set</string>
     <string name="reminder_list_set_positive">Reminder set</string>
     <string name="reminder_list_title">Reminders</string>
@@ -122,4 +123,22 @@
     <string name="menu_med_filter_active">Active medications</string>
     <string name="menu_med_filter_inactive">Inactive medications</string>
     <string name="menu_med_filter_archived">Archived medications</string>
+    <string name="camera_unavailable">Camera not available</string>
+    <string name="user_canceled">User cancelled</string>
+    <string name="dose_adapter_date_label_taken">Taken:</string>
+    <string name="dose_adapter_date_label_due">Due:</string>
+    <string name="storage_external_not_available">SD card is not available</string>
+    <string name="preference_positive">OK</string>
+    <string name="preference_negative">Cancel</string>
+    <string name="medication_adapter_archived">" (archived)"</string>
+    <string name="medication_adapter_inactive">" (inactive)"</string>
+    <string name="alert_archive_med_title">Archive medication?</string>
+    <string name="alert_archive_med_message">All doses taken and untaken doses will be removed.</string>
+    <string name="alert_archive_med_positive">Yes, archive</string>
+    <string name="alert_med_toast_num_deleted">" doses deleted"</string>
+    <string name="alert_deactivate_med_title">Deactivate medication?</string>
+    <string name="alert_deactivate_med_message">All untaken doses will be removed.</string>
+    <string name="alert_deactivate_med_positive">Yes, deactivate</string>
+    <string name="storage_external_display">SD Card</string>
+    <string name="storage_internal_display">Internal</string>
 </resources>

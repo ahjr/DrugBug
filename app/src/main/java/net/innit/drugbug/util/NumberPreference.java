@@ -24,8 +24,8 @@ public class NumberPreference extends DialogPreference {
     public NumberPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setPositiveButtonText("OK");
-        setNegativeButtonText("Cancel");
+        setPositiveButtonText(R.string.preference_positive);
+        setNegativeButtonText(R.string.preference_negative);
     }
 
     @Override

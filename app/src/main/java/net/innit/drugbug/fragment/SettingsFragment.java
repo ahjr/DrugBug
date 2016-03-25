@@ -87,18 +87,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private void setSummaries(Settings sharedPreferences) {
         // Set summary for number of untaken doses to keep
         findPreference(Settings.Key.NUM_DOSES.name())
-                .setSummary("Current: " + sharedPreferences.getString(Settings.Key.NUM_DOSES));
+                .setSummary(getString(R.string.preference_current) + sharedPreferences.getString(Settings.Key.NUM_DOSES));
 
         // Set summary for taken dose keep time
         findPreference(Settings.Key.KEEP_TIME_TAKEN.name())
-                .setSummary("Current: " + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_TAKEN)));
+                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_TAKEN)));
 
         // Set summary for untaken dose keep time
         findPreference(Settings.Key.KEEP_TIME_MISSED.name())
-                .setSummary("Current: " + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_MISSED)));
+                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_MISSED)));
 
         // Set summary for image storage location
         findPreference(Settings.Key.IMAGE_STORAGE.name())
-                .setSummary("Current: " + imageStorage.getDisplayText());
+                .setSummary(getString(R.string.preference_current) + imageStorage.getDisplayText());
     }
 }

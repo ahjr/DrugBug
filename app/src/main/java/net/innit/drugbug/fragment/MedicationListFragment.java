@@ -74,18 +74,6 @@ public class MedicationListFragment extends ListFragment {
         refreshDisplay();
     }
 
-//    @Override
-//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-//        menu.add(0, CONTEXT_DELETE_ALL, 0, "Delete all doses for this medication");
-//    }
-//
-//    @Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-//        confirmArchive(info.position);
-//        return true;
-//    }
-
     /**
      * Refreshes the listview display.  Used when the data list has changed.
      */

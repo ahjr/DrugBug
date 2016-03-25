@@ -49,9 +49,9 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
 
         String title = medicationItem.getName();
         if (medicationItem.isArchived())
-            title += " (archived)";
+            title += context.getString(R.string.medication_adapter_archived);
         else if (!medicationItem.isActive())
-            title += " (inactive)";
+            title += context.getString(R.string.medication_adapter_inactive);
         mViewHolder.name.setText(title);
         mViewHolder.frequency.setText(medicationItem.getFrequency());
 

@@ -5,10 +5,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
+import net.innit.drugbug.R;
+
 import java.io.File;
 
 public class ExternalStorage extends Storage {
-    public static final String DISPLAY = "SD Card";
     public static final String TYPE = "EXTERNAL";
 
     private static ExternalStorage instance;
@@ -16,7 +17,7 @@ public class ExternalStorage extends Storage {
     private final Context context;
 
     private ExternalStorage(Context context, String subDir) {
-        super(new File(Environment.getExternalStorageDirectory(), context.getPackageName()), subDir, DISPLAY, TYPE);
+        super(new File(Environment.getExternalStorageDirectory(), context.getPackageName()), subDir, context.getString(R.string.storage_external_display), TYPE);
         this.context = context;
     }
 
@@ -36,7 +37,7 @@ public class ExternalStorage extends Storage {
                     boolean success = this.moveFiles(oldStorage);
                 }
             } else {
-                Toast.makeText(context, "SD card is not available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.storage_external_not_available, Toast.LENGTH_SHORT).show();
                 //revertToDefault(context);
             }
     }

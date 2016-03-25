@@ -105,4 +105,7 @@ public class Constants {
     public static final int IMAGE_HEIGHT_PREVIEW = 100;
     public static final int IMAGE_WIDTH_PREVIEW = 100;
 
+    public static final String TAG_DETAIL = "Detail Fragment";
+    public static final String TAG_HELP = "Help Fragment";
+
 }

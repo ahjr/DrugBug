@@ -119,7 +119,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/ic_action_list_2"
-                    android:onClick="onClickMainFuture"
                     android:paddingBottom="10dp"
                     android:text="@string/main_view_list"
                     android:textSize="12sp"/>
@@ -170,7 +169,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/ic_action_list_2"
-                    android:onClick="onClickMainTaken"
                     android:paddingBottom="10dp"
                     android:text="@string/main_view_list"
                     android:textSize="12sp"/>
@@ -221,7 +219,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/ic_action_list_2"
-                    android:onClick="onClickMainReminders"
                     android:paddingBottom="10dp"
                     android:text="@string/main_view_list"
                     android:textSize="12sp"/>
@@ -337,7 +334,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/ic_action_list_2"
-                    android:onClick="onClickMainMedications"
                     android:paddingBottom="10dp"
                     android:text="@string/main_view_list"
                     android:textSize="12sp"/>
