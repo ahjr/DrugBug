@@ -12,6 +12,7 @@ import net.innit.drugbug.R;
 import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.util.BitmapHelper;
 import net.innit.drugbug.util.ImageStorage;
+import net.innit.drugbug.util.OnListUpdatedListener;
 
 import java.io.File;
 import java.util.Comparator;
@@ -184,7 +185,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
      * Deletes doses for medication & medication after confirmation from user
      *
      */
-    public void confirmSetInactive(final Context context) {
+    public void confirmSetInactive(final Context context, final OnListUpdatedListener listener) {
         final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Deactivate medication?");
@@ -197,6 +198,9 @@ public class MedicationItem implements Comparable<MedicationItem> {
                 MedicationItem.this.setActive(false);
                 db.updateMedication(MedicationItem.this);
                 db.close();
+                if (listener != null) {
+                    listener.onListUpdated();
+                }
                 Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
             }
         });
@@ -208,11 +212,15 @@ public class MedicationItem implements Comparable<MedicationItem> {
         }).create().show();
     }
 
+    public void confirmSetInactive(final Context context) {
+        confirmSetInactive(context, null);
+    }
+
     /**
      * Deletes doses for medication & medication after confirmation from user
      *
      */
-    public void confirmArchive(final Context context) {
+    public void confirmArchive(final Context context, final OnListUpdatedListener listener) {
         final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Archive medication?");
@@ -226,6 +234,9 @@ public class MedicationItem implements Comparable<MedicationItem> {
                 MedicationItem.this.setArchived(true);
                 db.updateMedication(MedicationItem.this);
                 db.close();
+                if (listener != null) {
+                    listener.onListUpdated();
+                }
                 Toast.makeText(context, "" + numDeleted + " doses deleted", Toast.LENGTH_SHORT).show();
             }
         });
@@ -237,7 +248,11 @@ public class MedicationItem implements Comparable<MedicationItem> {
         }).create().show();
     }
 
-    public void confirmDeleteMed(final Context context) {
+    public void confirmArchive(final Context context) {
+        confirmArchive(context, null);
+    }
+
+    public void confirmDeleteMed(final Context context, final OnListUpdatedListener listener) {
         final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(R.string.alert_delete_med_title);
@@ -248,6 +263,9 @@ public class MedicationItem implements Comparable<MedicationItem> {
                 db.open();
                 db.removeMedication(context, MedicationItem.this);
                 db.close();
+                if (listener != null) {
+                    listener.onListUpdated();
+                }
             }
         });
         alertDialogBuilder.setNegativeButton(R.string.alert_delete_med_negative, new DialogInterface.OnClickListener() {
@@ -258,4 +276,9 @@ public class MedicationItem implements Comparable<MedicationItem> {
             }
         }).create().show();
     }
+
+    public void confirmDeleteMed(final Context context) {
+        confirmDeleteMed(context, null);
+    }
+
 }

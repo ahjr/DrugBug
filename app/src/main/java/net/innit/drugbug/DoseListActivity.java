@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.fragment.DoseListFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 
@@ -37,7 +38,7 @@ public class DoseListActivity extends Activity {
 
     private String sortOrder;
     private String filter;
-    private Bundle bundle;
+    private Bundle bundle = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,6 +205,24 @@ public class DoseListActivity extends Activity {
     }
 
     private void refreshDisplay() {
+        switch (type) {
+            case TYPE_REMINDER:
+                setTitle(getString(R.string.dose_list_title_reminders));
+                break;
+            case TYPE_SINGLE:
+                DatabaseDAO db = new DatabaseDAO(this);
+                db.open();
+                setTitle(db.getMedication(bundle.getLong(INTENT_MED_ID)).getName());
+                db.close();
+                break;
+            default:
+                setTitle(
+                    (type.equals(TYPE_TAKEN))
+                        ? getString(R.string.dose_list_title_doses_taken)
+                        : getString(R.string.dose_list_title_doses_future)
+                );
+        }
+
         Fragment fragment = new DoseListFragment();
         fragment.setArguments(bundle);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();

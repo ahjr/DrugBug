@@ -195,6 +195,7 @@ public class DoseListFragment extends ListFragment {
 
         switch (sortOrder) {
             case SORT_DATE_ASC:
+                Collections.sort(doses);
                 break;
             case SORT_DATE_DESC:
                 Collections.sort(doses, new DoseItem.ReverseDateComparator());
