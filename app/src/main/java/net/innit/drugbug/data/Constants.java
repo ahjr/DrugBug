@@ -8,6 +8,8 @@ public class Constants {
 
     public static final String LOG = "DrugBug";
 
+    public static final int REQUEST_TAKE_PICTURE = 300;
+
     /**
      * Set to true to clear SharedPreferences and reset to defaults
      */
@@ -107,5 +109,6 @@ public class Constants {
 
     public static final String TAG_DETAIL = "Detail Fragment";
     public static final String TAG_HELP = "Help Fragment";
+    public static final String TAG_ADD = "Add Fragment";
 
 }

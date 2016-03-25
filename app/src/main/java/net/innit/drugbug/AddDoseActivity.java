@@ -55,6 +55,7 @@ import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_PREVIEW;
 import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.LOG;
+import static net.innit.drugbug.data.Constants.REQUEST_TAKE_PICTURE;
 import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SOURCE_ADD_DOSE;
 import static net.innit.drugbug.data.Constants.SOURCE_EDIT_DOSE;
@@ -65,7 +66,6 @@ import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 
 
 public class AddDoseActivity extends FragmentActivity {
-    private static final int REQUEST_TAKE_PICTURE = 300;
 
     private final DatabaseDAO db = new DatabaseDAO(this);
 
@@ -255,6 +255,8 @@ public class AddDoseActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        tempPath.delete();
 
         Intent intent;
         if (type.equals(TYPE_MEDICATION) || action.equals(ACTION_RESTORE)) {
