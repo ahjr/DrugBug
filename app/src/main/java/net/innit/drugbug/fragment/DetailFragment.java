@@ -21,32 +21,34 @@ import android.widget.TextView;
 import net.innit.drugbug.AddDoseActivity;
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.DBDataSource;
+import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.model.DoseItem;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static net.innit.drugbug.util.Constants.ACTION;
-import static net.innit.drugbug.util.Constants.ACTION_EDIT;
-import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
-import static net.innit.drugbug.util.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.util.Constants.SORT;
-import static net.innit.drugbug.util.Constants.SOURCE;
-import static net.innit.drugbug.util.Constants.SOURCE_DETAIL_FUTURE;
-import static net.innit.drugbug.util.Constants.SOURCE_DETAIL_TAKEN;
-import static net.innit.drugbug.util.Constants.TYPE;
-import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
-import static net.innit.drugbug.util.Constants.TYPE_SINGLE;
-import static net.innit.drugbug.util.Constants.TYPE_TAKEN;
+import static net.innit.drugbug.data.Constants.ACTION;
+import static net.innit.drugbug.data.Constants.ACTION_EDIT;
+import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_PREVIEW;
+import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_PREVIEW;
+import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
+import static net.innit.drugbug.data.Constants.SORT;
+import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_FUTURE;
+import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_TAKEN;
+import static net.innit.drugbug.data.Constants.TAG_DETAIL;
+import static net.innit.drugbug.data.Constants.TYPE;
+import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
+import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
 /**
  * Fragment for displaying the detail of a dose
  */
 public class DetailFragment extends DialogFragment {
     private long id;
-    private DBDataSource db;
+    private DatabaseDAO db;
     private Context context;
     private DoseItem dose;
     private String sortOrder;
@@ -55,7 +57,7 @@ public class DetailFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
-        db = new DBDataSource(context);
+        db = new DatabaseDAO(context);
     }
 
     @Nullable
@@ -164,11 +166,9 @@ public class DetailFragment extends DialogFragment {
 
         // Replace the detail image with the medication's image, if there is one
         if (dose.getMedication().hasImage()) {
-//            final Bitmap image = dose.getMedication().getBitmap(context, 100, 100);
             ImageView imageView = (ImageView) view.findViewById(R.id.ivDetailImage);
-//            imageView.setImageBitmap(image);
 
-            dose.getMedication().getBitmap(context, imageView, 100, 100);
+            dose.getMedication().getBitmap(context, imageView, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
 
             // Make the image thumbnail clickable and show it full size when it's clicked on
             imageView.setClickable(true);
@@ -183,7 +183,7 @@ public class DetailFragment extends DialogFragment {
 
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();
-                    ft.add(imageFragment, "Detail Fragment");
+                    ft.add(imageFragment, TAG_DETAIL);
                     ft.commit();
                 }
             });
@@ -198,20 +198,7 @@ public class DetailFragment extends DialogFragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int source;
-                    switch (type) {
-                        case TYPE_TAKEN:
-                            source = SOURCE_DETAIL_TAKEN;
-                            break;
-                        default:
-                            source = SOURCE_DETAIL_FUTURE;
-                    }
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(SOURCE, source);
-                    HelpFragment fragment = new HelpFragment();
-                    fragment.setArguments(bundle);
-                    fragment.show(getFragmentManager(), "Help Fragment");
+                    HelpFragment.showHelp(getFragmentManager(), (type.equals(TYPE_TAKEN)) ? SOURCE_DETAIL_TAKEN : SOURCE_DETAIL_FUTURE);
                 }
             });
         }

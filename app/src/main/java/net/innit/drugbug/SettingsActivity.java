@@ -8,8 +8,7 @@ import android.view.MenuItem;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.fragment.SettingsFragment;
 
-import static net.innit.drugbug.util.Constants.SOURCE;
-import static net.innit.drugbug.util.Constants.SOURCE_SETTINGS;
+import static net.innit.drugbug.data.Constants.SOURCE_SETTINGS;
 
 public class SettingsActivity extends Activity {
     @Override
@@ -30,12 +29,7 @@ public class SettingsActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_default_help:
-                Bundle bundle = new Bundle();
-                bundle.putInt(SOURCE, SOURCE_SETTINGS);
-
-                HelpFragment fragment = new HelpFragment();
-                fragment.setArguments(bundle);
-                fragment.show(getFragmentManager(), "Help Fragment");
+                HelpFragment.showHelp(getFragmentManager(), SOURCE_SETTINGS);
                 return true;
             case android.R.id.home:
                 onBackPressed();

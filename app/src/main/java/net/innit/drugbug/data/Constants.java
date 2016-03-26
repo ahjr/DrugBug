@@ -1,4 +1,4 @@
-package net.innit.drugbug.util;
+package net.innit.drugbug.data;
 
 public class Constants {
     /**
@@ -7,6 +7,8 @@ public class Constants {
     private Constants() {}
 
     public static final String LOG = "DrugBug";
+
+    public static final int REQUEST_TAKE_PICTURE = 300;
 
     /**
      * Set to true to clear SharedPreferences and reset to defaults
@@ -41,6 +43,7 @@ public class Constants {
     public static final String SORT_DATE_DESC = "dateDsc";
     public static final String SORT_DATE_ASC = "dateAsc";
     public static final String SORT_NAME = "name";
+    public static final String SORT_CREATION = "creation";
     public static final String SORT_NAME_DESC = "nameDsc";
     public static final String SORT_NAME_ASC = "nameAsc";
 
@@ -93,7 +96,19 @@ public class Constants {
     public static final String DEFAULT_NUM_DOSES = "5";
     public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
     public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
-    public static final String DEFAULT_IMAGE_STORAGE_EXTERNAL = "EXTERNAL";
-    public static final String DEFAULT_IMAGE_STORAGE_INTERNAL = "INTERNAL";
+
+    /**
+     * Image size constants
+     */
+    public static final int IMAGE_HEIGHT_FULL = 0;
+    public static final int IMAGE_WIDTH_FULL = 0;
+    public static final int IMAGE_HEIGHT_LIST = 50;
+    public static final int IMAGE_WIDTH_LIST = 50;
+    public static final int IMAGE_HEIGHT_PREVIEW = 100;
+    public static final int IMAGE_WIDTH_PREVIEW = 100;
+
+    public static final String TAG_DETAIL = "Detail Fragment";
+    public static final String TAG_HELP = "Help Fragment";
+    public static final String TAG_ADD = "Add Fragment";
 
 }

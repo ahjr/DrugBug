@@ -82,7 +82,7 @@
             android:inputType="datetime"/>
 
         <ImageButton
-            android:id="@+id/button"
+            android:id="@+id/btnAddMedDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/etAddMedDateTime"

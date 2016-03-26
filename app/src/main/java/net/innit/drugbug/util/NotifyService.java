@@ -10,12 +10,12 @@ import android.support.v4.app.NotificationCompat;
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.R;
 
-import static net.innit.drugbug.util.Constants.FROM_REMINDER;
-import static net.innit.drugbug.util.Constants.INTENT_DOSE_ID;
-import static net.innit.drugbug.util.Constants.REMINDER_TEXT;
-import static net.innit.drugbug.util.Constants.REMINDER_TITLE;
-import static net.innit.drugbug.util.Constants.TYPE;
-import static net.innit.drugbug.util.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.data.Constants.FROM_REMINDER;
+import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
+import static net.innit.drugbug.data.Constants.REMINDER_TEXT;
+import static net.innit.drugbug.data.Constants.REMINDER_TITLE;
+import static net.innit.drugbug.data.Constants.TYPE;
+import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
 
 /**
  * Dose notification service

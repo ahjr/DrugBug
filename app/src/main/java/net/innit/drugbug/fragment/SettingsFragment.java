@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.Settings;
@@ -20,7 +19,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private int oldNumDoses;                // Holder field for initial number of doses to keep
     private ImageStorage imageStorage;      // Image storage object
     private SettingsHelper settingsHelper;  // Settings constants and methods
-    private SharedPreferences sharedPreferences;
+    private Settings settings;
     private Context context;
 
     @Override
@@ -30,8 +29,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         context = getActivity().getApplicationContext();
         settingsHelper = new SettingsHelper(context);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        settings = Settings.getInstance(context);
+        settings.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -41,41 +40,43 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
-        oldNumDoses = sharedPreferences.getInt(Settings.NUM_DOSES.getKey(), Integer.parseInt(Settings.NUM_DOSES.getDefault()));
+        oldNumDoses = Integer.parseInt(settings.getString(Settings.Key.NUM_DOSES));
 
         imageStorage = ImageStorage.getInstance(context);
 
-        ListPreference listPreference = (ListPreference) findPreference(Settings.IMAGE_STORAGE.getKey());
+        ListPreference listPreference = (ListPreference) findPreference(Settings.Key.IMAGE_STORAGE.name());
         Map<String, String> locations = imageStorage.getAvailableLocations();
         Collection<String> values = locations.values();
         listPreference.setEntries(values.toArray(new String[values.size()]));
         values = locations.keySet();
         listPreference.setEntryValues(values.toArray(new String[values.size()]));
 
-        imageStorage.setLocationType(sharedPreferences.getString(Settings.IMAGE_STORAGE.getKey(), Settings.IMAGE_STORAGE.getDefault(context)));
+        imageStorage.setLocationType(settings.getString(Settings.Key.IMAGE_STORAGE));
 
-        setSummaries(sharedPreferences);
+        setSummaries(settings);
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Settings changedSetting = Settings.valueOf(key);
-        switch (changedSetting) {
+    public void onSharedPreferenceChanged(SharedPreferences sp, String keyString) {
+        // Since we're only using the default shared preferences here, we'll ignore the SharedPreferences
+        // parameter and just use the Settings instance we created in onCreate
+        Settings.Key key = Settings.Key.valueOf(keyString);
+        switch (key) {
             case NUM_DOSES:
-                settingsHelper.numDosesChanged(sharedPreferences.getInt(key, Integer.parseInt(Settings.NUM_DOSES.getDefault())), oldNumDoses);
+                settingsHelper.numDosesChanged(Integer.parseInt(settings.getString(key)), oldNumDoses);
                 break;
             case KEEP_TIME_TAKEN:
-                settingsHelper.keepTimeTakenChanged(sharedPreferences.getString(key, Settings.KEEP_TIME_TAKEN.getDefault()));
+                settingsHelper.keepTimeTakenChanged(settings.getString(key));
                 break;
             case KEEP_TIME_MISSED:
-                settingsHelper.keepTimeMissedChanged(sharedPreferences.getString(key, Settings.KEEP_TIME_MISSED.getDefault()));
+                settingsHelper.keepTimeMissedChanged(settings.getString(key));
                 break;
             case IMAGE_STORAGE:
-                imageStorage.setLocationType(sharedPreferences.getString(key, Settings.IMAGE_STORAGE.getDefault(context)));
+                imageStorage.setLocationType(settings.getString(key));
                 settingsHelper.imageStorageChanged(imageStorage);
                 break;
         }
-        setSummaries(sharedPreferences);
+        setSummaries(settings);
     }
 
     /**
@@ -83,28 +84,21 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      *
      * @param sharedPreferences Shared preferences object containing the preferences to set summaries for
      */
-    private void setSummaries(SharedPreferences sharedPreferences) {
+    private void setSummaries(Settings sharedPreferences) {
         // Set summary for number of untaken doses to keep
-        findPreference(Settings.NUM_DOSES.getKey())
-                .setSummary("Current: " +
-                        sharedPreferences.getInt(Settings.NUM_DOSES.getKey(),
-                                Integer.parseInt(Settings.NUM_DOSES.getDefault())));
+        findPreference(Settings.Key.NUM_DOSES.name())
+                .setSummary(getString(R.string.preference_current) + sharedPreferences.getString(Settings.Key.NUM_DOSES));
 
         // Set summary for taken dose keep time
-        findPreference(Settings.KEEP_TIME_TAKEN.getKey())
-                .setSummary("Current: " +
-                        SettingsHelper.convertString(sharedPreferences.getString(Settings.KEEP_TIME_TAKEN.getKey(),
-                                Settings.KEEP_TIME_TAKEN.getDefault())));
+        findPreference(Settings.Key.KEEP_TIME_TAKEN.name())
+                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_TAKEN)));
 
         // Set summary for untaken dose keep time
-        findPreference(Settings.KEEP_TIME_MISSED.getKey())
-                .setSummary("Current: " +
-                        SettingsHelper.convertString(sharedPreferences.getString(Settings.KEEP_TIME_MISSED.getKey(),
-                                Settings.KEEP_TIME_MISSED.getDefault())));
+        findPreference(Settings.Key.KEEP_TIME_MISSED.name())
+                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_MISSED)));
 
         // Set summary for image storage location
-        findPreference(Settings.IMAGE_STORAGE.getKey())
-                .setSummary("Current: " +
-                        imageStorage.getDisplayText());
+        findPreference(Settings.Key.IMAGE_STORAGE.name())
+                .setSummary(getString(R.string.preference_current) + imageStorage.getDisplayText());
     }
 }

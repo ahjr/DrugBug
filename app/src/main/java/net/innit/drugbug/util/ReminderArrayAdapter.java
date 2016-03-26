@@ -15,6 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_LIST;
+import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_LIST;
+
 public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
     private final Context context;
     private final List<DoseItem> data;
@@ -54,7 +57,7 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
         mViewHolder.date.setText(display);
 
         if (doseItem.getMedication().hasImage()) {
-            new BitmapHelper.BitmapWorkerTask(mViewHolder.image, doseItem.getMedication().getImagePath(), 50, 50).execute(context);
+            doseItem.getMedication().getBitmap(context, mViewHolder.image, IMAGE_WIDTH_LIST, IMAGE_HEIGHT_LIST);
         }
 
         return convertView;
