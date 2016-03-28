@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.innit.drugbug.data.Constants;
 import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.fragment.AddDoseFragment;
 import net.innit.drugbug.fragment.HelpFragment;
@@ -15,6 +14,7 @@ import net.innit.drugbug.fragment.MainFragment;
 
 import static net.innit.drugbug.data.Constants.ACTION;
 import static net.innit.drugbug.data.Constants.ACTION_ADD;
+import static net.innit.drugbug.data.Constants.CLEAR_SHARED_PREFS;
 import static net.innit.drugbug.data.Constants.SOURCE_MAIN;
 import static net.innit.drugbug.data.Constants.TAG_ADD;
 
@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
         Settings settings = Settings.getInstance(getApplicationContext());
 
         // Clean SharedPreferences if constant is true
-        if (Constants.CLEAR_SHARED_PREFS) {
+        if (CLEAR_SHARED_PREFS) {
             settings.clear();
             settings.apply();
         }

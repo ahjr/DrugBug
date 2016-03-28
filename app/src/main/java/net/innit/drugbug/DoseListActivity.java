@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.innit.drugbug.data.Constants;
 import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.fragment.AddDoseFragment;
 import net.innit.drugbug.fragment.DoseListFragment;
@@ -29,6 +28,7 @@ import static net.innit.drugbug.data.Constants.SOURCE_LIST_REMINDERS;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_SINGLE_MED;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_TAKEN;
 import static net.innit.drugbug.data.Constants.SOURCE_MAIN;
+import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
 import static net.innit.drugbug.data.Constants.TYPE_REMINDER;
@@ -144,7 +144,7 @@ public class DoseListActivity extends FragmentActivity {
 
                 Fragment fragment = new AddDoseFragment();
                 fragment.setArguments(b);
-                getFragmentManager().beginTransaction().add(fragment, Constants.TAG_ADD).commit();
+                getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
                 return true;
             case R.id.menu_list_help:
                 switch (type) {

@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.R;
-import net.innit.drugbug.data.Constants;
 import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.util.OnListUpdatedListener;
@@ -39,6 +38,7 @@ import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_FUTURE;
 import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_TAKEN;
+import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TAG_DETAIL;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
@@ -138,7 +138,7 @@ public class DetailFragment extends DialogFragment {
                 b.putString(SORT, sortOrder);
                 Fragment fragment = new AddDoseFragment();
                 fragment.setArguments(b);
-                getFragmentManager().beginTransaction().add(fragment, Constants.TAG_ADD).commit();
+                getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
             }
         });
 
