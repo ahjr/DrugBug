@@ -18,9 +18,9 @@ import java.util.Locale;
 import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_LIST;
 import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_LIST;
 
-public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
+public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> implements UpdateableListAdapter<DoseItem> {
     private final Context context;
-    private final List<DoseItem> data;
+    private List<DoseItem> data;
 
     public ReminderArrayAdapter(Context context, List<DoseItem> doseItems) {
         super(context, R.layout.list_item_reminder, doseItems);
@@ -66,6 +66,12 @@ public class ReminderArrayAdapter extends ArrayAdapter<DoseItem> {
     @Override
     public int getCount() {
         return data.size();
+    }
+
+    @Override
+    public void updateList(List<DoseItem> list) {
+        this.data = list;
+        notifyDataSetChanged();
     }
 
     private static class ViewHolder {

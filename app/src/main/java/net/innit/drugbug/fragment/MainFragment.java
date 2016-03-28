@@ -112,7 +112,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainFuture(View view) {
+    private void onClickMainFuture(View view) {
         Intent intent = new Intent(context, DoseListActivity.class);
         intent.putExtra(TYPE, TYPE_FUTURE);
         startActivity(intent);
@@ -123,7 +123,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainTaken(View view) {
+    private void onClickMainTaken(View view) {
         Intent intent = new Intent(context, DoseListActivity.class);
         intent.putExtra(TYPE, TYPE_TAKEN);
         startActivity(intent);
@@ -134,7 +134,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainReminders(View view) {
+    private void onClickMainReminders(View view) {
         Intent intent = new Intent(context, DoseListActivity.class);
         intent.putExtra(TYPE, TYPE_REMINDER);
         startActivity(intent);
@@ -145,7 +145,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainMedications(View view) {
+    private void onClickMainMedications(View view) {
         Intent intent = new Intent(context, MedicationListActivity.class);
         startActivity(intent);
     }

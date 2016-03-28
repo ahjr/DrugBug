@@ -1,14 +1,16 @@
 package net.innit.drugbug.model;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DatabaseDAO;
+import net.innit.drugbug.util.OnListUpdatedListener;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -122,9 +124,9 @@ public class DoseItem implements Comparable<DoseItem> {
      * Deletes dose after confirmation from user
      *
      * @param context context for the alert dialog
-     * @param intent  intent to start after confirmation
      */
-    public void confirmDelete(final Context context, final Intent intent) {
+//    public void confirmDelete(final Context context, final Intent intent) {
+    public void confirmDelete(final Context context, final OnListUpdatedListener listener) {
         final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(R.string.alert_delete_dose_title);
@@ -133,16 +135,20 @@ public class DoseItem implements Comparable<DoseItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                switch (db.removeDose(id, true)) {
-                    case RESULT_OK:
-                        Toast.makeText(context, R.string.dose_list_toast_removed_ok, Toast.LENGTH_SHORT).show();
-                        context.startActivity(intent);
-                        break;
-                    case ERROR_UNKNOWN_ERROR:
-                        Toast.makeText(context, R.string.dose_list_toast_removed_error, Toast.LENGTH_SHORT).show();
-                        break;
-                }
+//                switch (db.removeDose(id, true)) {
+//                    case RESULT_OK:
+//                        Toast.makeText(context, R.string.dose_list_toast_removed_ok, Toast.LENGTH_SHORT).show();
+//                        context.startActivity(intent);
+//                        break;
+//                    case ERROR_UNKNOWN_ERROR:
+//                        Toast.makeText(context, R.string.dose_list_toast_removed_error, Toast.LENGTH_SHORT).show();
+//                        break;
+//                }
+                db.removeDose(id, true);
                 db.close();
+                if (listener != null) {
+                    listener.onListUpdated();
+                }
             }
         });
         alertDialogBuilder.setNegativeButton(R.string.alert_delete_dose_negative, new DialogInterface.OnClickListener() {
@@ -161,9 +167,9 @@ public class DoseItem implements Comparable<DoseItem> {
      * @param context context for the alert dialog
      * @param intent  intent to start after confirmation
      */
-    public void confirmTaken(final Context context, final Intent intent) {
-        final DatabaseDAO db = new DatabaseDAO(context);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+    public void confirmTaken(final Fragment context, final Intent intent) {
+        final DatabaseDAO db = new DatabaseDAO(context.getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context.getActivity());
         alertDialogBuilder.setTitle(R.string.taken_dialog_title);
         alertDialogBuilder.setMessage(R.string.dialog_confirm);
         alertDialogBuilder.setPositiveButton(R.string.taken_dialog_positive, new DialogInterface.OnClickListener() {
@@ -179,7 +185,14 @@ public class DoseItem implements Comparable<DoseItem> {
                         db.removeDose(firstFutureDose.getId(), true);
                         firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
                     }
-                    context.startActivity(intent);
+
+                    db.createNextFuture(DoseItem.this.getMedication());
+
+                    if (context instanceof DialogFragment) {
+                        // Dismiss the calling dialog fragment
+                        ((DialogFragment) context).dismiss();
+                    }
+                    context.getActivity().startActivity(intent);
                 }
                 db.close();
 

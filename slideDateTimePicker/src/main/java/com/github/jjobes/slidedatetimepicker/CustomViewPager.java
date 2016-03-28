@@ -19,7 +19,8 @@ import android.widget.TimePicker;
 public class CustomViewPager extends ViewPager {
     private DatePicker mDatePicker;
     private TimePicker mTimePicker;
-    private float x1, y1, x2, y2;
+    private float x1;
+    private float y1;
     private float mTouchSlop;
 
     public CustomViewPager(Context context) {
@@ -84,8 +85,8 @@ public class CustomViewPager extends ViewPager {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                x2 = event.getX();
-                y2 = event.getY();
+                float x2 = event.getX();
+                float y2 = event.getY();
 
                 if (isScrollingHorizontal(x1, y1, x2, y2)) {
                     // When the user is scrolling the ViewPager horizontally,

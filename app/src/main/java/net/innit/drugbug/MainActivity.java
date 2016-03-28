@@ -1,6 +1,7 @@
 package net.innit.drugbug;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,12 +9,14 @@ import android.view.MenuItem;
 
 import net.innit.drugbug.data.Constants;
 import net.innit.drugbug.data.Settings;
+import net.innit.drugbug.fragment.AddDoseFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.fragment.MainFragment;
 
 import static net.innit.drugbug.data.Constants.ACTION;
 import static net.innit.drugbug.data.Constants.ACTION_ADD;
 import static net.innit.drugbug.data.Constants.SOURCE_MAIN;
+import static net.innit.drugbug.data.Constants.TAG_ADD;
 
 public class MainActivity extends Activity {
 
@@ -59,12 +62,18 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_main_add:
-                Intent intent = new Intent(MainActivity.this, AddDoseActivity.class);
-                intent.putExtra(ACTION, ACTION_ADD);
-                startActivity(intent);
+//                Intent intent = new Intent(MainActivity.this, AddDoseActivity.class);
+//                intent.putExtra(ACTION, ACTION_ADD);
+//                startActivity(intent);
+                Bundle b = new Bundle();
+                b.putString(ACTION, ACTION_ADD);
+
+                Fragment fragment = new AddDoseFragment();
+                fragment.setArguments(b);
+                getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
                 return true;
             case R.id.menu_main_prefs:
-                intent = new Intent(MainActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.menu_main_help:
@@ -76,6 +85,11 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 }

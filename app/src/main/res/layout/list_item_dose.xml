@@ -29,7 +29,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textSize="15sp"
-            android:text="Medication name (Dosage)"/>
+            android:text="MEDICATION_NAME (DOSAGE)"/>
 
         <LinearLayout
             android:layout_width="match_parent"

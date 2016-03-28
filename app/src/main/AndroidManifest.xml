@@ -23,13 +23,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!--<activity-->
+            <!--android:name=".DoseListActivity"-->
+            <!--android:noHistory="true"-->
+            <!--android:parentActivityName=".MainActivity"/>-->
         <activity
             android:name=".DoseListActivity"
-            android:noHistory="true"
             android:parentActivityName=".MainActivity"/>
+        <!--<activity-->
+            <!--android:name=".MedicationListActivity"-->
+            <!--android:noHistory="true"-->
+            <!--android:parentActivityName=".MainActivity"/>-->
         <activity
             android:name=".MedicationListActivity"
-            android:noHistory="true"
             android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".AddDoseActivity"

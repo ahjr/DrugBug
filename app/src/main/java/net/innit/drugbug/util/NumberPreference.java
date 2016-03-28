@@ -19,7 +19,6 @@ public class NumberPreference extends DialogPreference {
     private static final int MIN_VALUE = 1;
     private static final int MAX_VALUE = 30;
     private NumberPicker picker;
-    private int value;
 
     public NumberPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -37,6 +36,7 @@ public class NumberPreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
+        int value;
         if (restorePersistedValue) {
             // Restore existing state
             value = Integer.parseInt(this.getPersistedString(DEFAULT_NUM_DOSES));

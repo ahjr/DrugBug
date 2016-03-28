@@ -1,9 +1,10 @@
 package net.innit.drugbug.fragment;
 
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -18,11 +19,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import net.innit.drugbug.AddDoseActivity;
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.R;
+import net.innit.drugbug.data.Constants;
 import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.model.DoseItem;
+import net.innit.drugbug.util.OnListUpdatedListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,15 +51,18 @@ import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 public class DetailFragment extends DialogFragment {
     private long id;
     private DatabaseDAO db;
-    private Context context;
     private DoseItem dose;
     private String sortOrder;
+    private DialogInterface.OnDismissListener onDismissListener;
+
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getActivity();
-        db = new DatabaseDAO(context);
+        db = new DatabaseDAO(getActivity());
     }
 
     @Nullable
@@ -92,7 +97,7 @@ public class DetailFragment extends DialogFragment {
                 // dose was missed so who cares if reminder is set or not
                 textView.setVisibility(View.GONE);
             } else if (dose.isReminderSet()) {
-                Drawable image = ContextCompat.getDrawable(context, R.drawable.ic_action_alarm_on);
+                Drawable image = ContextCompat.getDrawable(getActivity(), R.drawable.ic_action_alarm_on);
                 textView.setCompoundDrawablesRelativeWithIntrinsicBounds(image, null, null, null);
                 textView.setText(R.string.reminder_list_set_positive);
             }
@@ -126,14 +131,14 @@ public class DetailFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, AddDoseActivity.class);
-                intent.putExtra(ACTION, ACTION_EDIT);
-                intent.putExtra(TYPE, type);
-                intent.putExtra(INTENT_DOSE_ID, id);
-                intent.putExtra(SORT, sortOrder);
-
-                startActivity(intent);
-                dismiss();
+                Bundle b = new Bundle();
+                b.putLong(INTENT_DOSE_ID, id);
+                b.putString(ACTION, ACTION_EDIT);
+                b.putString(TYPE, type);
+                b.putString(SORT, sortOrder);
+                Fragment fragment = new AddDoseFragment();
+                fragment.setArguments(b);
+                getFragmentManager().beginTransaction().add(fragment, Constants.TAG_ADD).commit();
             }
         });
 
@@ -142,12 +147,12 @@ public class DetailFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, DoseListActivity.class);
-                intent.putExtra(TYPE, type);
-                intent.putExtra(SORT, sortOrder);
-                if (type.equals(TYPE_SINGLE))
-                    intent.putExtra(INTENT_MED_ID, dose.getMedication().getId());
-                dose.confirmDelete(context, intent);
+                dose.confirmDelete(getActivity(), new OnListUpdatedListener() {
+                    @Override
+                    public void onListUpdated() {
+                        dismiss();
+                    }
+                });
             }
         });
 
@@ -155,12 +160,12 @@ public class DetailFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, DoseListActivity.class);
+                Intent intent = new Intent(getActivity(), DoseListActivity.class);
                 intent.putExtra(TYPE, TYPE_TAKEN);
                 intent.putExtra(SORT, sortOrder);
                 if (type.equals(TYPE_SINGLE))
                     intent.putExtra(INTENT_MED_ID, dose.getMedication().getId());
-                dose.confirmTaken(context, intent);
+                dose.confirmTaken(DetailFragment.this, intent);
             }
         });
 
@@ -168,7 +173,7 @@ public class DetailFragment extends DialogFragment {
         if (dose.getMedication().hasImage()) {
             ImageView imageView = (ImageView) view.findViewById(R.id.ivDetailImage);
 
-            dose.getMedication().getBitmap(context, imageView, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
+            dose.getMedication().getBitmap(getActivity(), imageView, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
 
             // Make the image thumbnail clickable and show it full size when it's clicked on
             imageView.setClickable(true);
@@ -206,4 +211,11 @@ public class DetailFragment extends DialogFragment {
         return view;
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
+    }
 }

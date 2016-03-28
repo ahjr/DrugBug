@@ -177,7 +177,8 @@
                 android:id="@+id/ivDetailHelp"
                 android:src="@drawable/ic_action_help"
                 android:layout_gravity="bottom"
-                android:paddingEnd="20dp"/>
+                android:paddingEnd="20dp"
+                android:contentDescription="@string/content_description_help"/>
 
     </LinearLayout>
 

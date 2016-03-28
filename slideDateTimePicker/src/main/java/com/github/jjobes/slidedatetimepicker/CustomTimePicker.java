@@ -1,6 +1,8 @@
 package com.github.jjobes.slidedatetimepicker;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.NumberPicker;
@@ -51,9 +53,9 @@ public class CustomTimePicker extends TimePicker {
             // to refer to our custom drawables
             selectionDividerField = numberPickerClass.getDeclaredField("mSelectionDivider");
             selectionDividerField.setAccessible(true);
-            selectionDividerField.set(hourNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
-            selectionDividerField.set(minuteNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
-            selectionDividerField.set(amPmNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
+            selectionDividerField.set(hourNumberPicker, ContextCompat.getDrawable(context, R.drawable.selection_divider));
+            selectionDividerField.set(minuteNumberPicker, ContextCompat.getDrawable(context, R.drawable.selection_divider));
+            selectionDividerField.set(amPmNumberPicker, ContextCompat.getDrawable(context, R.drawable.selection_divider));
         } catch (ClassNotFoundException e) {
             Log.e(TAG, "ClassNotFoundException in CustomTimePicker", e);
         } catch (NoSuchFieldException e) {
@@ -63,5 +65,37 @@ public class CustomTimePicker extends TimePicker {
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "IllegalArgumentException in CustomTimePicker", e);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setHour(int hour) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            super.setHour(hour);
+        else
+            super.setCurrentHour(hour);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void setMinute(int minute) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            super.setMinute(minute);
+        else
+            super.setCurrentMinute(minute);
+    }
+
+    @SuppressWarnings("deprecation")
+    public int getHour() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            return super.getHour();
+        else
+            return super.getCurrentHour();
+    }
+
+    @SuppressWarnings("deprecation")
+    public int getMinute() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            return super.getMinute();
+        else
+            return super.getCurrentMinute();
     }
 }

@@ -58,25 +58,27 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sp, String keyString) {
-        // Since we're only using the default shared preferences here, we'll ignore the SharedPreferences
-        // parameter and just use the Settings instance we created in onCreate
-        Settings.Key key = Settings.Key.valueOf(keyString);
-        switch (key) {
-            case NUM_DOSES:
-                settingsHelper.numDosesChanged(Integer.parseInt(settings.getString(key)), oldNumDoses);
-                break;
-            case KEEP_TIME_TAKEN:
-                settingsHelper.keepTimeTakenChanged(settings.getString(key));
-                break;
-            case KEEP_TIME_MISSED:
-                settingsHelper.keepTimeMissedChanged(settings.getString(key));
-                break;
-            case IMAGE_STORAGE:
-                imageStorage.setLocationType(settings.getString(key));
-                settingsHelper.imageStorageChanged(imageStorage);
-                break;
+        if (isAdded()) {
+            // Since we're only using the default shared preferences here, we'll ignore the SharedPreferences
+            // parameter and just use the Settings instance we created in onCreate
+            Settings.Key key = Settings.Key.valueOf(keyString);
+            switch (key) {
+                case NUM_DOSES:
+                    settingsHelper.numDosesChanged(Integer.parseInt(settings.getString(key)), oldNumDoses);
+                    break;
+                case KEEP_TIME_TAKEN:
+                    settingsHelper.keepTimeTakenChanged(settings.getString(key));
+                    break;
+                case KEEP_TIME_MISSED:
+                    settingsHelper.keepTimeMissedChanged(settings.getString(key));
+                    break;
+                case IMAGE_STORAGE:
+                    imageStorage.setLocationType(settings.getString(key));
+                    settingsHelper.imageStorageChanged(imageStorage);
+                    break;
+            }
+            setSummaries(settings);
         }
-        setSummaries(settings);
     }
 
     /**

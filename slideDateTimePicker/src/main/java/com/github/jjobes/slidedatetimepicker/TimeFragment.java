@@ -22,7 +22,7 @@ import android.widget.TimePicker;
  */
 public class TimeFragment extends Fragment {
     private TimeChangedListener mCallback;
-    private TimePicker mTimePicker;
+    private CustomTimePicker mTimePicker;
 
     public TimeFragment() {
         // Required empty public constructor for fragment.
@@ -31,7 +31,7 @@ public class TimeFragment extends Fragment {
     /**
      * Return an instance of TimeFragment with its bundle filled with the
      * constructor arguments. The values in the bundle are retrieved in
-     * {@link #onCreateView()} below to properly initialize the TimePicker.
+     *  below to properly initialize the TimePicker.
      *
      * @param theme
      * @param hour
@@ -40,7 +40,7 @@ public class TimeFragment extends Fragment {
      * @param is24HourTime
      * @return
      */
-    public static final TimeFragment newInstance(int theme, int hour, int minute,
+    public static TimeFragment newInstance(int theme, int hour, int minute,
                                                  boolean isClientSpecified24HourTime, boolean is24HourTime) {
         TimeFragment f = new TimeFragment();
 
@@ -99,7 +99,7 @@ public class TimeFragment extends Fragment {
 
         View v = localInflater.inflate(R.layout.fragment_time, container, false);
 
-        mTimePicker = (TimePicker) v.findViewById(R.id.timePicker);
+        mTimePicker = (CustomTimePicker) v.findViewById(R.id.timePicker);
         // block keyboard popping up on touch
         mTimePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
         mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
@@ -121,8 +121,8 @@ public class TimeFragment extends Fragment {
                     getTargetFragment().getActivity()));
         }
 
-        mTimePicker.setCurrentHour(initialHour);
-        mTimePicker.setCurrentMinute(initialMinute);
+        mTimePicker.setHour(initialHour);
+        mTimePicker.setMinute(initialMinute);
 
         // Fix for the bug where a TimePicker's onTimeChanged() is not called when
         // the user toggles the AM/PM button. Only applies to 4.0.0 and 4.0.3.
@@ -154,17 +154,17 @@ public class TimeFragment extends Fragment {
                 public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                     if (picker.getValue() == 1)  // PM
                     {
-                        if (mTimePicker.getCurrentHour() < 12)
-                            mTimePicker.setCurrentHour(mTimePicker.getCurrentHour() + 12);
+                        if (mTimePicker.getHour() < 12)
+                            mTimePicker.setHour(mTimePicker.getHour() + 12);
                     } else  // AM
                     {
-                        if (mTimePicker.getCurrentHour() >= 12)
-                            mTimePicker.setCurrentHour(mTimePicker.getCurrentHour() - 12);
+                        if (mTimePicker.getHour() >= 12)
+                            mTimePicker.setHour(mTimePicker.getHour() - 12);
                     }
 
                     mCallback.onTimeChanged(
-                            mTimePicker.getCurrentHour(),
-                            mTimePicker.getCurrentMinute());
+                            mTimePicker.getHour(),
+                            mTimePicker.getMinute());
                 }
             });
         }
@@ -178,4 +178,5 @@ public class TimeFragment extends Fragment {
     public interface TimeChangedListener {
         void onTimeChanged(int hour, int minute);
     }
+
 }

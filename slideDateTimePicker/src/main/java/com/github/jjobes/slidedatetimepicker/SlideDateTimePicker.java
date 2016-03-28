@@ -19,7 +19,7 @@ public class SlideDateTimePicker {
     public static final int HOLO_DARK = 1;
     public static final int HOLO_LIGHT = 2;
 
-    private FragmentManager mFragmentManager;
+    private final FragmentManager mFragmentManager;
     private SlideDateTimeListener mListener;
     private Date mInitialDate;
     private Date mMinDate;
@@ -176,7 +176,7 @@ public class SlideDateTimePicker {
      */
     public static class Builder {
         // Required
-        private FragmentManager fm;
+        private final FragmentManager fm;
         private SlideDateTimeListener listener;
 
         // Optional

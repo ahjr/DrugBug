@@ -13,10 +13,10 @@ import static net.innit.drugbug.data.Constants.DEFAULT_NUM_DOSES;
 
 public class Settings {
     private static Settings sSharedPrefs;
-    private SharedPreferences mPref;
+    private final SharedPreferences mPref;
     private SharedPreferences.Editor mEditor;
     private boolean mBulkUpdate = false;
-    private Context context;
+    private final Context context;
 
     private Settings(Context context) {
         mPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -42,7 +42,7 @@ public class Settings {
         put(key, key.getDefault(context));
     }
 
-    public void put(Key key, String val) {
+    private void put(Key key, String val) {
         doEdit();
         mEditor.putString(key.name(), val);
         doApply();
@@ -222,7 +222,7 @@ public class Settings {
         KEEP_TIME_MISSED(DEFAULT_KEEP_TIME_MISSED),
         IMAGE_STORAGE(null);
 
-        private String defaultValue;
+        private final String defaultValue;
 
         Key (String defaultValue) {
             this.defaultValue = defaultValue;

@@ -141,4 +141,5 @@
     <string name="alert_deactivate_med_positive">Yes, deactivate</string>
     <string name="storage_external_display">SD Card</string>
     <string name="storage_internal_display">Internal</string>
+    <string name="content_description_help">Help</string>
 </resources>

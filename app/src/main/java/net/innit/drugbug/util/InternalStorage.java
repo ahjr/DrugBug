@@ -21,7 +21,7 @@ public class InternalStorage extends Storage {
         this.context = context;
     }
 
-    protected static InternalStorage getInstance(Context context, String subDir) {
+    static InternalStorage getInstance(Context context, String subDir) {
         if (instance == null) {
             instance = new InternalStorage(context, subDir);
         }
@@ -29,7 +29,7 @@ public class InternalStorage extends Storage {
     }
 
     protected void setStorageLocation(Storage oldStorage) {
-        // if external directory doesnt exist
+        // if external directory doesn't exist
         this.prepareDirectory(oldStorage);
 
         // Move files from old storage location to here

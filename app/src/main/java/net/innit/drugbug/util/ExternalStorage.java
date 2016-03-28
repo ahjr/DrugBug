@@ -21,7 +21,7 @@ public class ExternalStorage extends Storage {
         this.context = context;
     }
 
-    protected static ExternalStorage getInstance(Context context, String subDir) {
+    static ExternalStorage getInstance(Context context, String subDir) {
         if (instance == null) {
             instance = new ExternalStorage(context, subDir);
         }
@@ -31,7 +31,7 @@ public class ExternalStorage extends Storage {
     protected void setStorageLocation(Storage oldStorage) {
         // if sd card is read/write
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                // if external directory doesnt exist
+                // if external directory doesn't exist
                 this.prepareDirectory(oldStorage);
                 if (oldStorage != null) {
                     boolean success = this.moveFiles(oldStorage);

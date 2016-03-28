@@ -2,12 +2,11 @@ package net.innit.drugbug;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.innit.drugbug.data.DatabaseDAO;
+import net.innit.drugbug.fragment.AddDoseFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 import net.innit.drugbug.fragment.MedicationListFragment;
 
@@ -22,6 +21,7 @@ import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SORT_NAME_ASC;
 import static net.innit.drugbug.data.Constants.SORT_NAME_DESC;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_MEDICATIONS;
+import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
 
@@ -29,7 +29,6 @@ import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
  * Activity to create a medication list
  */
 public class MedicationListActivity extends Activity {
-    private final DatabaseDAO db = new DatabaseDAO(this);
     private String sortOrder;
     private String filter;
     private Bundle bundle;
@@ -81,12 +80,15 @@ public class MedicationListActivity extends Activity {
 
         switch (item.getItemId()) {
             case R.id.menu_med_list_add:
-                Intent intent = new Intent(MedicationListActivity.this, AddDoseActivity.class);
-                intent.putExtra(ACTION, ACTION_ADD);
-                intent.putExtra(TYPE, TYPE_MEDICATION);
-                intent.putExtra(SORT, sortOrder);
-                intent.putExtra(FILTER_DOSE, filter);
-                startActivity(intent);
+                Bundle b = new Bundle();
+                b.putString(ACTION, ACTION_ADD);
+                b.putString(TYPE, TYPE_MEDICATION);
+                b.putString(SORT, sortOrder);
+                b.putString(FILTER_DOSE, filter);
+
+                Fragment fragment = new AddDoseFragment();
+                fragment.setArguments(b);
+                getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
                 return true;
             case R.id.menu_list_med_help:
                 HelpFragment.showHelp(getFragmentManager(), SOURCE_LIST_MEDICATIONS);

@@ -1,6 +1,6 @@
 [FEATURE] todo Swipe right goes back
 -- This is more complicated than I had anticipated
--- http://androidexample.com/Swipe_screen_left__right__top_bottom/index.php?view=article_discription&aid=95&aaid=118
+-- http://androidexample.com/Swipe_screen_left__right__top_bottom/index.php?view=articlediscription&aid=95&aaid=118
 
 [FEATURE] todo Handle reminder changes better
 -- Currently removing reminder from one dose changes all

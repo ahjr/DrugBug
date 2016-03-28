@@ -95,7 +95,7 @@ public class BitmapHelper {
         private final WeakReference<ImageView> imageViewReference;
         private final int width;
         private final int height;
-        private String imagePath;
+        private final String imagePath;
 
         public BitmapWorkerTask(ImageView imageView, String imagePath, int width, int height) {
             // Use a WeakReference to ensure the ImageView can be garbage collected

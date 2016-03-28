@@ -21,9 +21,9 @@ import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_LIST;
 import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_LIST;
 
 /**
- * Listview array adapter for taken and future doses
+ * ListView array adapter for taken and future doses
  */
-public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
+public class DoseArrayAdapter extends ArrayAdapter<DoseItem> implements UpdateableListAdapter<DoseItem> {
     private final Context context;
     private List<DoseItem> data;
     private int defaultColor;
@@ -38,10 +38,6 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
     @Override
     public int getCount() {
         return data.size();
-    }
-
-    public void updateList(List<DoseItem> doses) {
-        this.data = doses;
     }
 
     @Override
@@ -91,9 +87,9 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         display = simpleDateFormat.format(doseItem.getDate());
         mViewHolder.date.setText(display);
 
-        // Don't display the reminder set textview if dose is taken
-        // If dose is future, don't display the reminder set textview if dose is missed
-        // If future dose hasn't been missed, don't display the reminder set textview if dose reminder isn't set
+        // Don't display the reminder set TextView if dose is taken
+        // If dose is future, don't display the reminder set TextView if dose is missed
+        // If future dose hasn't been missed, don't display the reminder set TextView if dose reminder isn't set
         if (doseItem.isTaken() || missedDose) {
             mViewHolder.reminderImg.setVisibility(View.INVISIBLE);
         } else {
@@ -113,6 +109,12 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> {
         }
 
         return convertView;
+    }
+
+    @Override
+    public void updateList(List<DoseItem> list) {
+        this.data = list;
+        notifyDataSetChanged();
     }
 
     /**
