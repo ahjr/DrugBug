@@ -2,7 +2,6 @@ package net.innit.drugbug.fragment;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -40,7 +39,6 @@ import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.BitmapHelper;
 import net.innit.drugbug.util.DateUtil;
 import net.innit.drugbug.util.ImageStorage;
-import net.innit.drugbug.util.Reminder;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -71,15 +69,10 @@ public class AddDoseFragment extends DialogFragment {
     private static final int REQUEST_TAKE_PICTURE = 300;
 
     private DatabaseDAO db;
-    private Context context;
 
-    private String action;
-    private String type;
-    private String sortOrder;
-    private String filter;
+    private String action, type, sortOrder, filter;
 
-    private File dir;
-    private File tempPath;
+    private File dir, tempPath;
 
     private DoseItem doseItem = new DoseItem();
     private Date origDate;
@@ -111,8 +104,7 @@ public class AddDoseFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getActivity();
-        db = new DatabaseDAO(getActivity().getApplicationContext());
+        db = new DatabaseDAO(getActivity());
     }
 
     @Nullable
@@ -162,7 +154,7 @@ public class AddDoseFragment extends DialogFragment {
             mMedImage.setImageBitmap(image);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, db.getFreqLabels());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, db.getFreqLabels());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mFrequency.setAdapter(adapter);
@@ -181,14 +173,10 @@ public class AddDoseFragment extends DialogFragment {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        tempPath.delete();
-    }
-
-    @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         this.dismiss();
+        tempPath.delete();
     }
 
     private void onCreateEdit(Bundle bundle) {
@@ -224,7 +212,7 @@ public class AddDoseFragment extends DialogFragment {
         origFreq = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
-            doseItem.getMedication().getBitmap(context, mMedImage, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
+            doseItem.getMedication().getBitmap(getActivity(), mMedImage, IMAGE_WIDTH_PREVIEW, IMAGE_HEIGHT_PREVIEW);
         }
 
     }
@@ -265,7 +253,7 @@ public class AddDoseFragment extends DialogFragment {
 
     private boolean setupImageLocation() {
         // Need to do some stuff with the temporary image file
-        imageStorage = ImageStorage.getInstance(context);
+        imageStorage = ImageStorage.getInstance(getActivity());
         // Get the absolute path based on the current location SharedPreference setting
         dir = imageStorage.getAbsDir();
 
@@ -292,7 +280,7 @@ public class AddDoseFragment extends DialogFragment {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
             startActivityForResult(intent, REQUEST_TAKE_PICTURE);
         } else {
-            Toast.makeText(context, R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.camera_unavailable, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -303,7 +291,7 @@ public class AddDoseFragment extends DialogFragment {
         db.open();
         if (medication.getName().equals("")) {
             // Medication name is empty
-            Toast.makeText(context, R.string.add_dose_error_blank_name, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.add_dose_error_blank_name, Toast.LENGTH_SHORT).show();
         } else {
             if (action.equals(ACTION_ADD)) {
                 medication = db.createMedication(medication);
@@ -316,14 +304,14 @@ public class AddDoseFragment extends DialogFragment {
             doseItem.setReminder(mReminder.isChecked());
 
             if (!setDoseDate()) {
-                Toast.makeText(context, R.string.add_dose_error_invalid_date, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.add_dose_error_invalid_date, Toast.LENGTH_SHORT).show();
             } else {
                 if (doseItem.getDosage().equals("")) {
                     // Dosage is empty
-                    Toast.makeText(context, R.string.add_dose_error_blank_dosage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.add_dose_error_blank_dosage, Toast.LENGTH_SHORT).show();
                 } else {
                     if (action.equals(ACTION_EDIT) && !checkFreqChanged(medication)) {
-                        List<DoseItem> doses = db.getAllFutureForMed(context, medication);
+                        List<DoseItem> doses = db.getAllFutureForMed(getActivity(), medication);
                         DoseItem nextDose = doseItem;
                         for (DoseItem futureDose : doses) {
                             nextDose = updateFutureDose(nextDose, futureDose);
@@ -341,11 +329,12 @@ public class AddDoseFragment extends DialogFragment {
                             futureItem = new DoseItem(medication, calendar.getTime(), doseItem.isReminderSet(), false, doseItem.getDosage());
                             futureItem = db.createDose(futureItem);
 
-                            handleReminder(futureItem);
+//                            handleReminder(futureItem);
+                            futureItem.setOrKillAlarm(getActivity());
                         }
                     }
 
-                    Intent intent = new Intent(context, DoseListActivity.class);
+                    Intent intent = new Intent(getActivity(), DoseListActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra(TYPE, type);
                     if (!action.equals(ACTION_RESTORE)) {
@@ -383,7 +372,7 @@ public class AddDoseFragment extends DialogFragment {
         if (thisDose.getId() != doseItem.getId()) {
             // Only do the setting if this is not the dose currently being edited
             if (thisDose.getDate().getTime() > origDate.getTime()) {
-                thisDose.setDate(nextDose.nextDate(context));
+                thisDose.setDate(nextDose.nextDate(getActivity()));
                 nextDose = thisDose;
             }
             thisDose.setDosage(doseItem.getDosage());
@@ -393,23 +382,11 @@ public class AddDoseFragment extends DialogFragment {
         }
 
         if (db.updateDose(thisDose)) {
-            handleReminder(thisDose);
+            thisDose.setOrKillAlarm(getActivity());
         } else {
-            Toast.makeText(context, R.string.error_update_dose, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.error_update_dose, Toast.LENGTH_SHORT).show();
         }
         return nextDose;
-    }
-
-    private void handleReminder(DoseItem mDose) {
-        if (doseItem.isReminderSet() && !wasChecked) {
-            // if reminder is true and wasChecked is false
-            // create a reminder
-            new Reminder(context).startReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, mDose);
-        } else if (!doseItem.isReminderSet() && wasChecked) {
-            // if reminder is false and wasChecked is true
-            // remove reminder
-            new Reminder(context).killReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, mDose);
-        }
     }
 
     @NonNull
@@ -459,13 +436,13 @@ public class AddDoseFragment extends DialogFragment {
                     case Activity.RESULT_OK:
                         break;
                     case Activity.RESULT_CANCELED:
-                        Toast.makeText(context, R.string.user_canceled, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.user_canceled, Toast.LENGTH_SHORT).show();
                 }
         }
     }
 
     private boolean hasCamera() {
-        final boolean deviceHasCameraFlag = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        final boolean deviceHasCameraFlag = getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
         //noinspection deprecation
         return !(!deviceHasCameraFlag || Camera.getNumberOfCameras() == 0);
     }

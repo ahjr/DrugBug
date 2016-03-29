@@ -57,7 +57,7 @@
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_action_alarm_on"
+                android:src="@drawable/ic_content_alarm_on"
                 android:id="@+id/ivListItemReminder"
                 android:layout_marginStart="5dp"
                 android:scaleType="fitEnd"

@@ -34,7 +34,7 @@
             android:drawablePadding="3dp"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:drawableStart="@drawable/ic_content_add"
+            android:drawableStart="@drawable/ic_action_add"
             android:text="@string/main_add_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
@@ -78,20 +78,11 @@
             android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/tv_help_main_future_text1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:text="@string/main_future_text1"/>
-
-        <TextView
             android:id="@+id/tv_help_main_future_text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:drawableStart="@drawable/ic_action_list_2_24x24"
             android:text="@string/main_future_text2"
             android:gravity="center_vertical"/>
 
@@ -110,7 +101,6 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:drawableStart="@drawable/ic_action_list_2_24x24"
             android:text="@string/main_taken_text"
             android:gravity="center_vertical"/>
 
@@ -124,20 +114,11 @@
             android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/tv_help_main_reminder_text1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:text="@string/main_reminder_text1"/>
-
-        <TextView
             android:id="@+id/tv_help_main_reminder_text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:drawableStart="@drawable/ic_action_list_2_24x24"
             android:text="@string/main_reminder_text2"
             android:gravity="center_vertical"/>
 
@@ -149,6 +130,15 @@
             android:text="@string/main_med_label"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_help_main_med_text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/main_med_text3"
+            android:gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/tv_help_main_med_text1"
@@ -183,16 +173,6 @@
             android:textStyle="italic"
             android:paddingStart="15dp"
             android:text="@string/main_med_text2a"/>
-
-        <TextView
-            android:id="@+id/tv_help_main_med_text3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:drawableStart="@drawable/ic_action_list_2_24x24"
-            android:text="@string/main_med_text3"
-            android:gravity="center_vertical"/>
 
     </LinearLayout>
 </ScrollView>

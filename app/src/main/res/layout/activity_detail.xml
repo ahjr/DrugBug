@@ -164,7 +164,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:drawablePadding="5dp"
-                android:drawableStart="@drawable/ic_action_alarm_off"
+                android:drawableStart="@drawable/ic_content_alarm_off"
                 android:gravity="center_vertical"
                 android:text="No reminder set"
                 android:textSize="15sp"/>

@@ -10,10 +10,13 @@ import android.support.annotation.NonNull;
 
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DatabaseDAO;
+import net.innit.drugbug.util.OnChoiceSelectedListener;
 import net.innit.drugbug.util.OnListUpdatedListener;
+import net.innit.drugbug.util.Reminder;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 public class DoseItem implements Comparable<DoseItem> {
     private long id;
@@ -135,15 +138,6 @@ public class DoseItem implements Comparable<DoseItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-//                switch (db.removeDose(id, true)) {
-//                    case RESULT_OK:
-//                        Toast.makeText(context, R.string.dose_list_toast_removed_ok, Toast.LENGTH_SHORT).show();
-//                        context.startActivity(intent);
-//                        break;
-//                    case ERROR_UNKNOWN_ERROR:
-//                        Toast.makeText(context, R.string.dose_list_toast_removed_error, Toast.LENGTH_SHORT).show();
-//                        break;
-//                }
                 db.removeDose(id, true);
                 db.close();
                 if (listener != null) {
@@ -164,12 +158,12 @@ public class DoseItem implements Comparable<DoseItem> {
     /**
      * Converts dose to taken after confirmation from user
      *
-     * @param context context for the alert dialog
+     * @param fragment context for the alert dialog
      * @param intent  intent to start after confirmation
      */
-    public void confirmTaken(final Fragment context, final Intent intent) {
-        final DatabaseDAO db = new DatabaseDAO(context.getActivity());
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context.getActivity());
+    public void confirmTaken(final Fragment fragment, final Intent intent) {
+        final DatabaseDAO db = new DatabaseDAO(fragment.getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(fragment.getActivity());
         alertDialogBuilder.setTitle(R.string.taken_dialog_title);
         alertDialogBuilder.setMessage(R.string.dialog_confirm);
         alertDialogBuilder.setPositiveButton(R.string.taken_dialog_positive, new DialogInterface.OnClickListener() {
@@ -188,11 +182,11 @@ public class DoseItem implements Comparable<DoseItem> {
 
                     db.createNextFuture(DoseItem.this.getMedication());
 
-                    if (context instanceof DialogFragment) {
+                    if (fragment instanceof DialogFragment) {
                         // Dismiss the calling dialog fragment
-                        ((DialogFragment) context).dismiss();
+                        ((DialogFragment) fragment).dismiss();
                     }
-                    context.getActivity().startActivity(intent);
+                    fragment.getActivity().startActivity(intent);
                 }
                 db.close();
 
@@ -208,6 +202,63 @@ public class DoseItem implements Comparable<DoseItem> {
         }).create().show();
 
     }
+
+    public void reminderAllOrOne(final Context context, final OnChoiceSelectedListener listener) {
+        final DatabaseDAO db = new DatabaseDAO(context);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Toggle all reminders?");
+        alertDialogBuilder.setMessage("Should all reminders for this medication be changed?");
+        alertDialogBuilder.setPositiveButton("Yes, change all", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Change all
+                    DoseItem.this.toggleReminder();
+                    DoseItem.this.setOrKillAlarm(context);
+                    db.open();
+                    db.updateDose(DoseItem.this);
+                    List<DoseItem> doses = db.getAllFutureForMed(context, DoseItem.this.getMedication());
+                    for (DoseItem dose : doses) {
+                        dose.setReminder(DoseItem.this.isReminderSet());
+                        db.updateDose(dose);
+                        dose.setOrKillAlarm(context);
+                    }
+
+                    db.close();
+
+                if (listener != null) {
+                    listener.onChoiceSelected("all");
+                }
+            }
+        });
+        alertDialogBuilder.setNegativeButton("No, just this dose", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    // Change just this dose
+                    DoseItem.this.toggleReminder();
+                    db.open();
+                    db.updateDose(DoseItem.this);
+                    DoseItem.this.setOrKillAlarm(context);
+                    db.close();
+
+                if (listener != null) {
+                    listener.onChoiceSelected("one");
+                }
+            }
+        }).create().show();
+
+    }
+
+    public void setOrKillAlarm(Context context) {
+        if (this.isReminderSet()) {
+            // create a reminder
+            new Reminder(context).startReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, this);
+        } else {
+            // remove reminder
+            new Reminder(context).killReminder(Reminder.REQUEST_HEADER_FUTURE_DOSE, this);
+        }
+    }
+
 
     /**
      * A comparator so we can sort dosages by date, descending

@@ -93,14 +93,18 @@ public class DetailFragment extends DialogFragment {
             linearLayout.setVisibility(View.GONE);
         } else {
             TextView textView = (TextView) view.findViewById(R.id.tvDetailReminder);
+
+            Drawable image = ContextCompat.getDrawable(getActivity(), R.drawable.ic_content_alarm_off);
             if (new Date().after(dose.getDate())) {
                 // dose was missed so who cares if reminder is set or not
                 textView.setVisibility(View.GONE);
             } else if (dose.isReminderSet()) {
-                Drawable image = ContextCompat.getDrawable(getActivity(), R.drawable.ic_action_alarm_on);
-                textView.setCompoundDrawablesRelativeWithIntrinsicBounds(image, null, null, null);
+                image = ContextCompat.getDrawable(getActivity(), R.drawable.ic_content_alarm_on);
                 textView.setText(R.string.reminder_list_set_positive);
             }
+            final float density = getResources().getDisplayMetrics().density;
+            image.setBounds(0, 0, Math.round(24 * density), Math.round(24 * density));
+            textView.setCompoundDrawables(image, null, null, null);
 
             textView = (TextView) view.findViewById(R.id.tvDetailDateLabel);
             textView.setText(R.string.detail_date_label_future);

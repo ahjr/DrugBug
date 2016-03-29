@@ -1,6 +1,5 @@
 package net.innit.drugbug.fragment;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -20,16 +19,14 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private ImageStorage imageStorage;      // Image storage object
     private SettingsHelper settingsHelper;  // Settings constants and methods
     private Settings settings;
-    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getActivity().getApplicationContext();
-        settingsHelper = new SettingsHelper(context);
+        settingsHelper = new SettingsHelper(getActivity());
 
-        settings = Settings.getInstance(context);
+        settings = Settings.getInstance(getActivity());
         settings.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -42,7 +39,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         oldNumDoses = Integer.parseInt(settings.getString(Settings.Key.NUM_DOSES));
 
-        imageStorage = ImageStorage.getInstance(context);
+        imageStorage = ImageStorage.getInstance(getActivity());
 
         ListPreference listPreference = (ListPreference) findPreference(Settings.Key.IMAGE_STORAGE.name());
         Map<String, String> locations = imageStorage.getAvailableLocations();
@@ -93,11 +90,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         // Set summary for taken dose keep time
         findPreference(Settings.Key.KEEP_TIME_TAKEN.name())
-                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_TAKEN)));
+                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(getActivity(), sharedPreferences.getString(Settings.Key.KEEP_TIME_TAKEN)));
 
         // Set summary for untaken dose keep time
         findPreference(Settings.Key.KEEP_TIME_MISSED.name())
-                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(context, sharedPreferences.getString(Settings.Key.KEEP_TIME_MISSED)));
+                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(getActivity(), sharedPreferences.getString(Settings.Key.KEEP_TIME_MISSED)));
 
         // Set summary for image storage location
         findPreference(Settings.Key.IMAGE_STORAGE.name())

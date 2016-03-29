@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
-import android.widget.Toast;
 
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.R;
@@ -21,6 +20,7 @@ import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.DoseArrayAdapter;
+import net.innit.drugbug.util.OnChoiceSelectedListener;
 import net.innit.drugbug.util.OnListUpdatedListener;
 import net.innit.drugbug.util.ReminderArrayAdapter;
 import net.innit.drugbug.util.UpdateableListAdapter;
@@ -46,6 +46,7 @@ import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TAG_DETAIL;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
 import static net.innit.drugbug.data.Constants.TYPE_REMINDER;
 import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
@@ -123,7 +124,7 @@ public class DoseListFragment extends ListFragment {
                 adapter = new DoseArrayAdapter(getActivity(), getDoses());
         }
 
-        setListAdapter((ListAdapter)adapter);
+        setListAdapter((ListAdapter) adapter);
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -149,6 +150,7 @@ public class DoseListFragment extends ListFragment {
         registerForContextMenu(getListView());
 
     }
+
     private void showDetailFragment(Bundle bundle) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         DetailFragment fragment = new DetailFragment();
@@ -218,6 +220,7 @@ public class DoseListFragment extends ListFragment {
 
         switch (type) {
             case TYPE_FUTURE:
+            case TYPE_MEDICATION:
             case TYPE_REMINDER:
             case TYPE_SINGLE:
                 if (doseItem.isTaken()) break;      // no context options for taken items as yet
@@ -262,17 +265,22 @@ public class DoseListFragment extends ListFragment {
 
                 return true;
             case CONTEXT_REMINDER_SET:
-                doseItem.toggleReminder();
-                db.open();
-                if (db.updateDose(doseItem)) {
-                    String message = ((doseItem.isReminderSet()) ? getString(R.string.dose_list_toast_reminder_set) : getString(R.string.dose_list_toast_reminder_unset));
-                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), R.string.dose_list_toast_db_error_update, Toast.LENGTH_SHORT).show();
-                }
-                db.close();
-
-                refreshDisplay();
+//                doseItem.toggleReminder();
+//                db.open();
+//                if (db.updateDose(doseItem)) {
+//                    String message = ((doseItem.isReminderSet()) ? getString(R.string.dose_list_toast_reminder_set) : getString(R.string.dose_list_toast_reminder_unset));
+//                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getActivity(), R.string.dose_list_toast_db_error_update, Toast.LENGTH_SHORT).show();
+//                }
+//                db.close();
+                doseItem.reminderAllOrOne(getActivity(), new OnChoiceSelectedListener() {
+                    @Override
+                    public void onChoiceSelected(String choice) {
+                        adapter.updateList(getDoses());
+                    }
+                });
+//                refreshDisplay();
                 return true;
             case CONTEXT_TAKEN:
                 Intent intent = new Intent(getActivity().getApplicationContext(), DoseListActivity.class);

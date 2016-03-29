@@ -95,9 +95,9 @@ public class DoseArrayAdapter extends ArrayAdapter<DoseItem> implements Updateab
         } else {
             mViewHolder.reminderImg.setVisibility(View.VISIBLE);
             if (!doseItem.isReminderSet()) {
-                mViewHolder.reminderImg.setImageResource(R.drawable.ic_action_alarm_off);
+                mViewHolder.reminderImg.setImageResource(R.drawable.ic_content_alarm_off);
             } else {
-                mViewHolder.reminderImg.setImageResource(R.drawable.ic_action_alarm_on);
+                mViewHolder.reminderImg.setImageResource(R.drawable.ic_content_alarm_on);
             }
         }
 
