@@ -29,7 +29,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textSize="15sp"
-            android:text="Medication name (Dosage)"/>
+            android:text="MEDICATION_NAME (DOSAGE)"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,7 +57,7 @@
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_action_alarm_on"
+                android:src="@drawable/ic_content_alarm_on"
                 android:id="@+id/ivListItemReminder"
                 android:layout_marginStart="5dp"
                 android:scaleType="fitEnd"

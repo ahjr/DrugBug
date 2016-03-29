@@ -534,26 +534,35 @@ public class DatabaseDAO {
      * @param medication medication to generate a future dose for
      * @return DoseItem object for new dose
      */
-    public DoseItem getNextFuture(MedicationItem medication) {
+    public DoseItem createNextFuture(MedicationItem medication) {
         // After successful update, add another future dose so we keep the same number in our future list
         // Get last future dose for medication
         DoseItem newFutureItem = getLastDose(medication);
-        newFutureItem.setTaken(false);
-        // Get frequency
-        long interval = getInterval(medication.getFrequency());
-        Calendar calendar = Calendar.getInstance();
-        Date lastFutureDate = newFutureItem.getDate();
-        Date nowDate = new Date();
-        // Compare date of last future date to now
-        if (lastFutureDate.getTime() > nowDate.getTime()) {
-            // last future date is later than now
-            // Add frequency to future date
-            calendar.setTime(lastFutureDate);
-        } else {
-            // Add frequency to now
-            calendar.setTime(nowDate);
+        if (newFutureItem == null) {
+            newFutureItem = getLatestTakenDose(medication);
         }
-        calendar.add(Calendar.SECOND, (int) interval);
+        newFutureItem.setTaken(false);
+//      Code section removed -> set date of new doses in the future (from now) rather than at $INTERVAL from last dose
+//      Got rid of that logic because it was breaking adding a new dose when numDoses was set to 1
+//        // Get frequency
+//        long interval = getInterval(medication.getFrequency());
+//        Calendar calendar = Calendar.getInstance();
+//        Date lastFutureDate = newFutureItem.getDate();
+//        Date nowDate = new Date();
+//        // Compare date of last future date to now
+//        if (lastFutureDate.getTime() > nowDate.getTime()) {
+//            // last future date is later than now
+//            // Add frequency to future date
+//            calendar.setTime(lastFutureDate);
+//        } else {
+//            // Add frequency to now
+//            calendar.setTime(nowDate);
+//        }
+//        calendar.add(Calendar.SECOND, (int) interval);
+//        newFutureItem.setDate(calendar.getTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(newFutureItem.getDate());
+        calendar.add(Calendar.SECOND, (int) getInterval(medication.getFrequency()));
         newFutureItem.setDate(calendar.getTime());
         return createDose(newFutureItem);
 
@@ -631,7 +640,7 @@ public class DatabaseDAO {
         MedicationItem medication = getMedicationForDose(id);
 
         if (createNextDose) {
-            getNextFuture(medication);
+            createNextFuture(medication);
         }
 
         boolean deleteOK = (database.delete(DBHelper.TABLE_DOSES, where, null) == 1);

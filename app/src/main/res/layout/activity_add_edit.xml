@@ -21,7 +21,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_gravity="bottom">
 
                 <TextView
                     android:id="@+id/tvAddMedNameLabel"
@@ -40,15 +41,15 @@
 
             <ImageButton
                 android:id="@+id/ivAddMedImage"
-                android:layout_width="60dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|bottom"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:contentDescription="@string/med_image_desc"
                 android:cropToPadding="false"
                 android:onClick="onClickAddMedAddImage"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_image_camera_alt"/>
+                android:src="@drawable/ic_button_camera"
+                />
         </LinearLayout>
 
         <TextView
@@ -68,6 +69,7 @@
 
         <TextView
             android:id="@+id/tvAddMedDateTimeLabel"
+            android:labelFor="@+id/etAddMedDateTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/etAddMedDosage"
@@ -83,12 +85,13 @@
 
         <ImageButton
             android:id="@+id/btnAddMedDate"
+            android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/etAddMedDateTime"
             android:layout_toEndOf="@+id/etAddMedDateTime"
             android:onClick="onClickDatetime"
-            android:src="@drawable/ic_action_calendar_day"
+            android:src="@drawable/ic_button_calendar_day"
             android:contentDescription="@string/add_med_datetime_calendar_desc"/>
 
         <TextView

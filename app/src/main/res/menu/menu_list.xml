@@ -3,14 +3,14 @@
       xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_list_add"
-        android:icon="@drawable/ic_content_add"
+        android:icon="@drawable/ic_action_add"
         android:showAsAction="ifRoom"
         android:title="@string/menu_add"
         tools:ignore="AppCompatResource"/>
 
     <item
         android:id="@+id/menu_sort_order"
-        android:icon="@drawable/ic_action_sort_2"
+        android:icon="@drawable/ic_action_sort"
         android:showAsAction="ifRoom"
         android:title="@string/menu_list_sort"
         tools:ignore="AppCompatResource">
@@ -31,7 +31,7 @@
 
     <item
         android:id="@+id/menu_filter"
-        android:icon="@drawable/ic_content_filter_list"
+        android:icon="@drawable/ic_action_filter"
         android:showAsAction="ifRoom"
         android:title="@string/menu_list_filter"
         tools:ignore="AppCompatResource">

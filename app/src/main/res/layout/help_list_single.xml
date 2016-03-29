@@ -34,7 +34,7 @@
             android:drawablePadding="3dp"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:drawableStart="@drawable/ic_action_sort_2"
+            android:drawableStart="@drawable/ic_action_sort"
             android:text="@string/list_single_sort_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
@@ -79,7 +79,7 @@
             android:drawablePadding="3dp"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:drawableStart="@drawable/ic_content_filter_list"
+            android:drawableStart="@drawable/ic_action_filter"
             android:text="@string/list_single_filter_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
@@ -146,7 +146,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="bottom"
-                android:src="@drawable/ic_action_alarm_on"
+                android:src="@drawable/ic_content_alarm_on"
                 android:paddingBottom="2dp"
                 android:contentDescription="@string/content_desc_reminder_set"/>
 
@@ -172,7 +172,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="bottom"
-                android:src="@drawable/ic_action_alarm_off"
+                android:src="@drawable/ic_content_alarm_off"
                 android:paddingBottom="2dp"
                 android:contentDescription="@string/content_desc_reminder_unset"/>
 

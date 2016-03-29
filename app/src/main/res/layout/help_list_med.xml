@@ -33,7 +33,7 @@
             android:drawablePadding="3dp"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:drawableStart="@drawable/ic_content_add"
+            android:drawableStart="@drawable/ic_action_add"
             android:text="@string/list_med_add_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
@@ -54,7 +54,7 @@
             android:drawablePadding="3dp"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:drawableStart="@drawable/ic_content_filter_list"
+            android:drawableStart="@drawable/ic_action_filter"
             android:text="@string/list_med_filter_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>
@@ -118,7 +118,7 @@
             android:drawablePadding="3dp"
             android:textSize="@dimen/abc_text_size_subhead"
             android:textStyle="bold"
-            android:drawableStart="@drawable/ic_action_sort_2"
+            android:drawableStart="@drawable/ic_action_sort"
             android:text="@string/list_med_sort_label"
             android:gravity="fill"
             android:layout_gravity="bottom"/>

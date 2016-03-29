@@ -1,7 +1,9 @@
 package net.innit.drugbug.fragment;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -10,19 +12,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
+import android.widget.ListAdapter;
 
-import net.innit.drugbug.AddDoseActivity;
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.DoseArrayAdapter;
+import net.innit.drugbug.util.OnChoiceSelectedListener;
+import net.innit.drugbug.util.OnListUpdatedListener;
 import net.innit.drugbug.util.ReminderArrayAdapter;
+import net.innit.drugbug.util.UpdateableListAdapter;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -40,9 +42,11 @@ import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SORT_DATE_ASC;
 import static net.innit.drugbug.data.Constants.SORT_DATE_DESC;
 import static net.innit.drugbug.data.Constants.SORT_NAME;
+import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TAG_DETAIL;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
+import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
 import static net.innit.drugbug.data.Constants.TYPE_REMINDER;
 import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
@@ -54,9 +58,8 @@ public class DoseListFragment extends ListFragment {
     private static final int CONTEXT_TAKEN = 10004;
     private static final int CONTEXT_ONLY_THIS_MED = 10005;
 
-    private Context context;
     private DatabaseDAO db;
-    private List<DoseItem> doses = new ArrayList<>();
+    private UpdateableListAdapter<DoseItem> adapter;
 
     private String type;
     private String sortOrder;
@@ -67,8 +70,7 @@ public class DoseListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getActivity();
-        db = new DatabaseDAO(context);
+        db = new DatabaseDAO(getActivity());
 
         Bundle bundle = getArguments();
         type = bundle.getString(TYPE, TYPE_FUTURE);
@@ -103,36 +105,31 @@ public class DoseListFragment extends ListFragment {
 
     @Override
     public void onResume() {
-        doses = getDoses();
-
-        refreshDisplay();
-
         super.onResume();
-
+        refreshDisplay();
     }
 
     /**
      * Redisplay the list of doses
      */
     private void refreshDisplay() {
-        ArrayAdapter<?> adapter;
         switch (type) {
             case TYPE_REMINDER:
-                adapter = new ReminderArrayAdapter(context, doses);
+                adapter = new ReminderArrayAdapter(getActivity(), getDoses());
                 break;
             case TYPE_SINGLE:
-                adapter = new DoseArrayAdapter(context, doses);
+                adapter = new DoseArrayAdapter(getActivity(), getDoses());
                 break;
             default:
-                adapter = new DoseArrayAdapter(context, doses);
+                adapter = new DoseArrayAdapter(getActivity(), getDoses());
         }
 
-        setListAdapter(adapter);
+        setListAdapter((ListAdapter) adapter);
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DoseItem doseItem = doses.get(position);
+                DoseItem doseItem = getDoses().get(position);
                 Bundle bundle = new Bundle();
                 bundle.putString(TYPE, type);
                 bundle.putLong(INTENT_DOSE_ID, doseItem.getId());
@@ -153,10 +150,18 @@ public class DoseListFragment extends ListFragment {
         registerForContextMenu(getListView());
 
     }
+
     private void showDetailFragment(Bundle bundle) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(bundle);
-        fragment.show(getFragmentManager(), TAG_DETAIL);
+        fragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                adapter.updateList(getDoses());
+            }
+        });
+        transaction.addToBackStack(null).add(fragment, TAG_DETAIL).commit();
     }
 
     /**
@@ -170,26 +175,26 @@ public class DoseListFragment extends ListFragment {
         List<DoseItem> doses;
         switch (type) {
             case TYPE_TAKEN:
-                doses = db.getAllTaken(context);
+                doses = db.getAllTaken(getActivity());
                 break;
             case TYPE_REMINDER:
-                doses = db.getAllFutureWithReminder(context);
+                doses = db.getAllFutureWithReminder(getActivity());
                 break;
             case TYPE_SINGLE:
                 MedicationItem medication = db.getMedication(medId);
                 switch (filter) {
                     case FILTER_TAKEN:
-                        doses = db.getAllTakenForMed(context, medication);
+                        doses = db.getAllTakenForMed(getActivity(), medication);
                         break;
                     case FILTER_FUTURE:
-                        doses = db.getAllFutureForMed(context, medication);
+                        doses = db.getAllFutureForMed(getActivity(), medication);
                         break;
                     default:
-                        doses = db.getAllDosesForMed(context, medication);
+                        doses = db.getAllDosesForMed(getActivity(), medication);
                 }
                 break;
             default:
-                doses = db.getAllFuture(context);
+                doses = db.getAllFuture(getActivity());
 
         }
         db.close();
@@ -211,10 +216,11 @@ public class DoseListFragment extends ListFragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        DoseItem doseItem = doses.get(listItemPressedPos);
+        DoseItem doseItem = getDoses().get(listItemPressedPos);
 
         switch (type) {
             case TYPE_FUTURE:
+            case TYPE_MEDICATION:
             case TYPE_REMINDER:
             case TYPE_SINGLE:
                 if (doseItem.isTaken()) break;      // no context options for taken items as yet
@@ -234,47 +240,56 @@ public class DoseListFragment extends ListFragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        DoseItem doseItem = doses.get(info.position);
+        DoseItem doseItem = getDoses().get(info.position);
 
         switch (item.getItemId()) {
             case CONTEXT_EDIT:
-                Intent intent = new Intent(context.getApplicationContext(), AddDoseActivity.class);
-                intent.putExtra(INTENT_DOSE_ID, doseItem.getId());
-                intent.putExtra(ACTION, ACTION_EDIT);
-                intent.putExtra(TYPE, type);
-                intent.putExtra(SORT, sortOrder);
-                intent.putExtra(INTENT_MED_ID, medId);
-                startActivity(intent);
+                Bundle b = new Bundle();
+                b.putLong(INTENT_DOSE_ID, doseItem.getId());
+                b.putString(ACTION, ACTION_EDIT);
+                b.putString(TYPE, type);
+                b.putString(SORT, sortOrder);
+                b.putLong(INTENT_MED_ID, medId);
+
+                Fragment fragment = new AddDoseFragment();
+                fragment.setArguments(b);
+                getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
                 return true;
             case CONTEXT_DELETE:
-                intent = new Intent(context.getApplicationContext(), DoseListActivity.class);
-                intent.putExtra(TYPE, type);
-                intent.putExtra(SORT, sortOrder);
-                if (medId != null) intent.putExtra(INTENT_MED_ID, medId);
-                doseItem.confirmDelete(context, intent);
+                doseItem.confirmDelete(getActivity(), new OnListUpdatedListener() {
+                    @Override
+                    public void onListUpdated() {
+                        adapter.updateList(getDoses());
+                    }
+                });
+
                 return true;
             case CONTEXT_REMINDER_SET:
-                doseItem.toggleReminder();
-                db.open();
-                if (db.updateDose(doseItem)) {
-                    String message = ((doseItem.isReminderSet()) ? getString(R.string.dose_list_toast_reminder_set) : getString(R.string.dose_list_toast_reminder_unset));
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, R.string.dose_list_toast_db_error_update, Toast.LENGTH_SHORT).show();
-                }
-                db.close();
-
-                doses = getDoses();
-                refreshDisplay();
+//                doseItem.toggleReminder();
+//                db.open();
+//                if (db.updateDose(doseItem)) {
+//                    String message = ((doseItem.isReminderSet()) ? getString(R.string.dose_list_toast_reminder_set) : getString(R.string.dose_list_toast_reminder_unset));
+//                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getActivity(), R.string.dose_list_toast_db_error_update, Toast.LENGTH_SHORT).show();
+//                }
+//                db.close();
+                doseItem.reminderAllOrOne(getActivity(), new OnChoiceSelectedListener() {
+                    @Override
+                    public void onChoiceSelected(String choice) {
+                        adapter.updateList(getDoses());
+                    }
+                });
+//                refreshDisplay();
                 return true;
             case CONTEXT_TAKEN:
-                intent = new Intent(context.getApplicationContext(), DoseListActivity.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), DoseListActivity.class);
                 intent.putExtra(TYPE, TYPE_TAKEN);
                 intent.putExtra(SORT, sortOrder);
-                doseItem.confirmTaken(context, intent);
+                doseItem.confirmTaken(this, intent);
                 return true;
             case CONTEXT_ONLY_THIS_MED:
-                intent = new Intent(context.getApplicationContext(), DoseListActivity.class);
+                intent = new Intent(getActivity().getApplicationContext(), DoseListActivity.class);
                 intent.putExtra(TYPE, TYPE_SINGLE);
                 intent.putExtra(INTENT_MED_ID, doseItem.getMedication().getId());
                 intent.putExtra(SORT, sortOrder);
@@ -284,4 +299,6 @@ public class DoseListFragment extends ListFragment {
                 return false;
         }
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.github.jjobes.slidedatetimepicker;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.DatePicker;
@@ -51,9 +52,12 @@ public class CustomDatePicker extends DatePicker {
             // to refer to our custom drawables
             selectionDividerField = numberPickerClass.getDeclaredField("mSelectionDivider");
             selectionDividerField.setAccessible(true);
-            selectionDividerField.set(monthNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
-            selectionDividerField.set(dayNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
-            selectionDividerField.set(yearNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
+//            selectionDividerField.set(monthNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
+//            selectionDividerField.set(dayNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
+//            selectionDividerField.set(yearNumberPicker, getResources().getDrawable(R.drawable.selection_divider));
+            selectionDividerField.set(monthNumberPicker, ContextCompat.getDrawable(context, R.drawable.selection_divider));
+            selectionDividerField.set(dayNumberPicker, ContextCompat.getDrawable(context, R.drawable.selection_divider));
+            selectionDividerField.set(yearNumberPicker, ContextCompat.getDrawable(context, R.drawable.selection_divider));
         } catch (ClassNotFoundException e) {
             Log.e(TAG, "ClassNotFoundException in CustomDatePicker", e);
         } catch (NoSuchFieldException e) {

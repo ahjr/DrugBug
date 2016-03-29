@@ -16,10 +16,11 @@
         tools:context="net.innit.drugbug.MainActivity">
 
         <TableLayout
+            android:id="@+id/tlMainFuture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:stretchColumns="0">
+            android:stretchColumns="1">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -27,13 +28,23 @@
                 android:layout_margin="1dp"
                 android:padding="5dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/main_future_header"
-                    android:textColor="@android:color/primary_text_dark"
-                    android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_content_list_light"
+                        android:contentDescription="@string/content_description_list"
+                        android:layout_gravity="center_vertical"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/main_future_header"
+                        android:textColor="@android:color/primary_text_dark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_vertical|bottom"/>
+
             </TableRow>
 
             <TableRow
@@ -46,13 +57,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_span="2"
                     android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:text="@string/main_future_description"/>
+                        android:text="@string/main_future_description"
+                        android:textSize="16sp"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -113,16 +126,6 @@
 
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/btnMainFuture"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_action_list_2"
-                    android:paddingBottom="10dp"
-                    android:text="@string/main_view_list"
-                    android:textSize="12sp"/>
-
             </TableRow>
         </TableLayout>
 
@@ -133,22 +136,32 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/tlMainTaken"
             android:background="@color/colorPrimary"
-            android:stretchColumns="0">
+            android:stretchColumns="1">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_content_list_light"
+                    android:contentDescription="@string/content_description_list"
+                    android:layout_gravity="center_vertical"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/main_taken_header"
+                    android:layout_marginStart="7dp"
                     android:textColor="@android:color/primary_text_dark"
                     android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"/>
             </TableRow>
 
             <TableRow
@@ -161,17 +174,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="10dp"
-                    android:text="@string/main_taken_description"/>
-
-                <Button
-                    android:id="@+id/btnMainTaken"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_action_list_2"
-                    android:paddingBottom="10dp"
-                    android:text="@string/main_view_list"
-                    android:textSize="12sp"/>
+                    android:layout_span="2"
+                    android:text="@string/main_taken_description"
+                    android:textSize="16sp"/>
 
             </TableRow>
         </TableLayout>
@@ -183,8 +188,9 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/btnMainReminders"
             android:background="@color/colorPrimary"
-            android:stretchColumns="0">
+            android:stretchColumns="1">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -192,13 +198,22 @@
                 android:layout_margin="1dp"
                 android:padding="5dp">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_content_list_light"
+                    android:contentDescription="@string/content_description_list"
+                    android:layout_gravity="center_vertical"/>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
                     android:text="@string/main_header_reminders"
                     android:textColor="@android:color/primary_text_dark"
                     android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"/>
             </TableRow>
 
             <TableRow
@@ -210,18 +225,10 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_span="2"
                     android:padding="10dp"
-                    android:text="@string/main_reminders_description"/>
-
-                <Button
-                    android:id="@+id/btnMainReminders"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_action_list_2"
-                    android:paddingBottom="10dp"
-                    android:text="@string/main_view_list"
-                    android:textSize="12sp"/>
+                    android:text="@string/main_reminders_description"
+                    android:textSize="16dp"/>
 
             </TableRow>
         </TableLayout>
@@ -233,8 +240,9 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/tlMainMedications"
             android:background="@color/colorPrimary"
-            android:stretchColumns="0">
+            android:stretchColumns="1">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -242,13 +250,22 @@
                 android:layout_margin="1dp"
                 android:padding="5dp">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_content_list_light"
+                    android:contentDescription="@string/content_description_list"
+                    android:layout_gravity="center_vertical"/>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="7dp"
                     android:text="@string/main_meds_header"
                     android:textColor="@android:color/primary_text_dark"
                     android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:layout_gravity="center_vertical"/>
             </TableRow>
 
             <TableRow
@@ -261,13 +278,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:layout_span="2"
                     android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:text="@string/main_meds_description"/>
+                        android:text="@string/main_meds_description"
+                        android:textSize="16dp"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -327,16 +346,6 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
-                <Button
-                    android:id="@+id/btnMainMedications"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_action_list_2"
-                    android:paddingBottom="10dp"
-                    android:text="@string/main_view_list"
-                    android:textSize="12sp"/>
 
             </TableRow>
 

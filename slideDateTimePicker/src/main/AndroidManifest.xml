@@ -2,10 +2,10 @@
 
 <manifest
     package="com.github.jjobes.slidedatetimepicker"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    >
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="21"/>
+    <!--<uses-sdk-->
+        <!--android:minSdkVersion="14"-->
+        <!--android:targetSdkVersion="23"/>-->
 
 </manifest>

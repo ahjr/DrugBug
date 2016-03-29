@@ -1,13 +1,14 @@
 package net.innit.drugbug;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import net.innit.drugbug.data.DatabaseDAO;
+import net.innit.drugbug.fragment.AddDoseFragment;
 import net.innit.drugbug.fragment.DoseListFragment;
 import net.innit.drugbug.fragment.HelpFragment;
 
@@ -27,13 +28,14 @@ import static net.innit.drugbug.data.Constants.SOURCE_LIST_REMINDERS;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_SINGLE_MED;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_TAKEN;
 import static net.innit.drugbug.data.Constants.SOURCE_MAIN;
+import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_FUTURE;
 import static net.innit.drugbug.data.Constants.TYPE_REMINDER;
 import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
-public class DoseListActivity extends Activity {
+public class DoseListActivity extends FragmentActivity {
     private String type;
 
     private String sortOrder;
@@ -71,11 +73,8 @@ public class DoseListActivity extends Activity {
 
     @Override
     protected void onResume() {
-
-        refreshDisplay();
-
         super.onResume();
-
+        refreshDisplay();
     }
 
     @Override
@@ -136,13 +135,16 @@ public class DoseListActivity extends Activity {
 
         switch (item.getItemId()) {
             case R.id.menu_list_add:
-                Intent intent = new Intent(DoseListActivity.this, AddDoseActivity.class);
-                intent.putExtra(ACTION, ACTION_ADD);
-                intent.putExtra(TYPE, type);
-                intent.putExtra(INTENT_MED_ID, bundle.getLong(INTENT_MED_ID));
-                intent.putExtra(SORT, sortOrder);
-                intent.putExtra(FILTER_DOSE, filter);
-                startActivity(intent);
+                Bundle b = new Bundle();
+                b.putString(ACTION, ACTION_ADD);
+                b.putString(TYPE, type);
+                b.putLong(INTENT_MED_ID, bundle.getLong(INTENT_MED_ID));
+                b.putString(SORT, sortOrder);
+                b.putString(FILTER_DOSE, filter);
+
+                Fragment fragment = new AddDoseFragment();
+                fragment.setArguments(b);
+                getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
                 return true;
             case R.id.menu_list_help:
                 switch (type) {
@@ -194,13 +196,6 @@ public class DoseListActivity extends Activity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent;
-        switch (type) {
-            case TYPE_SINGLE:
-                intent = new Intent(this, MedicationListActivity.class);
-                startActivity(intent);
-                break;
-        }
         finish();
     }
 
@@ -228,4 +223,10 @@ public class DoseListActivity extends Activity {
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 }

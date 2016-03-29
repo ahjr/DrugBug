@@ -39,7 +39,7 @@ abstract class Storage {
             InputStream in = new FileInputStream(source);
             OutputStream out = new FileOutputStream(target);
 
-            // Copy the bits from instream to outstream
+            // Copy the bits from in stream to out stream
             byte[] buf = new byte[1024];
             int len;
             while ((len = in.read(buf)) > 0) {

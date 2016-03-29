@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import net.innit.drugbug.DoseListActivity;
@@ -74,32 +74,32 @@ public class MainFragment extends Fragment {
         mMedInactive = (TextView) view.findViewById(R.id.tvMainMedInactive);
         mMedArchived = (TextView) view.findViewById(R.id.tvMainMedArchived);
 
-        Button button = (Button) view.findViewById(R.id.btnMainFuture);
-        button.setOnClickListener(new View.OnClickListener() {
+        TableLayout tableLayout = (TableLayout) view.findViewById(R.id.tlMainFuture);
+        tableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickMainFuture(v);
             }
         });
 
-        button = (Button) view.findViewById(R.id.btnMainTaken);
-        button.setOnClickListener(new View.OnClickListener() {
+        tableLayout = (TableLayout) view.findViewById(R.id.tlMainTaken);
+        tableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickMainTaken(v);
             }
         });
 
-        button = (Button) view.findViewById(R.id.btnMainReminders);
-        button.setOnClickListener(new View.OnClickListener() {
+        tableLayout = (TableLayout) view.findViewById(R.id.btnMainReminders);
+        tableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickMainReminders(v);
             }
         });
 
-        button = (Button) view.findViewById(R.id.btnMainMedications);
-        button.setOnClickListener(new View.OnClickListener() {
+        tableLayout = (TableLayout) view.findViewById(R.id.tlMainMedications);
+        tableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickMainMedications(v);
@@ -112,7 +112,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainFuture(View view) {
+    private void onClickMainFuture(View view) {
         Intent intent = new Intent(context, DoseListActivity.class);
         intent.putExtra(TYPE, TYPE_FUTURE);
         startActivity(intent);
@@ -123,7 +123,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainTaken(View view) {
+    private void onClickMainTaken(View view) {
         Intent intent = new Intent(context, DoseListActivity.class);
         intent.putExtra(TYPE, TYPE_TAKEN);
         startActivity(intent);
@@ -134,7 +134,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainReminders(View view) {
+    private void onClickMainReminders(View view) {
         Intent intent = new Intent(context, DoseListActivity.class);
         intent.putExtra(TYPE, TYPE_REMINDER);
         startActivity(intent);
@@ -145,7 +145,7 @@ public class MainFragment extends Fragment {
      *
      * @param view The view that was clicked
      */
-    public void onClickMainMedications(View view) {
+    private void onClickMainMedications(View view) {
         Intent intent = new Intent(context, MedicationListActivity.class);
         startActivity(intent);
     }

@@ -20,7 +20,6 @@ import java.util.Date;
  */
 public class DateFragment extends Fragment {
     private DateChangedListener mCallback;
-    private CustomDatePicker mDatePicker;
 
     public DateFragment() {
         // Required empty public constructor for fragment.
@@ -39,7 +38,7 @@ public class DateFragment extends Fragment {
      * @param maxDate
      * @return an instance of DateFragment
      */
-    public static final DateFragment newInstance(int theme, int year, int month,
+    public static DateFragment newInstance(int theme, int year, int month,
                                                  int day, Date minDate, Date maxDate) {
         DateFragment f = new DateFragment();
 
@@ -100,7 +99,7 @@ public class DateFragment extends Fragment {
 
         View v = localInflater.inflate(R.layout.fragment_date, container, false);
 
-        mDatePicker = (CustomDatePicker) v.findViewById(R.id.datePicker);
+        CustomDatePicker mDatePicker = (CustomDatePicker) v.findViewById(R.id.datePicker);
         // block keyboard popping up on touch
         mDatePicker.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
         mDatePicker.init(

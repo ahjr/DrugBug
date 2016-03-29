@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -39,7 +40,6 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
 
     private Context mContext;
     private CustomViewPager mViewPager;
-    private ViewPagerAdapter mViewPagerAdapter;
     private SlidingTabLayout mSlidingTabLayout;
     private View mButtonHorizontalDivider;
     private View mButtonVerticalDivider;
@@ -53,10 +53,6 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
     private boolean mIsClientSpecified24HourTime;
     private boolean mIs24HourTime;
     private Calendar mCalendar;
-    private int mDateFlags =
-            DateUtils.FORMAT_SHOW_WEEKDAY |
-                    DateUtils.FORMAT_SHOW_DATE |
-                    DateUtils.FORMAT_ABBREV_ALL;
 
     public SlideDateTimeDialogFragment() {
         // Required empty public constructor
@@ -179,8 +175,8 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
 
     private void customizeViews() {
         int lineColor = mTheme == SlideDateTimePicker.HOLO_DARK ?
-                getResources().getColor(R.color.gray_holo_dark) :
-                getResources().getColor(R.color.gray_holo_light);
+                ContextCompat.getColor(getActivity(), R.color.gray_holo_dark) :
+                ContextCompat.getColor(getActivity(), R.color.gray_holo_light);
 
         // Set the colors of the horizontal and vertical lines for the
         // bottom buttons depending on the theme.
@@ -192,8 +188,8 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
                 break;
 
             default:  // if no theme was specified, default to holo light
-                mButtonHorizontalDivider.setBackgroundColor(getResources().getColor(R.color.gray_holo_light));
-                mButtonVerticalDivider.setBackgroundColor(getResources().getColor(R.color.gray_holo_light));
+                mButtonHorizontalDivider.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.gray_holo_light));
+                mButtonVerticalDivider.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.gray_holo_light));
         }
 
         // Set the color of the selected tab underline if one was specified.
@@ -202,7 +198,7 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
     }
 
     private void initViewPager() {
-        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
+        ViewPagerAdapter mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
 
         // Setting this custom layout for each tab ensures that the tabs will
@@ -212,7 +208,7 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
     }
 
     private void initTabs() {
-        // Set intial date on date tab
+        // Set initial date on date tab
         updateDateTab();
 
         // Set initial time on time tab
@@ -254,7 +250,7 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
     /**
      * <p>The callback used by the DatePicker to update {@code mCalendar} as
      * the user changes the date. Each time this is called, we also update
-     * the text on the date tab to reflect the date the user has currenly
+     * the text on the date tab to reflect the date the user has currently
      * selected.</p>
      * <p/>
      * <p>Implements the {@link DateFragment.DateChangedListener}
@@ -270,7 +266,7 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
     /**
      * <p>The callback used by the TimePicker to update {@code mCalendar} as
      * the user changes the time. Each time this is called, we also update
-     * the text on the time tab to reflect the time the user has currenly
+     * the text on the time tab to reflect the time the user has currently
      * selected.</p>
      * <p/>
      * <p>Implements the {@link TimeFragment.TimeChangedListener}
@@ -285,6 +281,9 @@ public class SlideDateTimeDialogFragment extends DialogFragment implements DateF
     }
 
     private void updateDateTab() {
+        int mDateFlags = DateUtils.FORMAT_SHOW_WEEKDAY |
+                DateUtils.FORMAT_SHOW_DATE |
+                DateUtils.FORMAT_ABBREV_ALL;
         mSlidingTabLayout.setTabText(0, DateUtils.formatDateTime(
                 mContext, mCalendar.getTimeInMillis(), mDateFlags));
     }

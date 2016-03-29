@@ -85,7 +85,7 @@ public class SettingsHelper {
         if (lastFutureDose != null) {
             int doseCount = (int) db.getFutureDoseCount(medication);
             while (maxNumDoses > doseCount) {
-                db.getNextFuture(medication);
+                db.createNextFuture(medication);
                 doseCount++;
             }
         }

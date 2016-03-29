@@ -32,7 +32,7 @@
             android:layout_gravity="bottom"
             android:layout_marginTop="10dp"
             android:drawablePadding="3dp"
-            android:drawableStart="@drawable/ic_content_add"
+            android:drawableStart="@drawable/ic_action_add"
             android:gravity="fill"
             android:text="@string/list_future_add_label"
             android:textSize="@dimen/abc_text_size_subhead"
@@ -53,7 +53,7 @@
             android:layout_gravity="bottom"
             android:layout_marginTop="10dp"
             android:drawablePadding="3dp"
-            android:drawableStart="@drawable/ic_action_sort_2"
+            android:drawableStart="@drawable/ic_action_sort"
             android:gravity="fill"
             android:text="@string/list_future_sort_label"
             android:textSize="@dimen/abc_text_size_subhead"
@@ -101,8 +101,9 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="bottom"
-                android:src="@drawable/ic_action_alarm_on"
-                android:paddingBottom="2dp"/>
+                android:src="@drawable/ic_content_alarm_on"
+                android:paddingBottom="2dp"
+                android:contentDescription="@string/content_desc_reminder_set"/>
 
             <TextView
                 android:id="@+id/tv_help_list_reminder_set"
@@ -125,8 +126,9 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="bottom"
-                android:src="@drawable/ic_action_alarm_off"
-                android:paddingBottom="2dp"/>
+                android:src="@drawable/ic_content_alarm_off"
+                android:paddingBottom="2dp"
+                android:contentDescription="@string/content_desc_reminder_unset"/>
 
             <TextView
                 android:id="@+id/tv_help_list_reminder_unset"

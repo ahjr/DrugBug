@@ -1,5 +1,6 @@
 package net.innit.drugbug.fragment;
 
+import android.app.Fragment;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import net.innit.drugbug.AddDoseActivity;
 import net.innit.drugbug.DoseListActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DatabaseDAO;
@@ -31,12 +31,10 @@ import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SORT_NAME_ASC;
 import static net.innit.drugbug.data.Constants.SORT_NAME_DESC;
+import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 
-/**
- * Created by alissa on 3/24/16.
- */
 public class MedicationListFragment extends ListFragment {
     //    private static final int CONTEXT_DELETE_ALL = 1001;
     private DatabaseDAO db; 
@@ -75,12 +73,11 @@ public class MedicationListFragment extends ListFragment {
     }
 
     /**
-     * Refreshes the listview display.  Used when the data list has changed.
+     * Refreshes the ListView display.  Used when the data list has changed.
      */
     private void refreshDisplay() {
-        final List<MedicationItem> medicationItems = updateMedications();
         if (adapter == null) {
-            adapter = new MedicationArrayAdapter(context, medicationItems);
+            adapter = new MedicationArrayAdapter(context, getMedications());
         }
 
         getListView().setAdapter(adapter);
@@ -88,16 +85,19 @@ public class MedicationListFragment extends ListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MedicationItem medicationItem = medicationItems.get(position);
+                MedicationItem medicationItem = getMedications().get(position);
 
                 if (medicationItem.isArchived() || (!medicationItem.isActive() && !medicationItem.hasTaken(context))) {
-                    Intent intent = new Intent(context, AddDoseActivity.class);
-                    intent.putExtra(ACTION, ACTION_RESTORE);
-                    intent.putExtra(TYPE, TYPE_SINGLE);
-                    intent.putExtra(INTENT_MED_ID, medicationItem.getId());
-                    intent.putExtra(SORT, sortOrder);
-                    intent.putExtra(FILTER_DOSE, filter);
-                    startActivity(intent);
+                    Bundle b = new Bundle();
+                    b.putString(ACTION, ACTION_RESTORE);
+                    b.putString(TYPE, TYPE_SINGLE);
+                    b.putLong(INTENT_MED_ID, medicationItem.getId());
+                    b.putString(SORT, sortOrder);
+                    b.putString(FILTER_DOSE, filter);
+
+                    Fragment fragment = new AddDoseFragment();
+                    fragment.setArguments(b);
+                    getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
                 } else {
                     Intent intent = new Intent(context, DoseListActivity.class);
                     intent.putExtra(TYPE, TYPE_SINGLE);
@@ -110,11 +110,11 @@ public class MedicationListFragment extends ListFragment {
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                MedicationItem medicationItem = medicationItems.get(position);
+                MedicationItem medicationItem = getMedications().get(position);
                 OnListUpdatedListener listener = new OnListUpdatedListener() {
                     @Override
                     public void onListUpdated() {
-                        adapter.updateList(updateMedications());
+                        adapter.updateList(getMedications());
                     }
                 };
 
@@ -135,7 +135,7 @@ public class MedicationListFragment extends ListFragment {
     /**
      * Gets a List of all medications in the database sorted by the current setting of sortOrder
      */
-    private List<MedicationItem> updateMedications() {
+    private List<MedicationItem> getMedications() {
         List<MedicationItem> medicationItems;
         db.open();
         switch (filter) {
@@ -165,16 +165,5 @@ public class MedicationListFragment extends ListFragment {
 
         return medicationItems;
     }
-
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        // Not overly happy with this solution but ...
-//        // Because AlertDialogs are called from MedicationItem class, updating the ListView is problematic.
-//        // The calling method finishes before the dialog returns, so updating medications field happens before the db is updated.
-//        // This solution updates the ListView when focus changes back to it (as from the dialogs) but it updates in every case, including on cancel
-//        updateMedications();
-//        adapter.updateList(medications);
-//    }
 
 }

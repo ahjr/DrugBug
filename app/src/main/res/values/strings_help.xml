@@ -128,18 +128,18 @@
     <string name="main_settings_text">App settings and preferences</string>
     <string name="main_future_label">Future Doses</string>
     <string name="main_future_text1">Untaken doses</string>
-    <string name="main_future_text2">Touch list icon to view dose list</string>
+    <string name="main_future_text2">Touch table to open the list of untaken doses</string>
     <string name="main_taken_label">Taken Doses</string>
-    <string name="main_taken_text">Touch list icon to view dose list</string>
+    <string name="main_taken_text">Touch table to open the list of taken doses</string>
     <string name="main_reminder_label">Reminders</string>
     <string name="main_reminder_text1">Doses with reminders set</string>
-    <string name="main_reminder_text2">Touch list icon to view reminder list</string>
+    <string name="main_reminder_text2">Touch table to open the list of doses with reminders set</string>
     <string name="main_med_label">Medications</string>
     <string name="main_med_text1">Active medications</string>
     <string name="main_med_text1a">Medications with associated doses</string>
     <string name="main_med_text2">Inactive medications</string>
     <string name="main_med_text2a">Medications with no associated doses</string>
-    <string name="main_med_text3">Touch list icon to view reminder list</string>
+    <string name="main_med_text3">Touch table to open the list of medications</string>
 
     <!-- Settings strings -->
     <string name="settings_title">Help - Settings</string>

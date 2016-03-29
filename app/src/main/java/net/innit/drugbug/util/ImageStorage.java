@@ -13,7 +13,7 @@ import java.util.Map;
  * Object for manipulating the app image storage
  */
 public class ImageStorage {
-    public static final String DIR = "images/medications";
+    private static final String DIR = "images/medications";
     private static ImageStorage instance;
     private String locationType;    // File storage location type - INTERNAL or EXTERNAL
     private final Map<String, Storage> locations = new ArrayMap<>();

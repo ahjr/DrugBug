@@ -48,8 +48,8 @@ import android.widget.TextView;
  * The views used as tabs can be customized by calling {@link #setCustomTabView(int, int)},
  * providing the layout ID of your custom layout.
  * <p/>
- * Modifed by jjobes - Added mTabTitleViews SparseArray and setTabText().
- * Also modifed populateTabStrip() to fill mTabTitleViews.
+ * Modified by jjobes - Added mTabTitleViews SparseArray and setTabText().
+ * Also modified populateTabStrip() to fill mTabTitleViews.
  */
 public class SlidingTabLayout extends HorizontalScrollView {
 
@@ -57,14 +57,14 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private static final int TAB_VIEW_PADDING_DIPS = 16;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
     private final SlidingTabStrip mTabStrip;
-    private int mTitleOffset;
+    private final int mTitleOffset;
 
     private int mTabViewLayoutId;
     private int mTabViewTextViewId;
 
     // A map of the TextViews in each tab.
     // Maps page index -> tab TextView
-    private SparseArray<TextView> mTabTitleViews = new SparseArray<>();
+    private final SparseArray<TextView> mTabTitleViews = new SparseArray<>();
 
     private ViewPager mViewPager;
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
@@ -94,7 +94,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     /**
      * Set the custom {@link TabColorizer} to be used.
      * <p/>
-     * If you only require simple custmisation then you can use
+     * If you only require simple customization then you can use
      * {@link #setSelectedIndicatorColors(int...)} and {@link #setDividerColors(int...)} to achieve
      * similar effects.
      */
@@ -149,7 +149,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         mViewPager = viewPager;
         if (viewPager != null) {
-            viewPager.setOnPageChangeListener(new InternalViewPagerListener());
+            viewPager.addOnPageChangeListener(new InternalViewPagerListener());
             populateTabStrip();
         }
     }
@@ -207,7 +207,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabTitleView = (TextView) tabView;
             }
 
-            tabTitleView.setText(adapter.getPageTitle(i));
+            if (tabTitleView != null) {
+                tabTitleView.setText(adapter.getPageTitle(i));
+            }
             tabView.setOnClickListener(tabClickListener);
 
             // Used to get a reference to each tab's TextView in order to
