@@ -56,7 +56,7 @@ import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.LOG;
 import static net.innit.drugbug.data.Constants.REQUEST_TAKE_PICTURE;
-import static net.innit.drugbug.data.Constants.SORT;
+import static net.innit.drugbug.data.Constants.SORT_DOSE;
 import static net.innit.drugbug.data.Constants.SOURCE_ADD_DOSE;
 import static net.innit.drugbug.data.Constants.SOURCE_EDIT_DOSE;
 import static net.innit.drugbug.data.Constants.TYPE;
@@ -119,7 +119,7 @@ public class AddDoseActivity extends FragmentActivity {
         Bundle bundle = getIntent().getExtras();
         action = bundle.getString(ACTION, ACTION_ADD);
         type = bundle.getString(TYPE, TYPE_NONE);
-        sortOrder = bundle.getString(SORT);
+        sortOrder = bundle.getString(SORT_DOSE);
         filter = bundle.getString(FILTER_DOSE);
 
         mDateTime.setText(sdf.format(new Date()));
@@ -266,7 +266,7 @@ public class AddDoseActivity extends FragmentActivity {
             if (type.equals(TYPE_SINGLE)) intent.putExtra(INTENT_MED_ID, doseItem.getMedication().getId());
         }
         intent.putExtra(TYPE, type);
-        intent.putExtra(SORT, sortOrder);
+        intent.putExtra(SORT_DOSE, sortOrder);
         intent.putExtra(FILTER_DOSE, filter);
         startActivity(intent);
         finish();
@@ -343,7 +343,7 @@ public class AddDoseActivity extends FragmentActivity {
                     if (!action.equals(ACTION_RESTORE)) {
                         // We want the dose list to use default values for sorting and filtering
                         // if we are coming from the medication list
-                        intent.putExtra(SORT, sortOrder);
+                        intent.putExtra(SORT_DOSE, sortOrder);
                         intent.putExtra(FILTER_DOSE, filter);
                     }
                     if (type.equals(TYPE_SINGLE)) {
