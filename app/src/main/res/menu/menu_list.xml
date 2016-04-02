@@ -24,7 +24,7 @@
                     android:title="@string/menu_list_sort_date_dsc"/>
                 <item
                     android:id="@+id/menu_sort_order_name"
-                    android:title="@string/menu_list_sort_name"/>
+                    android:title="@string/menu_list_sort_name_asc"/>
             </group>
         </menu>
     </item>

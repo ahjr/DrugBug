@@ -17,7 +17,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:gravity="center_vertical"
         android:orientation="vertical">
@@ -31,13 +31,45 @@
             android:text="MEDICATION NAME"
             android:textSize="15sp"/>
 
-        <TextView
-            android:id="@+id/tvMedListFreq"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingTop="5dp"
-            android:text="FREQUENCY"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvMedListFreqLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:text="Frequency:"/>
+
+            <TextView
+                android:id="@+id/tvMedListFreq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:text="FREQUENCY"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvMedListDoseLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:text="Next dose due:"/>
+
+            <TextView
+                android:id="@+id/tvMedListDose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:text="MMM DD, YYYY HH:MM:SS"/>
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

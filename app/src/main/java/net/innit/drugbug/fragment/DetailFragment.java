@@ -35,7 +35,7 @@ import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_PREVIEW;
 import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_PREVIEW;
 import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.data.Constants.SORT;
+import static net.innit.drugbug.data.Constants.SORT_DOSE;
 import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_FUTURE;
 import static net.innit.drugbug.data.Constants.SOURCE_DETAIL_TAKEN;
 import static net.innit.drugbug.data.Constants.TAG_ADD;
@@ -71,7 +71,7 @@ public class DetailFragment extends DialogFragment {
         Bundle bundle = this.getArguments();
         final String type = bundle.getString(TYPE, TYPE_FUTURE);
         id = bundle.getLong(INTENT_DOSE_ID);
-        sortOrder = bundle.getString(SORT);
+        sortOrder = bundle.getString(SORT_DOSE);
 
         db.open();
         dose = db.getDose(id);
@@ -139,7 +139,7 @@ public class DetailFragment extends DialogFragment {
                 b.putLong(INTENT_DOSE_ID, id);
                 b.putString(ACTION, ACTION_EDIT);
                 b.putString(TYPE, type);
-                b.putString(SORT, sortOrder);
+                b.putString(SORT_DOSE, sortOrder);
                 Fragment fragment = new AddDoseFragment();
                 fragment.setArguments(b);
                 getFragmentManager().beginTransaction().add(fragment, TAG_ADD).commit();
@@ -166,7 +166,7 @@ public class DetailFragment extends DialogFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), DoseListActivity.class);
                 intent.putExtra(TYPE, TYPE_TAKEN);
-                intent.putExtra(SORT, sortOrder);
+                intent.putExtra(SORT_DOSE, sortOrder);
                 if (type.equals(TYPE_SINGLE))
                     intent.putExtra(INTENT_MED_ID, dose.getMedication().getId());
                 dose.confirmTaken(DetailFragment.this, intent);

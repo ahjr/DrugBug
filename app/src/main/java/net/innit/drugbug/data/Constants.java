@@ -39,13 +39,23 @@ public class Constants {
     /**
      * Sort String constants
      */
-    public static final String SORT = "sort";
+    public static final String SORT_DOSE = "sort_dose";
     public static final String SORT_DATE_DESC = "dateDsc";
     public static final String SORT_DATE_ASC = "dateAsc";
     public static final String SORT_NAME = "name";
-    public static final String SORT_CREATION = "creation";
+
     public static final String SORT_NAME_DESC = "nameDsc";
     public static final String SORT_NAME_ASC = "nameAsc";
+
+    public static final String SORT_MED = "sort_med";
+    public static final String SORT_CREATION_ASC = "creationAsc";
+    public static final String SORT_CREATION_DESC = "creationDsc";
+    public static final String SORT_NEXT_FUTURE_ASC = "nextAsc";
+    public static final String SORT_NEXT_FUTURE_DESC = "nextDsc";
+    public static final String SORT_LAST_TAKEN_ASC = "takenAsc";
+    public static final String SORT_LAST_TAKEN_DESC = "takenDsc";
+    public static final String SORT_ARCHIVED_ASC = "archiveAsc";
+    public static final String SORT_ARCHIVED_DESC = "archiveDsc";
 
     /**
      * Dose list filter String constants

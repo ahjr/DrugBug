@@ -13,8 +13,8 @@
     <string name="add_dose_temp_image_filename">temp.jpg</string>
     <string name="add_dose_title_add">Add Medication</string>
     <string name="add_dose_title_edit">Edit dose</string>
-    <string name="add_med_datetime_calendar_desc">Calendar button</string>
-    <string name="add_med_datetime_label_first">Time of first dose</string>
+    <string name="add_dose_datetime_calendar_desc">Calendar button</string>
+    <string name="add_dose_datetime_label_first">Time of first dose</string>
     <string name="alert_delete_doses_message">Delete all doses for this medication?\nMedication will be archived.</string>
     <string name="alert_delete_doses_negative">No, cancel</string>
     <string name="alert_delete_doses_positive">Yes, delete them</string>
@@ -90,7 +90,6 @@
     <string name="menu_list_sort">Sort Order</string>
     <string name="menu_list_sort_date_asc">Date Ascending</string>
     <string name="menu_list_sort_date_dsc">Date Descending</string>
-    <string name="menu_list_sort_name">Medication Name</string>
     <string name="menu_preferences">Settings</string>
     <string name="preferences_keeptimemissed_title">How long should missed doses be kept?</string>
     <string name="preferences_keeptimetaken_title">How long should taken doses be kept?</string>
@@ -105,8 +104,8 @@
     <string name="reminder_list_set_positive">Reminder set</string>
     <string name="reminder_list_title">Reminders</string>
     <string name="reminder_title">Medication due</string>
-    <string name="sort_order_name_asc">Alphabetical</string>
-    <string name="sort_order_name_dsc">Reverse Alphabetical</string>
+    <string name="menu_list_sort_name_asc">Name (A-Z)</string>
+    <string name="menu_list_sort_name_dsc">Name (Z-A)</string>
     <string name="taken_dialog_negative">No, cancel</string>
     <string name="taken_dialog_positive">Yes, it\'s taken</string>
     <string name="taken_dialog_title">Take dose</string>
@@ -123,6 +122,8 @@
     <string name="menu_med_filter_active">Active medications</string>
     <string name="menu_med_filter_inactive">Inactive medications</string>
     <string name="menu_med_filter_archived">Archived medications</string>
+    <string name="menu_med_sort_creation_asc">Creation Date (Asc)</string>
+    <string name="menu_med_sort_creation_dsc">Creation Date (Desc)</string>
     <string name="camera_unavailable">Camera not available</string>
     <string name="user_canceled">User cancelled</string>
     <string name="dose_adapter_date_label_taken">Taken:</string>
@@ -143,4 +144,10 @@
     <string name="storage_internal_display">Internal</string>
     <string name="content_description_help">Help</string>
     <string name="content_description_list">List icon</string>
+    <string name="menu_med_sort_next_asc">Next Dose Due (Asc)</string>
+    <string name="menu_med_sort_next_dsc">Next Dose Due (Dsc)</string>
+    <string name="menu_med_sort_taken_asc">Last Dose Taken (Asc)</string>
+    <string name="menu_med_sort_taken_dsc">Last Dose Taken (Dsc)</string>
+    <string name="menu_med_sort_archived_asc">Archive Date (Asc)</string>
+    <string name="menu_med_sort_archived_dsc">Archive Date (Dsc)</string>
 </resources>

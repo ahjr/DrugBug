@@ -19,6 +19,7 @@ class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TAKEN = "taken";
     public static final String COLUMN_ACTIVE = "active";
     public static final String COLUMN_ARCHIVED = "archived";
+    public static final String COLUMN_ARCHIVE_DATE = "archive_date";
 
     /**
      * View name definitions
@@ -41,7 +42,8 @@ class DBHelper extends SQLiteOpenHelper {
                     COLUMN_FREQUENCY + " TEXT, " +
                     COLUMN_IMAGE_PATH + " TEXT, " +
                     COLUMN_ACTIVE + " INTEGER DEFAULT 1, " +
-                    COLUMN_ARCHIVED + " INTEGER DEFAULT 0" +
+                    COLUMN_ARCHIVED + " INTEGER DEFAULT 0, " +
+                    COLUMN_ARCHIVE_DATE + " INTEGER DEFAULT 0" +
                     ")";
 
     private static final String CREATE_TABLE_DOSES =
@@ -70,13 +72,15 @@ class DBHelper extends SQLiteOpenHelper {
                     TABLE_MEDICATIONS + "." + COLUMN_NAME + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_FREQUENCY + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_IMAGE_PATH + ", " +
-                    TABLE_MEDICATIONS + "." + COLUMN_ACTIVE + " " +
+                    TABLE_MEDICATIONS + "." + COLUMN_ACTIVE + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_ARCHIVED + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_ARCHIVE_DATE + " " +
                     "FROM " + TABLE_DOSES + " JOIN " + TABLE_MEDICATIONS + " " +
                     "ON " + TABLE_DOSES + "." + COLUMN_MED_ID + "=" + TABLE_MEDICATIONS + "." + COLUMN_MED_ID;
 
 
     private static final String DB_NAME = "drugbug.db";
-    private static final int DB_VERSION = 22;
+    private static final int DB_VERSION = 24;
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
