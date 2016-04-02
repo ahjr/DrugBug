@@ -31,6 +31,7 @@ import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
 import net.innit.drugbug.DoseListActivity;
+import net.innit.drugbug.MedicationListActivity;
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DatabaseDAO;
 import net.innit.drugbug.data.Settings;
@@ -54,14 +55,20 @@ import static net.innit.drugbug.data.Constants.ACTION_ADD;
 import static net.innit.drugbug.data.Constants.ACTION_EDIT;
 import static net.innit.drugbug.data.Constants.ACTION_REACTIVATE;
 import static net.innit.drugbug.data.Constants.ACTION_RESTORE;
+import static net.innit.drugbug.data.Constants.FILTER_ALL;
+import static net.innit.drugbug.data.Constants.FILTER_ARCHIVED;
 import static net.innit.drugbug.data.Constants.FILTER_DOSE;
+import static net.innit.drugbug.data.Constants.FILTER_INACTIVE;
+import static net.innit.drugbug.data.Constants.FILTER_MED;
 import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_PREVIEW;
 import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_PREVIEW;
 import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.LOG;
-import static net.innit.drugbug.data.Constants.SORT;
+import static net.innit.drugbug.data.Constants.SORT_DOSE;
+import static net.innit.drugbug.data.Constants.SORT_MED;
 import static net.innit.drugbug.data.Constants.TYPE;
+import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
 import static net.innit.drugbug.data.Constants.TYPE_NONE;
 import static net.innit.drugbug.data.Constants.TYPE_SINGLE;
 
@@ -70,7 +77,7 @@ public class AddDoseFragment extends DialogFragment {
 
     private DatabaseDAO db;
 
-    private String action, type, sortOrder, filter;
+    private String action, type, doseSortOrder, doseFilter, medSortOrder, medFilter;
 
     private File dir, tempPath;
 
@@ -78,10 +85,10 @@ public class AddDoseFragment extends DialogFragment {
     private Date origDate;
     private String origFreq;
 
-    private boolean wasChecked;
     private boolean imageLocationOK;
     private ImageStorage imageStorage;
 
+    private ArrayAdapter<String> adapter;
     private ImageButton mMedImage;
     private TextView mMedName;
     private TextView mDosage;
@@ -102,6 +109,12 @@ public class AddDoseFragment extends DialogFragment {
     };
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("Frequency", mFrequency.getSelectedItemPosition());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = new DatabaseDAO(getActivity());
@@ -113,6 +126,9 @@ public class AddDoseFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.activity_add_edit, container, false);
 
         setupViews(view);
+        if (savedInstanceState != null) {
+            mFrequency.setSelection(savedInstanceState.getInt("Frequency"));
+        }
 
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getDialog().setCanceledOnTouchOutside(true);
@@ -124,10 +140,19 @@ public class AddDoseFragment extends DialogFragment {
         Bundle bundle = getArguments();
         action = bundle.getString(ACTION, ACTION_ADD);
         type = bundle.getString(TYPE, TYPE_NONE);
-        sortOrder = bundle.getString(SORT);
-        filter = bundle.getString(FILTER_DOSE);
+
+        doseSortOrder = bundle.getString(SORT_DOSE);
+        doseFilter = bundle.getString(FILTER_DOSE);
+
+        medSortOrder = bundle.getString(SORT_MED);
+        medFilter = bundle.getString(FILTER_MED);
 
         mDateTime.setText(sdf.format(new Date()));
+
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, db.getFreqLabels());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mFrequency.setAdapter(adapter);
 
         switch (action) {
             case ACTION_EDIT:
@@ -154,22 +179,6 @@ public class AddDoseFragment extends DialogFragment {
             mMedImage.setImageBitmap(image);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, db.getFreqLabels());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        mFrequency.setAdapter(adapter);
-
-        switch (action) {
-            case ACTION_EDIT:
-                mMedName.setText(doseItem.getMedication().getName());
-                mDosage.setText(doseItem.getDosage());
-                mReminder.setChecked(doseItem.isReminderSet());
-                wasChecked = doseItem.isReminderSet();
-            case ACTION_RESTORE:
-                mMedName.setText(doseItem.getMedication().getName());
-            case ACTION_REACTIVATE:
-                mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
-        }
     }
 
     @Override
@@ -186,6 +195,8 @@ public class AddDoseFragment extends DialogFragment {
 
         onCreateAll();
 
+        mDosage.setText(doseItem.getDosage());
+        mReminder.setChecked(doseItem.isReminderSet());
         mDateTimeLabel.setText(R.string.add_dose_datetime_label);
         mDateTime.setText(sdf.format(doseItem.getDate()));
         origDate = doseItem.getDate();
@@ -193,7 +204,19 @@ public class AddDoseFragment extends DialogFragment {
 
     private void onCreateReactivate(Bundle bundle) {
         db.open();
-        doseItem = db.getDose(bundle.getLong(INTENT_DOSE_ID));
+        MedicationItem medicationItem = db.getMedication(bundle.getLong(INTENT_MED_ID));
+        doseItem.setMedication(medicationItem);
+        if (medicationItem.hasTaken(getActivity())) {
+            // Get the latest taken item
+            DoseItem dose = db.getLatestTakenDose(medicationItem);
+            // Set the date of it to now
+            dose.setDate(new Date());
+            doseItem = dose;
+        }
+
+        mDosage.setText(doseItem.getDosage());
+        mReminder.setChecked(doseItem.isReminderSet());
+
         db.close();
 
         onCreateAll();
@@ -209,6 +232,9 @@ public class AddDoseFragment extends DialogFragment {
     }
 
     private void onCreateAll() {
+        mMedName.setText(doseItem.getMedication().getName());
+        mFrequency.setSelection(adapter.getPosition(doseItem.getMedication().getFrequency()));
+
         origFreq = doseItem.getMedication().getFrequency();
 
         if (doseItem.getMedication().hasImage()) {
@@ -249,6 +275,8 @@ public class AddDoseFragment extends DialogFragment {
                 onClickAddMedSave(v);
             }
         });
+
+
     }
 
     private boolean setupImageLocation() {
@@ -334,20 +362,36 @@ public class AddDoseFragment extends DialogFragment {
                         }
                     }
 
-                    Intent intent = new Intent(getActivity(), DoseListActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra(TYPE, type);
-                    if (!action.equals(ACTION_RESTORE)) {
-                        // We want the dose list to use default values for sorting and filtering
-                        // if we are coming from the medication list
-                        intent.putExtra(SORT, sortOrder);
-                        intent.putExtra(FILTER_DOSE, filter);
+                    if (type.equals(TYPE_MEDICATION)) {
+                        Intent intent = new Intent(getActivity(), MedicationListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra(TYPE, TYPE_MEDICATION);
+                        if (medFilter.equals(FILTER_ARCHIVED) || medFilter.equals(FILTER_INACTIVE)) {
+                            intent.putExtra(FILTER_MED, FILTER_ALL);
+                        } else {
+                            intent.putExtra(FILTER_MED, medFilter);
+                        }
+                        // TODO: 4/2/16 May need some jiggery pokery here to account for changingto FILTER_ALL if sort order is by date
+                        intent.putExtra(SORT_MED, medSortOrder);
+                        startActivity(intent);
+                        dismiss();
+
+                    } else {
+                        Intent intent = new Intent(getActivity(), DoseListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra(TYPE, type);
+                        if ((!action.equals(ACTION_RESTORE)) && (!action.equals(ACTION_REACTIVATE))) {
+                            // We want the dose list to use default values for sorting and filtering
+                            // if we are coming from the medication list
+                            intent.putExtra(SORT_DOSE, doseSortOrder);
+                            intent.putExtra(FILTER_DOSE, doseFilter);
+                        }
+                        if (type.equals(TYPE_SINGLE)) {
+                            intent.putExtra(INTENT_MED_ID, medication.getId());
+                        }
+                        startActivity(intent);
+                        dismiss(); // Call once you redirect to another activity
                     }
-                    if (type.equals(TYPE_SINGLE)) {
-                        intent.putExtra(INTENT_MED_ID, medication.getId());
-                    }
-                    startActivity(intent);
-                    dismiss(); // Call once you redirect to another activity
                 }
             }
         }

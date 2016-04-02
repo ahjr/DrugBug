@@ -16,6 +16,7 @@ import net.innit.drugbug.util.OnListUpdatedListener;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.Date;
 
 public class MedicationItem implements Comparable<MedicationItem> {
     private long id;
@@ -24,6 +25,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     private String imagePath; // Picture of the pill or label
     private boolean active = true;
     private boolean archived;
+    private Date archiveDate;
 
     public MedicationItem() {
     }
@@ -84,7 +86,20 @@ public class MedicationItem implements Comparable<MedicationItem> {
     }
 
     public void setArchived(boolean archived) {
+        if (archived) {
+            this.setArchiveDate(new Date());
+        } else {
+            this.setArchiveDate(null);
+        }
         this.archived = archived;
+    }
+
+    public Date getArchiveDate() {
+        return archiveDate;
+    }
+
+    public void setArchiveDate(Date archiveDate) {
+        this.archiveDate = archiveDate;
     }
 
     public boolean hasTaken(Context context) {
@@ -167,6 +182,22 @@ public class MedicationItem implements Comparable<MedicationItem> {
         @Override
         public int compare(MedicationItem lhs, MedicationItem rhs) {
             return rhs.getName().compareTo(lhs.getName());
+        }
+    }
+
+    public static class CreationComparator implements Comparator<MedicationItem> {
+
+        @Override
+        public int compare(MedicationItem lhs, MedicationItem rhs) {
+            return (int) (lhs.getId() - rhs.getId());
+        }
+    }
+
+    public static class ReverseCreationComparator implements Comparator<MedicationItem> {
+
+        @Override
+        public int compare(MedicationItem lhs, MedicationItem rhs) {
+            return (int) (rhs.getId() - lhs.getId());
         }
     }
 

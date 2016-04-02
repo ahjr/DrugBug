@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
@@ -22,6 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static net.innit.drugbug.data.Constants.SORT_ARCHIVED_ASC;
+import static net.innit.drugbug.data.Constants.SORT_ARCHIVED_DESC;
+import static net.innit.drugbug.data.Constants.SORT_LAST_TAKEN_ASC;
+import static net.innit.drugbug.data.Constants.SORT_LAST_TAKEN_DESC;
+import static net.innit.drugbug.data.Constants.SORT_NEXT_FUTURE_ASC;
+import static net.innit.drugbug.data.Constants.SORT_NEXT_FUTURE_DESC;
 import static net.innit.drugbug.data.Constants.TYPE_MISSED;
 import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
@@ -35,7 +42,8 @@ public class DatabaseDAO {
             DBHelper.COLUMN_FREQUENCY,
             DBHelper.COLUMN_IMAGE_PATH,
             DBHelper.COLUMN_ACTIVE,
-            DBHelper.COLUMN_ARCHIVED
+            DBHelper.COLUMN_ARCHIVED,
+            DBHelper.COLUMN_ARCHIVE_DATE
     };
     /**
      * Array of columns in doses table
@@ -54,6 +62,8 @@ public class DatabaseDAO {
             DBHelper.COLUMN_FREQUENCY,
             DBHelper.COLUMN_IMAGE_PATH,
             DBHelper.COLUMN_ACTIVE,
+            DBHelper.COLUMN_ARCHIVED,
+            DBHelper.COLUMN_ARCHIVE_DATE,
             DBHelper.COLUMN_ID,
             DBHelper.COLUMN_DATE,
             DBHelper.COLUMN_REMINDER,
@@ -123,6 +133,8 @@ public class DatabaseDAO {
         medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
         medication.setActive(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
         medication.setArchived(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVED)) == 1);
+        long archiveDate = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVE_DATE));
+        medication.setArchiveDate((archiveDate>0) ? new Date(archiveDate): null);
         if (cursor.isLast()) cursor.close();
         return medication;
     }
@@ -139,14 +151,13 @@ public class DatabaseDAO {
 
     /**
      * Retrieve multiple medications from the DB based on a passed in selection String
-     * ** Currently only used once, so redundant, but split out in case of future growth
      *
      * @param selection SQL selection to retrieve from DB
      * @return ArrayList of medications
      */
-    private List<MedicationItem> getMedications(String selection) {
+    private List<MedicationItem> getMedications(String selection, String orderBy) {
         List<MedicationItem> returnList = new ArrayList<>();
-        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, null);
+        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, orderBy);
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 returnList.add(getMedFromDB(cursor));
@@ -156,29 +167,152 @@ public class DatabaseDAO {
         return returnList;
     }
 
+    public List<MedicationItem> getAllMedicationsByDose(String sortOrder) {
+        String orderBy;
+        String selection;
+        Cursor cursor = null;
+        if (sortOrder != null) {
+            switch (sortOrder) {
+                case SORT_LAST_TAKEN_ASC:
+                    StringBuilder columns = getColumnsString(medicationsAllColumns);
+                    cursor = database.rawQuery(
+                            "SELECT " + DBHelper.TABLE_MEDICATIONS + "." + columns +
+                            " FROM " + DBHelper.TABLE_MEDICATIONS + " LEFT JOIN " + DBHelper.TABLE_DOSES +
+                            " ON " + DBHelper.TABLE_MEDICATIONS + "." + DBHelper.COLUMN_MED_ID + "=" + DBHelper.TABLE_DOSES + "." + DBHelper.COLUMN_MED_ID +
+                            " WHERE " + DBHelper.COLUMN_ACTIVE + "=0" + " AND " + DBHelper.COLUMN_ARCHIVED + "=0" +
+                            " GROUP BY " + DBHelper.TABLE_MEDICATIONS + "." + DBHelper.COLUMN_MED_ID +
+                            " ORDER BY " + DBHelper.COLUMN_DATE + " ASC",
+                            null
+                    );
+                    break;
+                case SORT_LAST_TAKEN_DESC:
+                    columns = getColumnsString(medicationsAllColumns);
+                    cursor = database.rawQuery(
+                            "SELECT " + DBHelper.TABLE_MEDICATIONS + "." + columns +
+                            " FROM " + DBHelper.TABLE_MEDICATIONS + " LEFT JOIN " + DBHelper.TABLE_DOSES +
+                            " ON " + DBHelper.TABLE_MEDICATIONS + "." + DBHelper.COLUMN_MED_ID + "=" + DBHelper.TABLE_DOSES + "." + DBHelper.COLUMN_MED_ID +
+                            " WHERE " + DBHelper.COLUMN_ACTIVE + "=0" + " AND " + DBHelper.COLUMN_ARCHIVED + "=0" +
+                            " GROUP BY " + DBHelper.TABLE_MEDICATIONS + "." + DBHelper.COLUMN_MED_ID +
+                            " ORDER BY " + DBHelper.COLUMN_DATE + " DESC",
+                            null
+                    );
+                    break;
+                case SORT_NEXT_FUTURE_ASC:
+                    selection = DBHelper.COLUMN_ACTIVE + "=1";
+                    orderBy = DBHelper.COLUMN_DATE + " ASC";
+                    cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
+                    break;
+                case SORT_NEXT_FUTURE_DESC:
+                    selection = DBHelper.COLUMN_ACTIVE + "=1";
+                    orderBy = DBHelper.COLUMN_DATE + " DESC";
+                    cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
+                    break;
+                case SORT_ARCHIVED_ASC:
+                    selection = DBHelper.COLUMN_ARCHIVED + "=1";
+                    orderBy = DBHelper.COLUMN_ARCHIVE_DATE + " ASC";
+                    cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
+                    break;
+                case SORT_ARCHIVED_DESC:
+                    selection = DBHelper.COLUMN_ARCHIVED + "=1";
+                    orderBy = DBHelper.COLUMN_ARCHIVE_DATE + " DESC";
+                    cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
+                    break;
+            }
+        }
+        List<MedicationItem> returnList = new ArrayList<>();
+        if (cursor == null) {
+            cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, medicationsAllColumns, null, null, DBHelper.COLUMN_MED_ID, null, null);
+        }
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                returnList.add(getMedFromDB(cursor));
+            }
+        }
+        return returnList;
+    }
+
+    @NonNull
+    private StringBuilder getColumnsString(String[] columnArray) {
+        StringBuilder columns = new StringBuilder();
+        for (String n : columnArray) {
+            if (columns.length() > 0) columns.append(", ");
+            columns.append(n);
+        }
+        return columns;
+    }
+
     /**
      * Returns a List object with all medications in the database as MedicationItem objects
      * Basically a wrapper method for the private getMedications with selection == null
      *
      * @return list of MedicationItem objects
      */
+    public List<MedicationItem> getAllMedications(String sortOrder) {
+//        if (sortOrder != null) {
+//            switch (sortOrder) {
+//                case SORT_NEXT_FUTURE_ASC:
+//                    return getMedications(null, DBHelper.COLUMN_MED_ID + " ASC");
+//                case SORT_NEXT_FUTURE_DESC:
+//                    return getMedications(null, DBHelper.COLUMN_MED_ID + " DESC");
+//            }
+//        }
+        return getMedications(null, null);
+    }
+
     public List<MedicationItem> getAllMedications() {
-        return getMedications(null);
+        return getAllMedications(null);
+    }
+
+    public List<MedicationItem> getAllMedicationsInactive(String sortOrder) {
+        String selection = DBHelper.COLUMN_ACTIVE + "=0" + " AND " + DBHelper.COLUMN_ARCHIVED + "=0";
+//        if (sortOrder != null) {
+//            switch (sortOrder) {
+//                case SORT_NEXT_FUTURE_ASC:
+//                    return getMedications(selection, DBHelper.COLUMN_MED_ID + " ASC");
+//                case SORT_NEXT_FUTURE_DESC:
+//                    return getMedications(selection, DBHelper.COLUMN_MED_ID + " DESC");
+//            }
+//        }
+        return getMedications(selection, null);
     }
 
     public List<MedicationItem> getAllMedicationsInactive() {
-        String selection = DBHelper.COLUMN_ACTIVE + "=0" + " AND " + DBHelper.COLUMN_ARCHIVED + "=0";
-        return getMedications(selection);
+        return getAllMedicationsInactive(null);
+    }
+
+    public List<MedicationItem> getAllMedicationsActive(String sortOrder) {
+        String selection = DBHelper.COLUMN_ACTIVE + "=1";
+//        if (sortOrder != null) {
+//            switch (sortOrder) {
+//                case SORT_NEXT_FUTURE_ASC:
+//                    return getMedications(selection, DBHelper.COLUMN_MED_ID + " ASC");
+//                case SORT_NEXT_FUTURE_DESC:
+//                    return getMedications(selection, DBHelper.COLUMN_MED_ID + " DESC");
+//
+//            }
+//        }
+        return getMedications(selection, null);
     }
 
     public List<MedicationItem> getAllMedicationsActive() {
-        String selection = DBHelper.COLUMN_ACTIVE + "=1";
-        return getMedications(selection);
+        return getAllMedicationsActive(null);
+    }
+
+    public List<MedicationItem> getAllMedicationsArchived(String sortOrder) {
+        String selection = DBHelper.COLUMN_ARCHIVED + "=1";
+//        if (sortOrder != null) {
+//            switch (sortOrder) {
+//                case SORT_NEXT_FUTURE_ASC:
+//                    return getMedications(selection, DBHelper.COLUMN_MED_ID + " ASC");
+//                case SORT_NEXT_FUTURE_DESC:
+//                    return getMedications(selection, DBHelper.COLUMN_MED_ID + " DESC");
+//            }
+//        }
+        return getMedications(selection, null);
     }
 
     public List<MedicationItem> getAllMedicationsArchived() {
-        String selection = DBHelper.COLUMN_ARCHIVED + "=1";
-        return getMedications(selection);
+        return getAllMedicationsArchived(null);
     }
 
     /**
@@ -213,6 +347,7 @@ public class DatabaseDAO {
         values.put(DBHelper.COLUMN_IMAGE_PATH, medication.getImagePath());
         values.put(DBHelper.COLUMN_ACTIVE, medication.isActive());
         values.put(DBHelper.COLUMN_ARCHIVED, medication.isArchived());
+        values.put(DBHelper.COLUMN_ARCHIVE_DATE, (medication.getArchiveDate() != null) ? medication.getArchiveDate().getTime() : 0);
         return values;
     }
 
@@ -280,6 +415,9 @@ public class DatabaseDAO {
             medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
             medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
             medication.setActive(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
+            medication.setArchived(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
+            long archiveDate = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVE_DATE));
+            medication.setArchiveDate((archiveDate > 0) ? new Date(archiveDate) : null);
         }
 
         DoseItem dose = new DoseItem();

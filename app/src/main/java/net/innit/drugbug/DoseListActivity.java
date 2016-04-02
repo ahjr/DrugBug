@@ -19,9 +19,9 @@ import static net.innit.drugbug.data.Constants.FILTER_FUTURE;
 import static net.innit.drugbug.data.Constants.FILTER_NONE;
 import static net.innit.drugbug.data.Constants.FILTER_TAKEN;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SORT_DATE_ASC;
 import static net.innit.drugbug.data.Constants.SORT_DATE_DESC;
+import static net.innit.drugbug.data.Constants.SORT_DOSE;
 import static net.innit.drugbug.data.Constants.SORT_NAME;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_FUTURE;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_REMINDERS;
@@ -48,7 +48,7 @@ public class DoseListActivity extends FragmentActivity {
 
         bundle = getIntent().getExtras();
         type = bundle.getString(TYPE, TYPE_FUTURE);
-        sortOrder = bundle.getString(SORT);
+        sortOrder = bundle.getString(SORT_DOSE);
         filter = bundle.getString(FILTER_DOSE);
 
         setContentView(R.layout.activity_list_dose);
@@ -62,7 +62,7 @@ public class DoseListActivity extends FragmentActivity {
                 default:
                     sortOrder = SORT_DATE_ASC;
             }
-            bundle.putString(SORT, sortOrder);
+            bundle.putString(SORT_DOSE, sortOrder);
         }
 
         if (filter == null) {
@@ -122,7 +122,8 @@ public class DoseListActivity extends FragmentActivity {
                 setMenuItem(menu, R.id.menu_sort_order_date_dsc, R.string.menu_list_sort_date_dsc);
                 break;
             case SORT_NAME:
-                setMenuItem(menu, R.id.menu_sort_order_name, R.string.menu_list_sort_name);
+                // TODO: 4/2/16 Change this so sort can be both A-Z and Z-A
+                setMenuItem(menu, R.id.menu_sort_order_name, R.string.menu_list_sort_name_asc);
                 break;
             default:
                 setMenuItem(menu, R.id.menu_sort_order_date_asc, R.string.menu_list_sort_date_asc);
@@ -139,7 +140,7 @@ public class DoseListActivity extends FragmentActivity {
                 b.putString(ACTION, ACTION_ADD);
                 b.putString(TYPE, type);
                 b.putLong(INTENT_MED_ID, bundle.getLong(INTENT_MED_ID));
-                b.putString(SORT, sortOrder);
+                b.putString(SORT_DOSE, sortOrder);
                 b.putString(FILTER_DOSE, filter);
 
                 Fragment fragment = new AddDoseFragment();
@@ -169,15 +170,16 @@ public class DoseListActivity extends FragmentActivity {
                 return true;
             case R.id.menu_sort_order_date_asc:
                 sortOrder = SORT_DATE_ASC;
-                bundle.putString(SORT, sortOrder);
+                bundle.putString(SORT_DOSE, sortOrder);
                 break;
             case R.id.menu_sort_order_date_dsc:
                 sortOrder = SORT_DATE_DESC;
-                bundle.putString(SORT, sortOrder);
+                bundle.putString(SORT_DOSE, sortOrder);
                 break;
             case R.id.menu_sort_order_name:
+                // TODO: 4/2/16 Change this so we can sort A-Z and Z-A
                 sortOrder = SORT_NAME;
-                bundle.putString(SORT, sortOrder);
+                bundle.putString(SORT_DOSE, sortOrder);
                 break;
             case R.id.menu_filter_future:
                 filter = FILTER_FUTURE;

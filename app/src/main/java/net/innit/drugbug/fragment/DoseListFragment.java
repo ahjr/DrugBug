@@ -38,9 +38,9 @@ import static net.innit.drugbug.data.Constants.FILTER_TAKEN;
 import static net.innit.drugbug.data.Constants.FROM_REMINDER;
 import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.data.Constants.SORT;
 import static net.innit.drugbug.data.Constants.SORT_DATE_ASC;
 import static net.innit.drugbug.data.Constants.SORT_DATE_DESC;
+import static net.innit.drugbug.data.Constants.SORT_DOSE;
 import static net.innit.drugbug.data.Constants.SORT_NAME;
 import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TAG_DETAIL;
@@ -75,7 +75,7 @@ public class DoseListFragment extends ListFragment {
         Bundle bundle = getArguments();
         type = bundle.getString(TYPE, TYPE_FUTURE);
         medId = bundle.getLong(INTENT_MED_ID);
-        sortOrder = bundle.getString(SORT);
+        sortOrder = bundle.getString(SORT_DOSE);
         filter = bundle.getString(FILTER_DOSE);
 
         // Set the sortOrder if it wasn't passed in
@@ -133,7 +133,7 @@ public class DoseListFragment extends ListFragment {
                 Bundle bundle = new Bundle();
                 bundle.putString(TYPE, type);
                 bundle.putLong(INTENT_DOSE_ID, doseItem.getId());
-                bundle.putString(SORT, sortOrder);
+                bundle.putString(SORT_DOSE, sortOrder);
 
                 showDetailFragment(bundle);
             }
@@ -207,6 +207,7 @@ public class DoseListFragment extends ListFragment {
                 Collections.sort(doses, new DoseItem.ReverseDateComparator());
                 break;
             case SORT_NAME:
+                // TODO: 4/2/16 Change this so we can sort A-Z and Z-A
                 Collections.sort(doses, new DoseItem.NameComparator());
                 break;
         }
@@ -248,7 +249,7 @@ public class DoseListFragment extends ListFragment {
                 b.putLong(INTENT_DOSE_ID, doseItem.getId());
                 b.putString(ACTION, ACTION_EDIT);
                 b.putString(TYPE, type);
-                b.putString(SORT, sortOrder);
+                b.putString(SORT_DOSE, sortOrder);
                 b.putLong(INTENT_MED_ID, medId);
 
                 Fragment fragment = new AddDoseFragment();
@@ -285,14 +286,14 @@ public class DoseListFragment extends ListFragment {
             case CONTEXT_TAKEN:
                 Intent intent = new Intent(getActivity().getApplicationContext(), DoseListActivity.class);
                 intent.putExtra(TYPE, TYPE_TAKEN);
-                intent.putExtra(SORT, sortOrder);
+                intent.putExtra(SORT_DOSE, sortOrder);
                 doseItem.confirmTaken(this, intent);
                 return true;
             case CONTEXT_ONLY_THIS_MED:
                 intent = new Intent(getActivity().getApplicationContext(), DoseListActivity.class);
                 intent.putExtra(TYPE, TYPE_SINGLE);
                 intent.putExtra(INTENT_MED_ID, doseItem.getMedication().getId());
-                intent.putExtra(SORT, sortOrder);
+                intent.putExtra(SORT_DOSE, sortOrder);
                 startActivity(intent);
                 return true;
             default:
