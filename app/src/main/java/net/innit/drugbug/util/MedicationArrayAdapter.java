@@ -77,7 +77,7 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
             defaultColor = mViewHolder.date.getTextColors().getDefaultColor();
         }
         if (medicationItem.isActive()) {
-            dose = db.getFirstFutureDose(medicationItem);
+            dose = medicationItem.getFirstFuture(context);
             date = dose.getDate();
             Date now = new Date();
 
@@ -92,7 +92,7 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
             mViewHolder.dateLabel.setText("Archived:");
         } else {
             // med is inactive and not archived
-            dose = db.getLatestTakenDose(medicationItem);
+            dose = medicationItem.getLastTaken(context);
             if (dose != null) {
                 date = dose.getDate();
             }

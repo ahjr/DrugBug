@@ -28,6 +28,7 @@ import net.innit.drugbug.util.OnListUpdatedListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static net.innit.drugbug.data.Constants.ACTION;
 import static net.innit.drugbug.data.Constants.ACTION_EDIT;
@@ -122,7 +123,7 @@ public class DetailFragment extends DialogFragment {
 
         // Show the date all pretty instead of a long number
         // Set it red if the date has passed on taken doses
-        DateFormat simpleDateFormat = SimpleDateFormat.getDateTimeInstance();
+        DateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.getDefault());
         String dateString = simpleDateFormat.format(dose.getDate());
         textView = (TextView) view.findViewById(R.id.tvDetailDate);
         textView.setText(dateString);

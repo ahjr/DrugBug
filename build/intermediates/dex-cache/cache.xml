@@ -1,12 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" >
-
-    <item
-        jar="/Users/alissa/AndroidStudioProjects/DrugBug/app/build/intermediates/exploded-aar/DrugBug/slideDateTimePicker/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="50bb835d7eca54b151ad89b8431b424e12e9e183">
-        <dex dex="/Users/alissa/AndroidStudioProjects/DrugBug/app/build/intermediates/pre-dexed/release/DrugBug-slideDateTimePicker-unspecified_2d953d4fccc222178c768f76fb17783cbad38042.jar" />
-    </item>
-
-</items>
+<items version="2" />

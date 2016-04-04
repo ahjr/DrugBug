@@ -208,7 +208,7 @@ public class AddDoseFragment extends DialogFragment {
         doseItem.setMedication(medicationItem);
         if (medicationItem.hasTaken(getActivity())) {
             // Get the latest taken item
-            DoseItem dose = db.getLatestTakenDose(medicationItem);
+            DoseItem dose = medicationItem.getLastTaken(getActivity());
             // Set the date of it to now
             dose.setDate(new Date());
             doseItem = dose;
@@ -339,12 +339,13 @@ public class AddDoseFragment extends DialogFragment {
                     Toast.makeText(getActivity(), R.string.add_dose_error_blank_dosage, Toast.LENGTH_SHORT).show();
                 } else {
                     if (action.equals(ACTION_EDIT) && !checkFreqChanged(medication)) {
-                        List<DoseItem> doses = db.getAllFutureForMed(getActivity(), medication);
+                        List<DoseItem> doses = medication.getAllFuture(getActivity());
                         DoseItem nextDose = doseItem;
                         for (DoseItem futureDose : doses) {
                             nextDose = updateFutureDose(nextDose, futureDose);
                         }
                     } else {
+                        // TODO: 4/2/16 wrap this up into db.createNextFuture
                         DoseItem futureItem = doseItem;
                         int numFutureDoses = Integer.parseInt(Settings.getInstance().getString(Settings.Key.NUM_DOSES));
                         Calendar calendar = Calendar.getInstance();
@@ -455,7 +456,7 @@ public class AddDoseFragment extends DialogFragment {
         if (action.equals(ACTION_EDIT)) {
             if (!medication.getFrequency().equals(origFreq)) {
                 // frequency has changed, so delete all previous futures with this medId
-                db.removeAllFutureDosesForMed(medication);
+                medication.removeAllFuture(getActivity());
                 return true;
             }
         }

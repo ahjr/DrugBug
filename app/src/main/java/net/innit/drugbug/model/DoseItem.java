@@ -138,7 +138,7 @@ public class DoseItem implements Comparable<DoseItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                db.removeDose(id, true);
+                db.removeDose(context, id, true);
                 db.close();
                 if (listener != null) {
                     listener.onListUpdated();
@@ -172,15 +172,16 @@ public class DoseItem implements Comparable<DoseItem> {
                 convertToTaken();
                 db.open();
                 if (db.updateDose(DoseItem.this)) {
-                    DoseItem firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
+                    // TODO: 4/3/16 add toast to say "X missed doses removed" or similar
+                    DoseItem firstFutureDose = DoseItem.this.getMedication().getFirstFuture(fragment.getActivity());
 
                     while ((firstFutureDose != null) && (firstFutureDose.getDate().getTime() <= DoseItem.this.getDate().getTime())) {
                         // First future dose date is before taken dose date
-                        db.removeDose(firstFutureDose.getId(), true);
-                        firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
+                        db.removeDose(fragment.getActivity(), firstFutureDose.getId(), true);
+                        firstFutureDose = DoseItem.this.getMedication().getFirstFuture(fragment.getActivity());
                     }
 
-                    db.createNextFuture(DoseItem.this.getMedication());
+                    DoseItem.this.getMedication().createNextFuture(fragment.getActivity());
 
                     if (fragment instanceof DialogFragment) {
                         // Dismiss the calling dialog fragment
@@ -216,7 +217,7 @@ public class DoseItem implements Comparable<DoseItem> {
                     DoseItem.this.setOrKillAlarm(context);
                     db.open();
                     db.updateDose(DoseItem.this);
-                    List<DoseItem> doses = db.getAllFutureForMed(context, DoseItem.this.getMedication());
+                    List<DoseItem> doses = medication.getAllFuture(context);
                     for (DoseItem dose : doses) {
                         dose.setReminder(DoseItem.this.isReminderSet());
                         db.updateDose(dose);

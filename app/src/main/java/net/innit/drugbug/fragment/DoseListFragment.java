@@ -184,13 +184,13 @@ public class DoseListFragment extends ListFragment {
                 MedicationItem medication = db.getMedication(medId);
                 switch (filter) {
                     case FILTER_TAKEN:
-                        doses = db.getAllTakenForMed(getActivity(), medication);
+                        doses = medication.getAllTaken(getActivity());
                         break;
                     case FILTER_FUTURE:
-                        doses = db.getAllFutureForMed(getActivity(), medication);
+                        doses = medication.getAllFuture(getActivity());
                         break;
                     default:
-                        doses = db.getAllDosesForMed(getActivity(), medication);
+                        doses = medication.getAllDoses(getActivity());
                 }
                 break;
             default:

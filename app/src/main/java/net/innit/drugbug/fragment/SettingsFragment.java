@@ -61,7 +61,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             Settings.Key key = Settings.Key.valueOf(keyString);
             switch (key) {
                 case NUM_DOSES:
-                    settingsHelper.numDosesChanged(Integer.parseInt(settings.getString(key)), oldNumDoses);
+                    settingsHelper.numDosesChanged(getActivity(), Integer.parseInt(settings.getString(key)), oldNumDoses);
                     break;
                 case KEEP_TIME_TAKEN:
                     settingsHelper.keepTimeTakenChanged(settings.getString(key));

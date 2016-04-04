@@ -51,45 +51,43 @@ public class SettingsHelper {
         return output;
     }
 
-    public void numDosesChanged(int maxNumDoses, int oldNumDoses) {
+    public void numDosesChanged(Context context, int maxNumDoses, int oldNumDoses) {
         db.open();
         List<MedicationItem> medications = db.getAllMedicationsActive();
         db.close();
         for (MedicationItem medication : medications) {
             int difference = maxNumDoses - oldNumDoses;
             if (difference > 0) {
-                increaseDoses(maxNumDoses, medication);
+                increaseDoses(context, maxNumDoses, medication);
 
             } else if (difference < 0) {
-                decreaseDoses(maxNumDoses, medication);
+                decreaseDoses(context, maxNumDoses, medication);
             } // if difference is 0, we'll do nothing
         }
     }
 
-    private void decreaseDoses(int maxNumDoses, MedicationItem medication) {
-        db.open();
-        int doseCount = (int) db.getFutureDoseCount(medication);
+    private void decreaseDoses(Context context, int maxNumDoses, MedicationItem medication) {
+        int doseCount = (int) medication.getNumFutures(context);
         while (doseCount > maxNumDoses) {
-            DoseItem lastFutureDose = db.getLastDose(medication);
+            DoseItem lastFutureDose = medication.getLastFuture(context);
             if (lastFutureDose != null) {
-                db.removeDose(lastFutureDose.getId(), false);
+                db.open();
+                db.removeDose(context, lastFutureDose.getId(), false);
+                db.close();
             }
             doseCount--;
         }
-        db.close();
     }
 
-    private void increaseDoses(int maxNumDoses, MedicationItem medication) {
-        db.open();
-        DoseItem lastFutureDose = db.getLastDose(medication);
+    private void increaseDoses(Context context, int maxNumDoses, MedicationItem medication) {
+        DoseItem lastFutureDose = medication.getLastFuture(context);
         if (lastFutureDose != null) {
-            int doseCount = (int) db.getFutureDoseCount(medication);
+            int doseCount = (int) medication.getNumFutures(context);
             while (maxNumDoses > doseCount) {
-                db.createNextFuture(medication);
+                medication.createNextFuture(context);
                 doseCount++;
             }
         }
-        db.close();
     }
 
     public void keepTimeTakenChanged(String keepTimeString) {
