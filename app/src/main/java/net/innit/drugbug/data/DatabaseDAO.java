@@ -616,26 +616,6 @@ public class DatabaseDAO {
     }
 
     /**
-     * Retrieve untaken dose furthest in the future
-     *
-     * @param medication medication to find the future dose for
-     * @return DoseItem with latest future dose
-     */
-    public DoseItem getLastDose(MedicationItem medication) {
-        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
-                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
-        String orderBy = DBHelper.COLUMN_DATE + " DESC";
-        return getSingleDose(medication, selection, orderBy);
-    }
-
-    public DoseItem getLatestTakenDose(MedicationItem medication) {
-        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
-                " AND " + DBHelper.COLUMN_TAKEN + "=" + 1;
-        String orderBy = DBHelper.COLUMN_DATE + " DESC";
-        return getSingleDose(medication, selection, orderBy);
-    }
-
-    /**
      * Return count of taken or untaken doses
      *
      * @param medication medication to count untaken doses for

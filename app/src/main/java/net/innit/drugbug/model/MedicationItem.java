@@ -376,11 +376,13 @@ public class MedicationItem implements Comparable<MedicationItem> {
     }
 
     public DoseItem removeLastTaken(Context context) {
+        // TODO: 4/3/16 stub
         DoseItem dose = new DoseItem();
         return dose;
     }
 
     public DoseItem removeLastFuture(Context context) {
+        // TODO: 4/3/16 stub
         DoseItem dose = new DoseItem();
         return dose;
     }
