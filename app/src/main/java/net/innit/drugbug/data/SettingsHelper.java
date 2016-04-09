@@ -1,14 +1,20 @@
 package net.innit.drugbug.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.innit.drugbug.R;
 import net.innit.drugbug.model.DoseItem;
 import net.innit.drugbug.model.MedicationItem;
 import net.innit.drugbug.util.ImageStorage;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import static net.innit.drugbug.data.Constants.TAG;
 import static net.innit.drugbug.data.Constants.TYPE_MISSED;
 import static net.innit.drugbug.data.Constants.TYPE_TAKEN;
 
@@ -49,6 +55,19 @@ public class SettingsHelper {
         }
 
         return output;
+    }
+
+    public static String convertTime(String input) {
+        SimpleDateFormat sdf24 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        Date date;
+        try {
+            date = sdf24.parse(input);
+            SimpleDateFormat sdf12 = new SimpleDateFormat("h:mm aa", Locale.getDefault());
+            return sdf12.format(date);
+        } catch (ParseException e) {
+            Log.e(TAG, "convertTime Parse Error: " + e.getMessage());
+        }
+        return "";
     }
 
     public void numDosesChanged(Context context, int maxNumDoses, int oldNumDoses) {
@@ -99,6 +118,11 @@ public class SettingsHelper {
 
     public void imageStorageChanged(ImageStorage imageStorage) {
         // Nothing here yet, but extracted it to keep everything together
+    }
+
+    public void timeChanged(Settings.Key key, String newTime) {
+        // todo Will need to make changes to any meds that utilize this setting here
+        // on hold until I get that stuff implemented
     }
 
 }

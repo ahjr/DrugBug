@@ -160,4 +160,9 @@
     <string name="medication_adapter_date_label_archived">Archived:</string>
     <string name="medication_adapter_date_label_taken">Last taken:</string>
     <string name="medication_adapter_date_none_taken">No doses taken</string>
+    <string name="preferences_time_wake">Wakeup</string>
+    <string name="preferences_time_breakfast">Breakfast</string>
+    <string name="preferences_time_lunch">Lunch</string>
+    <string name="preferences_time_dinner">Dinner</string>
+    <string name="preferences_time_bed">Bed</string>
 </resources>

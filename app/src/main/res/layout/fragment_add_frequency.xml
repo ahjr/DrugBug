@@ -6,20 +6,35 @@
 <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp">
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
 
     <TextView
         android:id="@+id/tvAddFreqLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/etAddFreqLabel"
-        android:text="Label:"/>
+        android:layout_marginEnd="5dp"
+        android:layout_alignBaseline="@+id/etAddFreqLabel"
+        android:text="Label:"
+        android:textSize="16sp"/>
 
     <EditText
         android:id="@+id/etAddFreqLabel"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/tvAddFreqLabel"/>
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/tvAddFreqLabel"
+        android:layout_toStartOf="@+id/btnAddFreqSave"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_button_save"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/btnAddFreqSave"/>
 
     <CheckBox
         android:id="@+id/cbAddFreqAsNeeded"
@@ -110,7 +125,8 @@
         android:layout_below="@+id/llAddFreqEveryXHour"
         android:layout_alignParentStart="true"
         android:checked="false"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:textSize="14sp"/>
 
     <LinearLayout
         android:id="@+id/llAddFreqHr2"

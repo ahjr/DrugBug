@@ -20,6 +20,13 @@ class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ACTIVE = "active";
     public static final String COLUMN_ARCHIVED = "archived";
     public static final String COLUMN_ARCHIVE_DATE = "archive_date";
+    public static final String COLUMN_FREQ_ID = "_freq_id";
+    public static final String COLUMN_LABEL = "label";
+    public static final String COLUMN_END_DATE = "end_date";
+    public static final String COLUMN_NUM_REMINDERS = "num_reminders";
+    public static final String COLUMN_INTERVAL = "interval";
+    public static final String COLUMN_NIGHT_REMINDER = "night_reminder";
+    public static final String COLUMN_TIME_OF_DAY = "tod";
 
     /**
      * View name definitions
@@ -31,6 +38,7 @@ class DBHelper extends SQLiteOpenHelper {
      */
     public static final String TABLE_MEDICATIONS = "medications";
     public static final String TABLE_DOSES = "doses";
+    public static final String TABLE_FREQUENCIES = "frequencies";
 
     /**
      * Create table definitions
@@ -58,6 +66,16 @@ class DBHelper extends SQLiteOpenHelper {
                     "REFERENCES " + TABLE_MEDICATIONS + "(" + COLUMN_MED_ID + ")" +
                     ")";
 
+    private static final String CREATE_TABLE_FREQUENCIES =
+            "CREATE TABLE " + TABLE_FREQUENCIES + "(" +
+                    COLUMN_FREQ_ID + " INTEGER AUTOINCREMENT, " +
+                    COLUMN_LABEL + " TEXT NOT NULL, " +
+                    COLUMN_TIME_OF_DAY + " TEXT, " +
+                    COLUMN_INTERVAL + " INTEGER, " +
+                    COLUMN_NIGHT_REMINDER + " INTEGER, " +
+                    "PRIMARY KEY (" + COLUMN_TIME_OF_DAY + ", " + COLUMN_INTERVAL + ", " + COLUMN_NIGHT_REMINDER + ")" +
+                    ")";
+
     /**
      * Create view definitions
      */
@@ -78,7 +96,6 @@ class DBHelper extends SQLiteOpenHelper {
                     "FROM " + TABLE_DOSES + " JOIN " + TABLE_MEDICATIONS + " " +
                     "ON " + TABLE_DOSES + "." + COLUMN_MED_ID + "=" + TABLE_MEDICATIONS + "." + COLUMN_MED_ID;
 
-
     private static final String DB_NAME = "drugbug.db";
     private static final int DB_VERSION = 24;
 
@@ -90,6 +107,7 @@ class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_MEDICATIONS);
         db.execSQL(CREATE_TABLE_DOSES);
+        db.execSQL(CREATE_TABLE_FREQUENCIES);
         db.execSQL(CREATE_VIEW_DOSE_WITH_MED);
     }
 
@@ -97,6 +115,7 @@ class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDICATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOSES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FREQUENCIES);
         db.execSQL("DROP VIEW IF EXISTS " + VIEW_DOSE_WITH_MED);
         onCreate(db);
     }

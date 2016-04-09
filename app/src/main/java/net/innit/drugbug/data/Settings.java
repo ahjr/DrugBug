@@ -10,6 +10,11 @@ import net.innit.drugbug.util.ImageStorage;
 import static net.innit.drugbug.data.Constants.DEFAULT_KEEP_TIME_MISSED;
 import static net.innit.drugbug.data.Constants.DEFAULT_KEEP_TIME_TAKEN;
 import static net.innit.drugbug.data.Constants.DEFAULT_NUM_DOSES;
+import static net.innit.drugbug.data.Constants.DEFAULT_TIME_BED;
+import static net.innit.drugbug.data.Constants.DEFAULT_TIME_BREAKFAST;
+import static net.innit.drugbug.data.Constants.DEFAULT_TIME_DINNER;
+import static net.innit.drugbug.data.Constants.DEFAULT_TIME_LUNCH;
+import static net.innit.drugbug.data.Constants.DEFAULT_TIME_WAKE;
 
 public class Settings {
     private static Settings sSharedPrefs;
@@ -220,7 +225,12 @@ public class Settings {
         NUM_DOSES(String.valueOf(DEFAULT_NUM_DOSES)),
         KEEP_TIME_TAKEN(DEFAULT_KEEP_TIME_TAKEN),
         KEEP_TIME_MISSED(DEFAULT_KEEP_TIME_MISSED),
-        IMAGE_STORAGE(null);
+        IMAGE_STORAGE(null),
+        TIME_WAKE(DEFAULT_TIME_WAKE),
+        TIME_BREAKFAST(DEFAULT_TIME_BREAKFAST),
+        TIME_LUNCH(DEFAULT_TIME_LUNCH),
+        TIME_DINNER(DEFAULT_TIME_DINNER),
+        TIME_BED(DEFAULT_TIME_BED);
 
         private final String defaultValue;
 
