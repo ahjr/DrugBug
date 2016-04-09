@@ -61,7 +61,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             Settings.Key key = Settings.Key.valueOf(keyString);
             switch (key) {
                 case NUM_DOSES:
-                    settingsHelper.numDosesChanged(Integer.parseInt(settings.getString(key)), oldNumDoses);
+                    settingsHelper.numDosesChanged(getActivity(), Integer.parseInt(settings.getString(key)), oldNumDoses);
                     break;
                 case KEEP_TIME_TAKEN:
                     settingsHelper.keepTimeTakenChanged(settings.getString(key));
@@ -72,6 +72,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 case IMAGE_STORAGE:
                     imageStorage.setLocationType(settings.getString(key));
                     settingsHelper.imageStorageChanged(imageStorage);
+                    break;
+                case TIME_WAKE:
+                case TIME_BREAKFAST:
+                case TIME_LUNCH:
+                case TIME_DINNER:
+                case TIME_BED:
+                    settingsHelper.timeChanged(key, settings.getString(key));
                     break;
             }
             setSummaries(settings);
@@ -84,20 +91,30 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      * @param sharedPreferences Shared preferences object containing the preferences to set summaries for
      */
     private void setSummaries(Settings sharedPreferences) {
-        // Set summary for number of untaken doses to keep
-        findPreference(Settings.Key.NUM_DOSES.name())
-                .setSummary(getString(R.string.preference_current) + sharedPreferences.getString(Settings.Key.NUM_DOSES));
+        for (Settings.Key key : Settings.Key.values()) {
+            String currentString = "";
+            switch (key) {
+                case NUM_DOSES:
+                    currentString = sharedPreferences.getString(Settings.Key.NUM_DOSES);
+                    break;
+                case IMAGE_STORAGE:
+                    currentString = imageStorage.getDisplayText();
+                    break;
+                case KEEP_TIME_TAKEN:
+                case KEEP_TIME_MISSED:
+                    currentString = SettingsHelper.convertString(getActivity(), sharedPreferences.getString(key));
+                    break;
+                case TIME_WAKE:
+                case TIME_BREAKFAST:
+                case TIME_LUNCH:
+                case TIME_DINNER:
+                case TIME_BED:
+                    currentString = SettingsHelper.convertTime(sharedPreferences.getString(key));
+                    break;
+            }
 
-        // Set summary for taken dose keep time
-        findPreference(Settings.Key.KEEP_TIME_TAKEN.name())
-                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(getActivity(), sharedPreferences.getString(Settings.Key.KEEP_TIME_TAKEN)));
+            findPreference(key.name()).setSummary(getString(R.string.preference_current) + currentString);
+        }
 
-        // Set summary for untaken dose keep time
-        findPreference(Settings.Key.KEEP_TIME_MISSED.name())
-                .setSummary(getString(R.string.preference_current) + SettingsHelper.convertString(getActivity(), sharedPreferences.getString(Settings.Key.KEEP_TIME_MISSED)));
-
-        // Set summary for image storage location
-        findPreference(Settings.Key.IMAGE_STORAGE.name())
-                .setSummary(getString(R.string.preference_current) + imageStorage.getDisplayText());
     }
 }

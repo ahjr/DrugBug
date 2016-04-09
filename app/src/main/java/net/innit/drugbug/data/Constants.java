@@ -6,7 +6,7 @@ public class Constants {
      */
     private Constants() {}
 
-    public static final String LOG = "DrugBug";
+    public static final String TAG = "DrugBug";
 
     public static final int REQUEST_TAKE_PICTURE = 300;
 
@@ -42,7 +42,6 @@ public class Constants {
     public static final String SORT_DOSE = "sort_dose";
     public static final String SORT_DATE_DESC = "dateDsc";
     public static final String SORT_DATE_ASC = "dateAsc";
-    public static final String SORT_NAME = "name";
 
     public static final String SORT_NAME_DESC = "nameDsc";
     public static final String SORT_NAME_ASC = "nameAsc";
@@ -106,6 +105,11 @@ public class Constants {
     public static final String DEFAULT_NUM_DOSES = "5";
     public static final String DEFAULT_KEEP_TIME_TAKEN = "1:0:0";
     public static final String DEFAULT_KEEP_TIME_MISSED = "0:1:0";
+    public static final String DEFAULT_TIME_WAKE = "06:00";
+    public static final String DEFAULT_TIME_BREAKFAST = "07:00";
+    public static final String DEFAULT_TIME_LUNCH = "12:00";
+    public static final String DEFAULT_TIME_DINNER = "18:00";
+    public static final String DEFAULT_TIME_BED = "22:00";
 
     /**
      * Image size constants

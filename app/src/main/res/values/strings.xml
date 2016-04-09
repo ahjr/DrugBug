@@ -150,4 +150,19 @@
     <string name="menu_med_sort_taken_dsc">Last Dose Taken (Dsc)</string>
     <string name="menu_med_sort_archived_asc">Archive Date (Asc)</string>
     <string name="menu_med_sort_archived_dsc">Archive Date (Dsc)</string>
+    <string name="toast_previous_doses_removed">" previous doses removed"</string>
+    <string name="reminder_dialog_title">Toggle all reminders?</string>
+    <string name="reminder_dialog_message">Should all reminders for this medication be changed?</string>
+    <string name="reminder_dialog_positive">Yes, change all</string>
+    <string name="reminder_dialog_negative">No, just this dose</string>
+    <string name="context_med_reactivate">Reactivate medication</string>
+    <string name="context_med_archive">Archive medication</string>
+    <string name="medication_adapter_date_label_archived">Archived:</string>
+    <string name="medication_adapter_date_label_taken">Last taken:</string>
+    <string name="medication_adapter_date_none_taken">No doses taken</string>
+    <string name="preferences_time_wake">Wakeup</string>
+    <string name="preferences_time_breakfast">Breakfast</string>
+    <string name="preferences_time_lunch">Lunch</string>
+    <string name="preferences_time_dinner">Dinner</string>
+    <string name="preferences_time_bed">Bed</string>
 </resources>

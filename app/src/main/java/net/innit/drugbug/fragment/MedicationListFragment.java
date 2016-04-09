@@ -70,8 +70,8 @@ public class MedicationListFragment extends ListFragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, CONTEXT_REACTIVATE, 0, "Reactivate medication");
-        menu.add(0, CONTEXT_ARCHIVE, 1, "Archive medication");
+        menu.add(0, CONTEXT_REACTIVATE, 0, R.string.context_med_reactivate);
+        menu.add(0, CONTEXT_ARCHIVE, 1, R.string.context_med_archive);
     }
 
     @Override
@@ -119,16 +119,16 @@ public class MedicationListFragment extends ListFragment {
     private void setCurrentFilterIndicator(Menu menu) {
         switch (medFilter) {
             case FILTER_ALL:
-                menu.findItem(R.id.menu_med_filter_all).setTitle(">> " + getString(R.string.menu_med_filter_all) + " <<");
+                menu.findItem(R.id.menu_med_filter_all).setTitle(">> " + getString(R.string.menu_med_filter_all));
                 break;
             case FILTER_INACTIVE:
-                menu.findItem(R.id.menu_med_filter_inactive).setTitle(">> " + getString(R.string.menu_med_filter_inactive) + " <<");
+                menu.findItem(R.id.menu_med_filter_inactive).setTitle(">> " + getString(R.string.menu_med_filter_inactive));
                 break;
             case FILTER_ARCHIVED:
-                menu.findItem(R.id.menu_med_filter_archived).setTitle(">> " + getString(R.string.menu_med_filter_archived) + " <<");
+                menu.findItem(R.id.menu_med_filter_archived).setTitle(">> " + getString(R.string.menu_med_filter_archived));
                 break;
             default:
-                menu.findItem(R.id.menu_med_filter_active).setTitle(">> " + getString(R.string.menu_med_filter_active) + " <<");
+                menu.findItem(R.id.menu_med_filter_active).setTitle(">> " + getString(R.string.menu_med_filter_active));
         }
     }
 
@@ -136,34 +136,34 @@ public class MedicationListFragment extends ListFragment {
         // Indicate which sort order is currently in use
         switch (medSortOrder) {
             case SORT_NEXT_FUTURE_ASC:
-                menu.findItem(MENU_NEXT_FUTURE_ASC).setTitle(">> " + getString(R.string.menu_med_sort_next_asc) + " <<");
+                menu.findItem(MENU_NEXT_FUTURE_ASC).setTitle(">> " + getString(R.string.menu_med_sort_next_asc));
                 break;
             case SORT_NEXT_FUTURE_DESC:
-                menu.findItem(MENU_NEXT_FUTURE_DSC).setTitle(">> " + getString(R.string.menu_med_sort_next_dsc) + " <<");
+                menu.findItem(MENU_NEXT_FUTURE_DSC).setTitle(">> " + getString(R.string.menu_med_sort_next_dsc));
                 break;
             case SORT_LAST_TAKEN_ASC:
-                menu.findItem(MENU_LAST_TAKEN_ASC).setTitle(">> " + getString(R.string.menu_med_sort_taken_asc) + " <<");
+                menu.findItem(MENU_LAST_TAKEN_ASC).setTitle(">> " + getString(R.string.menu_med_sort_taken_asc));
                 break;
             case SORT_LAST_TAKEN_DESC:
-                menu.findItem(MENU_LAST_TAKEN_DSC).setTitle(">> " + getString(R.string.menu_med_sort_taken_dsc) + " <<");
+                menu.findItem(MENU_LAST_TAKEN_DSC).setTitle(">> " + getString(R.string.menu_med_sort_taken_dsc));
                 break;
             case SORT_ARCHIVED_ASC:
-                menu.findItem(MENU_ARCHIVED_ASC).setTitle(">> " + getString(R.string.menu_med_sort_archived_asc) + " <<");
+                menu.findItem(MENU_ARCHIVED_ASC).setTitle(">> " + getString(R.string.menu_med_sort_archived_asc));
                 break;
             case SORT_ARCHIVED_DESC:
-                menu.findItem(MENU_ARCHIVED_DSC).setTitle(">> " + getString(R.string.menu_med_sort_archived_dsc) + " <<");
+                menu.findItem(MENU_ARCHIVED_DSC).setTitle(">> " + getString(R.string.menu_med_sort_archived_dsc));
                 break;
             case SORT_NAME_DESC:
-                menu.findItem(R.id.menu_med_sort_order_name_dsc).setTitle(">> " + getString(R.string.menu_list_sort_name_dsc) + " <<");
+                menu.findItem(R.id.menu_med_sort_order_name_dsc).setTitle(">> " + getString(R.string.menu_list_sort_name_dsc));
                 break;
             case SORT_CREATION_ASC:
-                menu.findItem(R.id.menu_med_sort_order_creation_asc).setTitle(">> " + getString(R.string.menu_med_sort_creation_asc) + " <<");
+                menu.findItem(R.id.menu_med_sort_order_creation_asc).setTitle(">> " + getString(R.string.menu_med_sort_creation_asc));
                 break;
             case SORT_CREATION_DESC:
-                menu.findItem(R.id.menu_med_sort_order_creation_dsc).setTitle(">> " + getString(R.string.menu_med_sort_creation_dsc) + " <<");
+                menu.findItem(R.id.menu_med_sort_order_creation_dsc).setTitle(">> " + getString(R.string.menu_med_sort_creation_dsc));
                 break;
             default:
-                menu.findItem(R.id.menu_med_sort_order_name_asc).setTitle(">> " + getString(R.string.menu_list_sort_name_asc) + " <<");
+                menu.findItem(R.id.menu_med_sort_order_name_asc).setTitle(">> " + getString(R.string.menu_list_sort_name_asc));
         }
     }
 
@@ -365,7 +365,7 @@ public class MedicationListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.activity_list_medication, container, false);
+        return inflater.inflate(R.layout.fragment_list_medication, container, false);
     }
 
     @Override

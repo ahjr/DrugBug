@@ -45,7 +45,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -64,9 +63,9 @@ import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_PREVIEW;
 import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_PREVIEW;
 import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.data.Constants.LOG;
 import static net.innit.drugbug.data.Constants.SORT_DOSE;
 import static net.innit.drugbug.data.Constants.SORT_MED;
+import static net.innit.drugbug.data.Constants.TAG;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
 import static net.innit.drugbug.data.Constants.TYPE_NONE;
@@ -123,7 +122,7 @@ public class AddDoseFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_add_edit, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_edit, container, false);
 
         setupViews(view);
         if (savedInstanceState != null) {
@@ -185,7 +184,9 @@ public class AddDoseFragment extends DialogFragment {
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         this.dismiss();
-        tempPath.delete();
+        if (tempPath != null && tempPath.exists()) {
+            tempPath.delete();
+        }
     }
 
     private void onCreateEdit(Bundle bundle) {
@@ -208,7 +209,7 @@ public class AddDoseFragment extends DialogFragment {
         doseItem.setMedication(medicationItem);
         if (medicationItem.hasTaken(getActivity())) {
             // Get the latest taken item
-            DoseItem dose = db.getLatestTakenDose(medicationItem);
+            DoseItem dose = medicationItem.getLastTaken(getActivity());
             // Set the date of it to now
             dose.setDate(new Date());
             doseItem = dose;
@@ -300,7 +301,7 @@ public class AddDoseFragment extends DialogFragment {
         // Delete any temp file left over from a previous addition
         boolean fileDeleted = tempPath.delete();
         if (fileDeleted) {
-            Log.i(LOG, "onClickAddMedAddImage: Temporary file deleted: " + tempPath.toString());
+            Log.i(TAG, "onClickAddMedAddImage: Temporary file deleted: " + tempPath.toString());
         }
         Uri outputFileUri = imageStorage.getStorageUri(tempPath);
         if (hasCamera()) {
@@ -327,6 +328,8 @@ public class AddDoseFragment extends DialogFragment {
                 db.updateMedication(medication);
             }
 
+            doseItem.setMedication(medication);
+
             doseItem.setDosage(mDosage.getText().toString());
 
             doseItem.setReminder(mReminder.isChecked());
@@ -339,26 +342,17 @@ public class AddDoseFragment extends DialogFragment {
                     Toast.makeText(getActivity(), R.string.add_dose_error_blank_dosage, Toast.LENGTH_SHORT).show();
                 } else {
                     if (action.equals(ACTION_EDIT) && !checkFreqChanged(medication)) {
-                        List<DoseItem> doses = db.getAllFutureForMed(getActivity(), medication);
+                        List<DoseItem> doses = medication.getAllFuture(getActivity());
                         DoseItem nextDose = doseItem;
                         for (DoseItem futureDose : doses) {
                             nextDose = updateFutureDose(nextDose, futureDose);
                         }
                     } else {
-                        DoseItem futureItem = doseItem;
-                        int numFutureDoses = Integer.parseInt(Settings.getInstance().getString(Settings.Key.NUM_DOSES));
-                        Calendar calendar = Calendar.getInstance();
-                        for (int i = 0; i < numFutureDoses; i++) {
-                            calendar.setTime(futureItem.getDate());
-                            if (i > 0) {
-                                // Add interval to last date
-                                calendar.add(Calendar.SECOND, (int) db.getInterval(medication.getFrequency()));
-                            }
-                            futureItem = new DoseItem(medication, calendar.getTime(), doseItem.isReminderSet(), false, doseItem.getDosage());
-                            futureItem = db.createDose(futureItem);
+                        db.createDose(doseItem).setOrKillAlarm(getActivity());
 
-//                            handleReminder(futureItem);
-                            futureItem.setOrKillAlarm(getActivity());
+                        int numFutureDoses = Integer.parseInt(Settings.getInstance().getString(Settings.Key.NUM_DOSES));
+                        for (int i = 0; i < numFutureDoses-1; i++) {
+                            doseItem.getMedication().createNextFuture(getActivity()).setOrKillAlarm(getActivity());
                         }
                     }
 
@@ -371,7 +365,6 @@ public class AddDoseFragment extends DialogFragment {
                         } else {
                             intent.putExtra(FILTER_MED, medFilter);
                         }
-                        // TODO: 4/2/16 May need some jiggery pokery here to account for changingto FILTER_ALL if sort order is by date
                         intent.putExtra(SORT_MED, medSortOrder);
                         startActivity(intent);
                         dismiss();
@@ -406,7 +399,7 @@ public class AddDoseFragment extends DialogFragment {
                 doseItem.setDate(formatter.parse(mDateTime.getText().toString()));
                 return true;
             } catch (ParseException e) {
-                Log.e(LOG, "onClickAddMedSave: Unable to parse date");
+                Log.e(TAG, "onClickAddMedSave: Unable to parse date");
             }
         }
         return false;
@@ -416,7 +409,7 @@ public class AddDoseFragment extends DialogFragment {
         if (thisDose.getId() != doseItem.getId()) {
             // Only do the setting if this is not the dose currently being edited
             if (thisDose.getDate().getTime() > origDate.getTime()) {
-                thisDose.setDate(nextDose.nextDate(getActivity()));
+                thisDose.setDate(nextDose.getMedication().getNextDate(getActivity(),nextDose).getTime());
                 nextDose = thisDose;
             }
             thisDose.setDosage(doseItem.getDosage());
@@ -455,7 +448,7 @@ public class AddDoseFragment extends DialogFragment {
         if (action.equals(ACTION_EDIT)) {
             if (!medication.getFrequency().equals(origFreq)) {
                 // frequency has changed, so delete all previous futures with this medId
-                db.removeAllFutureDosesForMed(medication);
+                medication.removeAllFuture(getActivity());
                 return true;
             }
         }
@@ -467,7 +460,7 @@ public class AddDoseFragment extends DialogFragment {
         File path = new File(dir, filename);
         boolean b = tempPath.renameTo(path);
         if (!b) {
-            Log.e(LOG, "Unable to rename " + tempPath.toString() + " to " + path.toString());
+            Log.e(TAG, "Unable to rename " + tempPath.toString() + " to " + path.toString());
         }
         medication.setImagePath(filename);
     }

@@ -15,8 +15,10 @@ import net.innit.drugbug.util.ImageStorage;
 import net.innit.drugbug.util.OnListUpdatedListener;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 public class MedicationItem implements Comparable<MedicationItem> {
     private long id;
@@ -103,15 +105,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
     }
 
     public boolean hasTaken(Context context) {
-        DatabaseDAO db = new DatabaseDAO(context);
-        db.open();
-        if (db.getLatestTakenDose(MedicationItem.this) != null) {
-            db.close();
-            return true;
-        } else {
-            db.close();
-            return false;
-        }
+        return this.getLastTaken(context) != null;
     }
 
     public String getImagePath() {
@@ -225,7 +219,7 @@ public class MedicationItem implements Comparable<MedicationItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                int numDeleted = db.removeAllFutureDosesForMed(MedicationItem.this);
+                long numDeleted = MedicationItem.this.removeAllFuture(context);
                 MedicationItem.this.setActive(false);
                 db.updateMedication(MedicationItem.this);
                 db.close();
@@ -260,9 +254,9 @@ public class MedicationItem implements Comparable<MedicationItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                int numDeleted = db.removeAllDosesForMed(MedicationItem.this);
-                MedicationItem.this.setActive(false);
-                MedicationItem.this.setArchived(true);
+                long numDeleted = removeAllDoses(context);
+                setActive(false);
+                setArchived(true);
                 db.updateMedication(MedicationItem.this);
                 db.close();
                 if (listener != null) {
@@ -310,6 +304,161 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
     public void confirmDeleteMed(final Context context) {
         confirmDeleteMed(context, null);
+    }
+
+    public DoseItem getLastFuture(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        DoseItem dose = db.getDose(this, false, DatabaseDAO.QueuePosition.LAST);
+        db.close();
+        return dose;
+    }
+
+    public DoseItem getFirstFuture(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        DoseItem dose = db.getDose(this, false, DatabaseDAO.QueuePosition.FIRST);
+        db.close();
+        return dose;
+    }
+
+    public DoseItem getLastTaken(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        DoseItem dose = db.getDose(this, true, DatabaseDAO.QueuePosition.LAST);
+        db.close();
+        return dose;
+    }
+
+    public long getNumFutures(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        long num = db.getDoseCount(this, false, true);
+        db.close();
+        return num;
+    }
+
+    public DoseItem createNextFuture(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        // After successful update, add another future dose so we keep the same number in our future list
+        // Get last future dose for medication
+        DoseItem newFutureItem = getLastFuture(context);
+        if (newFutureItem == null) {
+            newFutureItem = getLastTaken(context);
+        }
+        if (newFutureItem == null) {
+            throw new IllegalArgumentException("There must be at least 1 dose for this medication in the database to run this method.");
+        }
+        newFutureItem.setTaken(false);
+//      Code section removed -> set date of new doses in the future (from now) rather than at $INTERVAL from last dose
+//      Got rid of that logic because it was breaking adding a new dose when numDoses was set to 1
+//        // Get frequency
+//        long interval = getInterval(medication.getFrequency());
+//        Calendar calendar = Calendar.getInstance();
+//        Date lastFutureDate = newFutureItem.getDate();
+//        Date nowDate = new Date();
+//        // Compare date of last future date to now
+//        if (lastFutureDate.getTime() > nowDate.getTime()) {
+//            // last future date is later than now
+//            // Add frequency to future date
+//            calendar.setTime(lastFutureDate);
+//        } else {
+//            // Add frequency to now
+//            calendar.setTime(nowDate);
+//        }
+//        calendar.add(Calendar.SECOND, (int) interval);
+//        newFutureItem.setDate(calendar.getTime());
+        Calendar calendar = getNextDate(context, newFutureItem);
+        newFutureItem.setDate(calendar.getTime());
+        db.open();
+        DoseItem dose = db.createDose(newFutureItem);
+        db.close();
+        return dose;
+    }
+
+    @NonNull
+    public Calendar getNextDate(Context context, DoseItem previousDose) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(previousDose.getDate());
+        calendar.add(Calendar.SECOND, (int) db.getInterval(getFrequency()));
+        return calendar;
+    }
+
+//    public DoseItem removeLastTaken(Context context) {
+//        DoseItem dose = new DoseItem();
+//        return dose;
+//    }
+
+    public DoseItem removeLastFuture(Context context) {
+        DoseItem dose = getLastFuture(context);
+        if (dose != null) {
+            DatabaseDAO db = new DatabaseDAO(context);
+            db.open();
+            db.removeDose(dose.getId());
+            db.close();
+        }
+
+        return dose;
+    }
+
+    public long removeAllDoses(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        long numDeleted = db.removeDoses(this, true, true);
+        db.close();
+        return numDeleted;
+    }
+
+    public long removeAllFuture(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        long numDeleted = db.removeDoses(this, false, true);
+        db.close();
+        return numDeleted;
+    }
+
+//      removeMedicationIfNoDoses() - Archived in case it's needed later (incomplete)
+//    /**
+//     * Remove medication if it has no doses attached to it
+//     *
+//     * @param medication medication to remove
+//     * @return true if medication was removed
+//     */
+//    private boolean removeIfNoDoses(Context context) {
+//        // Remove medication if no doses are associated with it
+//        if (getDoseCount(context) < 1) {
+//            Result medResult = db.removeMedication(context, medication);
+//            if (medResult == Result.RESULT_OK) {
+//                return true;
+//            }
+//        }
+//        // Return false if there are still doses or there was an error deleting the medication
+//        return false;
+//    }
+
+    public List<DoseItem> getAllDoses(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        List<DoseItem> doses = db.getAllDoses(this, null, true, true, false);
+        db.close();
+        return doses;
+    }
+
+    public List<DoseItem> getAllTaken(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        List<DoseItem> doses = db.getAllDoses(this, null, true, false, false);
+        db.close();
+        return doses;
+    }
+
+    public List<DoseItem> getAllFuture(Context context) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        db.open();
+        List<DoseItem> doses = db.getAllDoses(this, null, false, true, false);
+        db.close();
+        return doses;
     }
 
 }

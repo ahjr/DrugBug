@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+<RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
+
+    <TextView
+        android:id="@+id/tvAddFreqLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_alignBaseline="@+id/etAddFreqLabel"
+        android:text="Label:"
+        android:textSize="16sp"/>
+
+    <EditText
+        android:id="@+id/etAddFreqLabel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/tvAddFreqLabel"
+        android:layout_toStartOf="@+id/btnAddFreqSave"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_button_save"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/btnAddFreqSave"/>
+
+    <CheckBox
+        android:id="@+id/cbAddFreqAsNeeded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etAddFreqLabel"
+        android:checked="false"
+        android:text="As needed"
+        android:layout_marginTop="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/llAddFreqHr1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cbAddFreqAsNeeded"
+        android:layout_marginTop="10dp">
+
+        <View
+            android:id="@+id/hrAddFreq1a"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/background_dark"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text=" OR "/>
+
+        <View
+            android:id="@+id/hrAddFreq1b"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/background_dark"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llAddFreqEveryXHour"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llAddFreqHr1"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <CheckBox
+            android:id="@+id/cbAddFreqEveryXHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/tvAddFreqEvery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Every "
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvAddFreqHoursLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text=" Hour(s)"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set nighttime reminders"
+        android:id="@+id/swAddFreqNightReminders"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/llAddFreqEveryXHour"
+        android:layout_alignParentStart="true"
+        android:checked="false"
+        android:textAlignment="center"
+        android:textSize="14sp"/>
+
+    <LinearLayout
+        android:id="@+id/llAddFreqHr2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/swAddFreqNightReminders"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <View
+            android:id="@+id/hrAddFreq2a"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/background_dark"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text=" OR "/>
+
+        <View
+            android:id="@+id/hrAddFreq2b"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/background_dark"/>
+    </LinearLayout>
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/llAddFreqWakeup"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/llAddFreqHr2"-->
+        <!--android:orientation="horizontal">-->
+
+        <CheckBox
+            android:id="@+id/cbAddFreqWake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:gravity="center_vertical"
+            android:layout_below="@id/llAddFreqHr2"
+            android:text="Wakeup"/>
+
+        <TextView
+            android:id="@+id/tvAddFreqWakeTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/cbAddFreqWake"
+            android:layout_below="@id/llAddFreqHr2"
+            android:text="6:00am"
+            android:textSize="16sp"
+            android:layout_alignBottom="@+id/cbAddFreqWake"
+            android:gravity="fill_vertical"
+            android:layout_alignStart="@+id/tvAddFreqBreakfastTime"/>
+
+        <TextView
+            android:id="@+id/cbAddFreqWakeSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tvAddFreqWakeTime"
+            android:layout_below="@id/llAddFreqHr2"
+            android:text="[ Set ]"
+            android:layout_alignBottom="@+id/cbAddFreqWake"
+            android:layout_alignStart="@+id/tvAddFreqLunchSet"
+            android:gravity="fill_vertical"/>
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/llAddFreqBreakfast"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/llAddFreqWakeup"-->
+        <!--android:orientation="horizontal">-->
+
+        <CheckBox
+            android:id="@+id/cbAddFreqBreakfast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_below="@+id/cbAddFreqWake"
+            android:checked="false"
+            android:text="Breakfast"/>
+
+        <TextView
+            android:id="@+id/tvAddFreqBreakfastTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cbAddFreqWake"
+            android:layout_toEndOf="@id/cbAddFreqBreakfast"
+            android:text="7:00am"
+            android:textSize="16sp"
+            android:layout_alignBottom="@+id/cbAddFreqBreakfast"
+            android:gravity="fill_vertical"/>
+
+        <TextView
+            android:id="@+id/tvAddFreqBreakfastSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cbAddFreqWake"
+            android:layout_toEndOf="@id/tvAddFreqBreakfastTime"
+            android:text="[ Set ]"
+            android:layout_alignBottom="@+id/cbAddFreqBreakfast"
+            android:gravity="fill_vertical"
+            android:layout_alignStart="@+id/tvAddFreqLunchSet"
+            />
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/llAddFreqLunch"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/llAddFreqBreakfast"-->
+        <!--android:orientation="horizontal">-->
+
+        <CheckBox
+            android:id="@+id/cbAddFreqLunch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqBreakfast"
+            android:checked="false"
+            android:text="Lunch"/>
+
+        <TextView
+            android:id="@+id/tvAddFreqLunchTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqBreakfast"
+            android:layout_toEndOf="@id/cbAddFreqLunch"
+            android:layout_marginEnd="10dp"
+            android:text="12:00pm"
+            android:textSize="16sp"
+            android:layout_alignBottom="@+id/cbAddFreqLunch"
+            android:gravity="fill_vertical"
+            android:layout_alignStart="@+id/tvAddFreqBreakfastTime"/>
+
+
+    <TextView
+            android:id="@+id/tvAddFreqLunchSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqBreakfast"
+            android:layout_toEndOf="@id/tvAddFreqLunchTime"
+            android:text="[ Set ]"
+            android:layout_alignBottom="@+id/cbAddFreqLunch"
+            android:gravity="fill_vertical"/>
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/llAddFreqDinner"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/llAddFreqLunch"-->
+        <!--android:orientation="horizontal">-->
+
+        <CheckBox
+            android:id="@+id/cbAddFreqDinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqLunch"
+            android:checked="false"
+            android:text="Dinner"/>
+
+        <TextView
+            android:id="@+id/tvAddFreqDinnerTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqLunch"
+            android:layout_toEndOf="@id/cbAddFreqDinner"
+            android:text="7:00pm"
+            android:textSize="16sp"
+            android:layout_alignBottom="@+id/cbAddFreqDinner"
+            android:gravity="fill_vertical"
+            android:layout_alignStart="@+id/tvAddFreqBreakfastTime"/>
+
+    <TextView
+            android:id="@+id/tvAddFreqDinnerSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqLunch"
+            android:layout_toEndOf="@id/tvAddFreqDinnerTime"
+            android:text="[ Set ]"
+            android:layout_alignStart="@+id/tvAddFreqLunchSet"
+            android:layout_alignBottom="@+id/cbAddFreqDinner"
+            android:gravity="fill_vertical"/>
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/llAddFreqBed"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/llAddFreqDinner"-->
+        <!--android:orientation="horizontal">-->
+
+        <CheckBox
+            android:id="@+id/cbAddFreqBed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqDinner"
+            android:checked="false"
+            android:text="Bedtime"/>
+
+        <TextView
+            android:id="@+id/tvAddFreqBedTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqDinner"
+            android:layout_toEndOf="@id/cbAddFreqBed"
+            android:text="10:00pm"
+            android:textSize="16sp"
+            android:layout_alignBottom="@+id/cbAddFreqBed"
+            android:gravity="fill_vertical"
+            android:layout_alignStart="@+id/tvAddFreqBreakfastTime"/>
+
+
+    <TextView
+            android:id="@+id/tvAddFreqBedSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cbAddFreqDinner"
+            android:layout_toEndOf="@id/tvAddFreqBedTime"
+            android:text="[ Set ]"
+            android:layout_alignStart="@+id/tvAddFreqLunchSet"
+            android:layout_alignBottom="@+id/cbAddFreqBed"
+            android:gravity="fill_vertical"/>
+
+    <!--</LinearLayout>-->
+
+
+
+</RelativeLayout>
+</ScrollView>

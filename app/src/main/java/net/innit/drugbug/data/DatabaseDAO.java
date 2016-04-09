@@ -71,6 +71,11 @@ public class DatabaseDAO {
             DBHelper.COLUMN_DOSAGE
     };
 
+    public enum QueuePosition {
+        FIRST,
+        LAST
+    }
+
     /**
      * Map of frequencies
      * Initialized in a static block
@@ -480,7 +485,7 @@ public class DatabaseDAO {
         numDeleted = removeOldDoses(TYPE_TAKEN, settings.getString(Settings.Key.KEEP_TIME_TAKEN));
     }
 
-    private List<DoseItem> getAllDoses(MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
+    public List<DoseItem> getAllDoses(MedicationItem medication, Date date, boolean takenOnly, boolean futureOnly, boolean reminderOnly) {
         cleanDB();
 
         List<String> selection = new ArrayList<>();
@@ -540,10 +545,6 @@ public class DatabaseDAO {
         return getDoses(sel, orderBy);
     }
 
-    public List<DoseItem> getAllDosesForMed(Context context, MedicationItem medication) {
-        return getAllDoses(medication, null, false, false, false);
-    }
-
     /**
      * Returns all future doses
      *
@@ -552,20 +553,6 @@ public class DatabaseDAO {
      */
     public List<DoseItem> getAllFuture(Context context) {
         return getAllDoses(null, null, false, true, false);
-    }
-
-    /**
-     * Return a list of all future doses for a single medication id
-     *
-     * @param medication medication to retrieve doses for
-     * @return List of DoseItem objects
-     */
-    public List<DoseItem> getAllFutureForMed(Context context, MedicationItem medication) {
-        return getAllDoses(medication, null, false, true, false);
-    }
-
-    public List<DoseItem> getAllTakenForMed(Context context, MedicationItem medication) {
-        return getAllDoses(medication, null, true, false, false);
     }
 
     /**
@@ -621,89 +608,30 @@ public class DatabaseDAO {
         return getSingleDose(null, selection, null);
     }
 
-    /**
-     * Retrieve untaken dose furthest in the future
-     *
-     * @param medication medication to find the future dose for
-     * @return DoseItem with latest future dose
-     */
-    public DoseItem getLastDose(MedicationItem medication) {
+    public DoseItem getDose(MedicationItem medication, boolean taken, QueuePosition position) {
         String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
-                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
-        String orderBy = DBHelper.COLUMN_DATE + " DESC";
+                " AND " + DBHelper.COLUMN_TAKEN + "=" + (taken?1:0);
+        String orderBy = DBHelper.COLUMN_DATE + (position == QueuePosition.FIRST?" ASC":" DESC");
         return getSingleDose(medication, selection, orderBy);
     }
 
     /**
-     * Retrieve untaken dose with lowest date
-     *
-     * @param medication medication to find the future dose for
-     * @return DoseItem object with lowest future dose
-     */
-    public DoseItem getFirstFutureDose(MedicationItem medication) {
-        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
-                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
-        String orderBy = DBHelper.COLUMN_DATE + " ASC";
-        return getSingleDose(medication, selection, orderBy);
-    }
-
-    public DoseItem getLatestTakenDose(MedicationItem medication) {
-        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
-                " AND " + DBHelper.COLUMN_TAKEN + "=" + 1;
-        String orderBy = DBHelper.COLUMN_DATE + " DESC";
-        return getSingleDose(medication, selection, orderBy);
-    }
-
-    /**
-     * Return count of untaken doses
+     * Return count of taken or untaken doses
      *
      * @param medication medication to count untaken doses for
-     * @return count of untaken doses
+     * @param taken true for count of taken doses, false for count of untaken doses
+     * @return number of doses
      */
-    public long getFutureDoseCount(MedicationItem medication) {
-        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId() +
-                " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
-        return DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection);
-    }
-
-    /**
-     * Generate next future dose
-     *
-     * @param medication medication to generate a future dose for
-     * @return DoseItem object for new dose
-     */
-    public DoseItem createNextFuture(MedicationItem medication) {
-        // After successful update, add another future dose so we keep the same number in our future list
-        // Get last future dose for medication
-        DoseItem newFutureItem = getLastDose(medication);
-        if (newFutureItem == null) {
-            newFutureItem = getLatestTakenDose(medication);
+    public long getDoseCount(MedicationItem medication, boolean taken, boolean future) {
+        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId();
+        if (!(taken && future)) {
+            if (taken || future) {
+                selection += " AND " + DBHelper.COLUMN_TAKEN + "=" + (taken ? 1 : 0);
+            } else {
+                throw new IllegalArgumentException("One of taken or future must be true.");
+            }
         }
-        newFutureItem.setTaken(false);
-//      Code section removed -> set date of new doses in the future (from now) rather than at $INTERVAL from last dose
-//      Got rid of that logic because it was breaking adding a new dose when numDoses was set to 1
-//        // Get frequency
-//        long interval = getInterval(medication.getFrequency());
-//        Calendar calendar = Calendar.getInstance();
-//        Date lastFutureDate = newFutureItem.getDate();
-//        Date nowDate = new Date();
-//        // Compare date of last future date to now
-//        if (lastFutureDate.getTime() > nowDate.getTime()) {
-//            // last future date is later than now
-//            // Add frequency to future date
-//            calendar.setTime(lastFutureDate);
-//        } else {
-//            // Add frequency to now
-//            calendar.setTime(nowDate);
-//        }
-//        calendar.add(Calendar.SECOND, (int) interval);
-//        newFutureItem.setDate(calendar.getTime());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(newFutureItem.getDate());
-        calendar.add(Calendar.SECOND, (int) getInterval(medication.getFrequency()));
-        newFutureItem.setDate(calendar.getTime());
-        return createDose(newFutureItem);
-
+        return DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection);
     }
 
     private ContentValues createDoseCV(DoseItem dose) {
@@ -744,78 +672,47 @@ public class DatabaseDAO {
         return rows > 0;
     }
 
-//      removeMedicationIfNoDoses() - Archived in case it's needed later
-//    /**
-//     * Remove medication if it has no doses attached to it
-//     *
-//     * @param medication medication to remove
-//     * @return true if medication was removed
-//     */
-//    private boolean removeMedicationIfNoDoses(Context context, MedicationItem medication) {
-//        // Remove medication if no doses are associated with it
-//        String selection = DBHelper.COLUMN_MED_ID + "=" + medication.getId();
-//        if (DatabaseUtils.queryNumEntries(database, DBHelper.TABLE_DOSES, selection) < 1) {
-//            Result medResult = removeMedication(context, medication);
-//            if (medResult == Result.RESULT_OK) {
-//                return true;
-//            }
-//        }
-//        // Return false if there are still doses or there was an error deleting the medication
-//        return false;
-//    }
-
     /**
-     * Remove a dose
+     * Remove a dose and generate the next future dose
      *
+     * @param context Context for this method
      * @param id id of dose to remove
-     * @param createNextDose True if next dose should be created
-     * @return RESULT_OK if dose was removed successfully
+     * @return RESULT_OK if dose was removed successfully, MEDICATION_NULL if medication for the dose does not exist
      */
     // Delete one dose
-    public Result removeDose(long id, boolean createNextDose) {
-        String where = DBHelper.COLUMN_ID + "=" + id;
+    public Result removeDose(Context context, long id) {
         // Get medication
         MedicationItem medication = getMedicationForDose(id);
-
-        if (createNextDose) {
-            createNextFuture(medication);
+        if (medication != null) {
+            medication.createNextFuture(context);
+            return removeDose(id);
+        } else {
+            return Result.MEDICATION_NULL;
         }
+    }
+
+    public Result removeDose(long id) {
+        String where = DBHelper.COLUMN_ID + "=" + id;
 
         boolean deleteOK = (database.delete(DBHelper.TABLE_DOSES, where, null) == 1);
         if (deleteOK) {
-            if (medication != null) {
-                return Result.RESULT_OK;
-            } else {
-                return Result.ERROR_UNKNOWN_ERROR;
-            }
+            return Result.RESULT_OK;
         } else {
             return Result.ERROR_UNKNOWN_ERROR;
         }
+
     }
 
-    /**
-     * Remove all untaken doses for a medication
-     *
-     * @param medication medication to remove all future doses for
-     * @return number of deleted doses
-     */
-    public int removeAllFutureDosesForMed(MedicationItem medication) {
-        String where = DBHelper.COLUMN_MED_ID + "=" + medication.getId() + " AND " + DBHelper.COLUMN_TAKEN + "=" + 0;
-        return database.delete(DBHelper.TABLE_DOSES, where, null);
-    }
-
-    /**
-     * Remove all doses for a medication
-     *
-     * @param medication medication to remove all doses for
-     * @return number of deleted doses
-     */
-    public int removeAllDosesForMed(MedicationItem medication) {
+    public long removeDoses(MedicationItem medication, boolean taken, boolean future) throws IllegalArgumentException {
         String where = DBHelper.COLUMN_MED_ID + "=" + medication.getId();
-        int numDeleted = database.delete(DBHelper.TABLE_DOSES, where, null);
-        medication.setActive(true);
-        boolean updated = updateMedication(medication);
-        return numDeleted;
+        if (!taken || !future) {
+            if (!taken && !future) {
+                throw new IllegalArgumentException("One of taken or future must be true.");
+            } else {
+                where += " AND " + DBHelper.COLUMN_TAKEN + "=" + (taken?1:0);
+            }
+        }
+        return database.delete(DBHelper.TABLE_DOSES, where, null);
     }
 
     /**
@@ -849,6 +746,7 @@ public class DatabaseDAO {
      */
     public enum Result {
         RESULT_OK,
+        MEDICATION_NULL,
         ERROR_UNKNOWN_ERROR
     }
 

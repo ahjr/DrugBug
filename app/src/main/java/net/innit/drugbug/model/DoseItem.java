@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import net.innit.drugbug.R;
 import net.innit.drugbug.data.DatabaseDAO;
@@ -71,12 +72,6 @@ public class DoseItem implements Comparable<DoseItem> {
         this.date = date;
     }
 
-    public Date nextDate(Context context) {
-        DatabaseDAO db = new DatabaseDAO(context);
-        long secs = date.getTime() + db.getInterval(medication.getFrequency()) * 1000;
-        return new Date(secs);
-    }
-
     public boolean isReminderSet() {
         return reminder;
     }
@@ -138,7 +133,7 @@ public class DoseItem implements Comparable<DoseItem> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.open();
-                db.removeDose(id, true);
+                db.removeDose(context, id);
                 db.close();
                 if (listener != null) {
                     listener.onListUpdated();
@@ -172,15 +167,18 @@ public class DoseItem implements Comparable<DoseItem> {
                 convertToTaken();
                 db.open();
                 if (db.updateDose(DoseItem.this)) {
-                    DoseItem firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
+                    int count = 0;
+                    DoseItem firstFutureDose = DoseItem.this.getMedication().getFirstFuture(fragment.getActivity());
 
                     while ((firstFutureDose != null) && (firstFutureDose.getDate().getTime() <= DoseItem.this.getDate().getTime())) {
                         // First future dose date is before taken dose date
-                        db.removeDose(firstFutureDose.getId(), true);
-                        firstFutureDose = db.getFirstFutureDose(DoseItem.this.getMedication());
+                        db.removeDose(fragment.getActivity(), firstFutureDose.getId());
+                        count++;
+                        firstFutureDose = DoseItem.this.getMedication().getFirstFuture(fragment.getActivity());
                     }
+                    Toast.makeText(fragment.getActivity(), "" + count + fragment.getActivity().getString(R.string.toast_previous_doses_removed), Toast.LENGTH_LONG).show();
 
-                    db.createNextFuture(DoseItem.this.getMedication());
+                    DoseItem.this.getMedication().createNextFuture(fragment.getActivity());
 
                     if (fragment instanceof DialogFragment) {
                         // Dismiss the calling dialog fragment
@@ -206,9 +204,9 @@ public class DoseItem implements Comparable<DoseItem> {
     public void reminderAllOrOne(final Context context, final OnChoiceSelectedListener listener) {
         final DatabaseDAO db = new DatabaseDAO(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Toggle all reminders?");
-        alertDialogBuilder.setMessage("Should all reminders for this medication be changed?");
-        alertDialogBuilder.setPositiveButton("Yes, change all", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setTitle(R.string.reminder_dialog_title);
+        alertDialogBuilder.setMessage(R.string.reminder_dialog_message);
+        alertDialogBuilder.setPositiveButton(R.string.reminder_dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Change all
@@ -216,7 +214,7 @@ public class DoseItem implements Comparable<DoseItem> {
                     DoseItem.this.setOrKillAlarm(context);
                     db.open();
                     db.updateDose(DoseItem.this);
-                    List<DoseItem> doses = db.getAllFutureForMed(context, DoseItem.this.getMedication());
+                    List<DoseItem> doses = medication.getAllFuture(context);
                     for (DoseItem dose : doses) {
                         dose.setReminder(DoseItem.this.isReminderSet());
                         db.updateDose(dose);
@@ -230,7 +228,7 @@ public class DoseItem implements Comparable<DoseItem> {
                 }
             }
         });
-        alertDialogBuilder.setNegativeButton("No, just this dose", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(R.string.reminder_dialog_negative, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -282,5 +280,15 @@ public class DoseItem implements Comparable<DoseItem> {
         }
     }
 
+    /**
+     * A comparator so we can sort dosages by name, ascending
+     */
+    public static class ReverseNameComparator implements Comparator<DoseItem> {
+
+        @Override
+        public int compare(DoseItem lhs, DoseItem rhs) {
+            return rhs.getMedication().getName().compareTo(lhs.getMedication().getName());
+        }
+    }
 
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import net.innit.drugbug.data.Settings;
 import net.innit.drugbug.fragment.AddDoseFragment;
@@ -35,7 +36,7 @@ public class MainActivity extends FragmentActivity {
         // Clean SharedPreferences if constant is true
         if (CLEAR_SHARED_PREFS) {
             settings.clear();
-            settings.apply();
+//            settings.apply();
         }
 
         // Set SharedPreferences to default if setting is not set yet
@@ -89,4 +90,7 @@ public class MainActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public void onClickFreq(View view) {
+        startActivity(new Intent(this, FrequencyActivity.class));
+    }
 }

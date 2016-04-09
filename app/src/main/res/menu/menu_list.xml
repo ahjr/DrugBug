@@ -23,8 +23,11 @@
                     android:id="@+id/menu_sort_order_date_dsc"
                     android:title="@string/menu_list_sort_date_dsc"/>
                 <item
-                    android:id="@+id/menu_sort_order_name"
+                    android:id="@+id/menu_sort_order_name_asc"
                     android:title="@string/menu_list_sort_name_asc"/>
+                <item
+                    android:id="@+id/menu_sort_order_name_dsc"
+                    android:title="@string/menu_list_sort_name_dsc"/>
             </group>
         </menu>
     </item>

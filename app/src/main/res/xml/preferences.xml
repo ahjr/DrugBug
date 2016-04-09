@@ -1,31 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <net.innit.drugbug.util.NumberPreference
-        android:defaultValue="5"
-        android:key="NUM_DOSES"
-        android:persistent="true"
-        android:summary="PLACEHOLDER"
-        android:title="@string/preferences_numfuturedoses_title"/>
+    <PreferenceCategory
+        android:title="General">
+        <net.innit.drugbug.util.NumberPreference
+            android:defaultValue="5"
+            android:key="NUM_DOSES"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_numfuturedoses_title"/>
 
-    <net.innit.drugbug.util.KeepTimePreference
-        android:defaultValue="1:0:0"
-        android:key="KEEP_TIME_TAKEN"
-        android:persistent="true"
-        android:summary="PLACEHOLDER"
-        android:title="@string/preferences_keeptimetaken_title"/>
+        <net.innit.drugbug.util.KeepTimePreference
+            android:defaultValue="1:0:0"
+            android:key="KEEP_TIME_TAKEN"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_keeptimetaken_title"/>
 
-    <net.innit.drugbug.util.KeepTimePreference
-        android:defaultValue="0:1:0"
-        android:key="KEEP_TIME_MISSED"
-        android:persistent="true"
-        android:summary="PLACEHOLDER"
-        android:title="@string/preferences_keeptimemissed_title"/>
+        <net.innit.drugbug.util.KeepTimePreference
+            android:defaultValue="0:1:0"
+            android:key="KEEP_TIME_MISSED"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_keeptimemissed_title"/>
 
-    <ListPreference
-        android:key="IMAGE_STORAGE"
-        android:summary="PLACEHOLDER"
-        android:defaultValue="INTERNAL"
-        android:title="@string/preferences_storageloc_title"/>
+        <ListPreference
+            android:defaultValue="INTERNAL"
+            android:key="IMAGE_STORAGE"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_storageloc_title"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Times">
+
+        <net.innit.drugbug.util.TimePreference
+            android:defaultValue="06:00"
+            android:key="TIME_WAKE"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_time_wake"/>
+
+        <net.innit.drugbug.util.TimePreference
+            android:defaultValue="07:00"
+            android:key="TIME_BREAKFAST"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_time_breakfast"/>
+
+        <net.innit.drugbug.util.TimePreference
+            android:defaultValue="06:00"
+            android:key="TIME_LUNCH"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_time_lunch"/>
+
+        <net.innit.drugbug.util.TimePreference
+            android:defaultValue="06:00"
+            android:key="TIME_DINNER"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_time_dinner"/>
+
+        <net.innit.drugbug.util.TimePreference
+            android:defaultValue="06:00"
+            android:key="TIME_BED"
+            android:persistent="true"
+            android:summary="PLACEHOLDER"
+            android:title="@string/preferences_time_bed"/>
+
+    </PreferenceCategory>
 
 
 </PreferenceScreen>
