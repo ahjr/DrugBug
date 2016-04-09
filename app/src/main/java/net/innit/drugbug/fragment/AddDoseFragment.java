@@ -63,9 +63,9 @@ import static net.innit.drugbug.data.Constants.IMAGE_HEIGHT_PREVIEW;
 import static net.innit.drugbug.data.Constants.IMAGE_WIDTH_PREVIEW;
 import static net.innit.drugbug.data.Constants.INTENT_DOSE_ID;
 import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
-import static net.innit.drugbug.data.Constants.LOG;
 import static net.innit.drugbug.data.Constants.SORT_DOSE;
 import static net.innit.drugbug.data.Constants.SORT_MED;
+import static net.innit.drugbug.data.Constants.TAG;
 import static net.innit.drugbug.data.Constants.TYPE;
 import static net.innit.drugbug.data.Constants.TYPE_MEDICATION;
 import static net.innit.drugbug.data.Constants.TYPE_NONE;
@@ -301,7 +301,7 @@ public class AddDoseFragment extends DialogFragment {
         // Delete any temp file left over from a previous addition
         boolean fileDeleted = tempPath.delete();
         if (fileDeleted) {
-            Log.i(LOG, "onClickAddMedAddImage: Temporary file deleted: " + tempPath.toString());
+            Log.i(TAG, "onClickAddMedAddImage: Temporary file deleted: " + tempPath.toString());
         }
         Uri outputFileUri = imageStorage.getStorageUri(tempPath);
         if (hasCamera()) {
@@ -399,7 +399,7 @@ public class AddDoseFragment extends DialogFragment {
                 doseItem.setDate(formatter.parse(mDateTime.getText().toString()));
                 return true;
             } catch (ParseException e) {
-                Log.e(LOG, "onClickAddMedSave: Unable to parse date");
+                Log.e(TAG, "onClickAddMedSave: Unable to parse date");
             }
         }
         return false;
@@ -460,7 +460,7 @@ public class AddDoseFragment extends DialogFragment {
         File path = new File(dir, filename);
         boolean b = tempPath.renameTo(path);
         if (!b) {
-            Log.e(LOG, "Unable to rename " + tempPath.toString() + " to " + path.toString());
+            Log.e(TAG, "Unable to rename " + tempPath.toString() + " to " + path.toString());
         }
         medication.setImagePath(filename);
     }

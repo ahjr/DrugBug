@@ -6,7 +6,7 @@ public class Constants {
      */
     private Constants() {}
 
-    public static final String LOG = "DrugBug";
+    public static final String TAG = "DrugBug";
 
     public static final int REQUEST_TAKE_PICTURE = 300;
 

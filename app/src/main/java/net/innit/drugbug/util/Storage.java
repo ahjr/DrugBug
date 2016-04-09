@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static net.innit.drugbug.data.Constants.LOG;
+import static net.innit.drugbug.data.Constants.TAG;
 
 abstract class Storage {
     private final File rootDir;           // Root directory for the storage type
@@ -98,7 +98,7 @@ abstract class Storage {
                 copyAllFiles(oldStorage.getAbsDir(), absDir);
                 return true;
             } catch (IOException e) {
-                Log.e(LOG, "moveFiles: Error copying files from " + oldStorage.getDisplayText() + " to " + this.getDisplayText());
+                Log.e(TAG, "moveFiles: Error copying files from " + oldStorage.getDisplayText() + " to " + this.getDisplayText());
             }
 
         }
