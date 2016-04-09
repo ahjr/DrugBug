@@ -22,7 +22,8 @@ import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.SORT_DATE_ASC;
 import static net.innit.drugbug.data.Constants.SORT_DATE_DESC;
 import static net.innit.drugbug.data.Constants.SORT_DOSE;
-import static net.innit.drugbug.data.Constants.SORT_NAME;
+import static net.innit.drugbug.data.Constants.SORT_NAME_ASC;
+import static net.innit.drugbug.data.Constants.SORT_NAME_DESC;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_FUTURE;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_REMINDERS;
 import static net.innit.drugbug.data.Constants.SOURCE_LIST_SINGLE_MED;
@@ -51,7 +52,7 @@ public class DoseListActivity extends FragmentActivity {
         sortOrder = bundle.getString(SORT_DOSE);
         filter = bundle.getString(FILTER_DOSE);
 
-        setContentView(R.layout.activity_list_dose);
+        setContentView(R.layout.fragment_list_dose);
 
         // Set the sortOrder if it wasn't passed in
         if (sortOrder == null) {
@@ -85,7 +86,8 @@ public class DoseListActivity extends FragmentActivity {
             menu.findItem(R.id.menu_filter).setVisible(false);
         } else {
             menu.findItem(R.id.menu_list_add).setVisible(false);
-            menu.findItem(R.id.menu_sort_order_name).setVisible(false);
+            menu.findItem(R.id.menu_sort_order_name_asc).setVisible(false);
+            menu.findItem(R.id.menu_sort_order_name_dsc).setVisible(false);
         }
 
         return true;
@@ -121,9 +123,11 @@ public class DoseListActivity extends FragmentActivity {
             case SORT_DATE_DESC:
                 setMenuItem(menu, R.id.menu_sort_order_date_dsc, R.string.menu_list_sort_date_dsc);
                 break;
-            case SORT_NAME:
-                // TODO: 4/2/16 Change this so sort can be both A-Z and Z-A
-                setMenuItem(menu, R.id.menu_sort_order_name, R.string.menu_list_sort_name_asc);
+            case SORT_NAME_ASC:
+                setMenuItem(menu, R.id.menu_sort_order_name_asc, R.string.menu_list_sort_name_asc);
+                break;
+            case SORT_NAME_DESC:
+                setMenuItem(menu, R.id.menu_sort_order_name_dsc, R.string.menu_list_sort_name_dsc);
                 break;
             default:
                 setMenuItem(menu, R.id.menu_sort_order_date_asc, R.string.menu_list_sort_date_asc);
@@ -176,9 +180,12 @@ public class DoseListActivity extends FragmentActivity {
                 sortOrder = SORT_DATE_DESC;
                 bundle.putString(SORT_DOSE, sortOrder);
                 break;
-            case R.id.menu_sort_order_name:
-                // TODO: 4/2/16 Change this so we can sort A-Z and Z-A
-                sortOrder = SORT_NAME;
+            case R.id.menu_sort_order_name_asc:
+                sortOrder = SORT_NAME_ASC;
+                bundle.putString(SORT_DOSE, sortOrder);
+                break;
+            case R.id.menu_sort_order_name_dsc:
+                sortOrder = SORT_NAME_DESC;
                 bundle.putString(SORT_DOSE, sortOrder);
                 break;
             case R.id.menu_filter_future:

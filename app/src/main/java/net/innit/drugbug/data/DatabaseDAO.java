@@ -673,32 +673,34 @@ public class DatabaseDAO {
     }
 
     /**
-     * Remove a dose
+     * Remove a dose and generate the next future dose
      *
+     * @param context Context for this method
      * @param id id of dose to remove
-     * @param createNextDose True if next dose should be created
-     * @return RESULT_OK if dose was removed successfully
+     * @return RESULT_OK if dose was removed successfully, MEDICATION_NULL if medication for the dose does not exist
      */
     // Delete one dose
-    public Result removeDose(Context context, long id, boolean createNextDose) {
-        String where = DBHelper.COLUMN_ID + "=" + id;
+    public Result removeDose(Context context, long id) {
         // Get medication
         MedicationItem medication = getMedicationForDose(id);
-
-        if (createNextDose) {
+        if (medication != null) {
             medication.createNextFuture(context);
+            return removeDose(id);
+        } else {
+            return Result.MEDICATION_NULL;
         }
+    }
+
+    public Result removeDose(long id) {
+        String where = DBHelper.COLUMN_ID + "=" + id;
 
         boolean deleteOK = (database.delete(DBHelper.TABLE_DOSES, where, null) == 1);
         if (deleteOK) {
-            if (medication != null) {
-                return Result.RESULT_OK;
-            } else {
-                return Result.ERROR_UNKNOWN_ERROR;
-            }
+            return Result.RESULT_OK;
         } else {
             return Result.ERROR_UNKNOWN_ERROR;
         }
+
     }
 
     public long removeDoses(MedicationItem medication, boolean taken, boolean future) throws IllegalArgumentException {
@@ -744,6 +746,7 @@ public class DatabaseDAO {
      */
     public enum Result {
         RESULT_OK,
+        MEDICATION_NULL,
         ERROR_UNKNOWN_ERROR
     }
 

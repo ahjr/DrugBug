@@ -69,12 +69,7 @@ public class SettingsHelper {
     private void decreaseDoses(Context context, int maxNumDoses, MedicationItem medication) {
         int doseCount = (int) medication.getNumFutures(context);
         while (doseCount > maxNumDoses) {
-            DoseItem lastFutureDose = medication.getLastFuture(context);
-            if (lastFutureDose != null) {
-                db.open();
-                db.removeDose(context, lastFutureDose.getId(), false);
-                db.close();
-            }
+            medication.removeLastFuture(context);
             doseCount--;
         }
     }

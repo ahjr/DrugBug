@@ -89,14 +89,14 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
         } else if (medicationItem.isArchived()) {
             // med is inactive and archived
             date = medicationItem.getArchiveDate();
-            mViewHolder.dateLabel.setText("Archived:");
+            mViewHolder.dateLabel.setText(R.string.medication_adapter_date_label_archived);
         } else {
             // med is inactive and not archived
             dose = medicationItem.getLastTaken(context);
             if (dose != null) {
                 date = dose.getDate();
             }
-            mViewHolder.dateLabel.setText("Last taken:");
+            mViewHolder.dateLabel.setText(R.string.medication_adapter_date_label_taken);
         }
         db.close();
 
@@ -104,7 +104,7 @@ public class MedicationArrayAdapter extends ArrayAdapter<MedicationItem> {
         if (date != null) {
             mViewHolder.date.setText(sdf.format(date));
         } else {
-            mViewHolder.date.setText("No doses taken");
+            mViewHolder.date.setText(R.string.medication_adapter_date_none_taken);
         }
 
         return convertView;

@@ -41,7 +41,8 @@ import static net.innit.drugbug.data.Constants.INTENT_MED_ID;
 import static net.innit.drugbug.data.Constants.SORT_DATE_ASC;
 import static net.innit.drugbug.data.Constants.SORT_DATE_DESC;
 import static net.innit.drugbug.data.Constants.SORT_DOSE;
-import static net.innit.drugbug.data.Constants.SORT_NAME;
+import static net.innit.drugbug.data.Constants.SORT_NAME_ASC;
+import static net.innit.drugbug.data.Constants.SORT_NAME_DESC;
 import static net.innit.drugbug.data.Constants.TAG_ADD;
 import static net.innit.drugbug.data.Constants.TAG_DETAIL;
 import static net.innit.drugbug.data.Constants.TYPE;
@@ -100,7 +101,7 @@ public class DoseListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_list_dose, container, false);
+        return inflater.inflate(R.layout.fragment_list_dose, container, false);
     }
 
     @Override
@@ -206,9 +207,11 @@ public class DoseListFragment extends ListFragment {
             case SORT_DATE_DESC:
                 Collections.sort(doses, new DoseItem.ReverseDateComparator());
                 break;
-            case SORT_NAME:
-                // TODO: 4/2/16 Change this so we can sort A-Z and Z-A
+            case SORT_NAME_ASC:
                 Collections.sort(doses, new DoseItem.NameComparator());
+                break;
+            case SORT_NAME_DESC:
+                Collections.sort(doses, new DoseItem.ReverseNameComparator());
                 break;
         }
 

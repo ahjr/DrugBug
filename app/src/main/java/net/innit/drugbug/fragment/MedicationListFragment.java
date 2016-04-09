@@ -70,8 +70,8 @@ public class MedicationListFragment extends ListFragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, CONTEXT_REACTIVATE, 0, "Reactivate medication");
-        menu.add(0, CONTEXT_ARCHIVE, 1, "Archive medication");
+        menu.add(0, CONTEXT_REACTIVATE, 0, R.string.context_med_reactivate);
+        menu.add(0, CONTEXT_ARCHIVE, 1, R.string.context_med_archive);
     }
 
     @Override
@@ -365,7 +365,7 @@ public class MedicationListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.activity_list_medication, container, false);
+        return inflater.inflate(R.layout.fragment_list_medication, container, false);
     }
 
     @Override

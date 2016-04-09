@@ -340,12 +340,14 @@ public class MedicationItem implements Comparable<MedicationItem> {
 
     public DoseItem createNextFuture(Context context) {
         DatabaseDAO db = new DatabaseDAO(context);
-        db.open();
         // After successful update, add another future dose so we keep the same number in our future list
         // Get last future dose for medication
         DoseItem newFutureItem = getLastFuture(context);
         if (newFutureItem == null) {
             newFutureItem = getLastTaken(context);
+        }
+        if (newFutureItem == null) {
+            throw new IllegalArgumentException("There must be at least 1 dose for this medication in the database to run this method.");
         }
         newFutureItem.setTaken(false);
 //      Code section removed -> set date of new doses in the future (from now) rather than at $INTERVAL from last dose
@@ -366,24 +368,37 @@ public class MedicationItem implements Comparable<MedicationItem> {
 //        }
 //        calendar.add(Calendar.SECOND, (int) interval);
 //        newFutureItem.setDate(calendar.getTime());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(newFutureItem.getDate());
-        calendar.add(Calendar.SECOND, (int) db.getInterval(getFrequency()));
+        Calendar calendar = getNextDate(context, newFutureItem);
         newFutureItem.setDate(calendar.getTime());
+        db.open();
         DoseItem dose = db.createDose(newFutureItem);
         db.close();
         return dose;
     }
 
-    public DoseItem removeLastTaken(Context context) {
-        // TODO: 4/3/16 stub
-        DoseItem dose = new DoseItem();
-        return dose;
+    @NonNull
+    public Calendar getNextDate(Context context, DoseItem previousDose) {
+        DatabaseDAO db = new DatabaseDAO(context);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(previousDose.getDate());
+        calendar.add(Calendar.SECOND, (int) db.getInterval(getFrequency()));
+        return calendar;
     }
 
+//    public DoseItem removeLastTaken(Context context) {
+//        DoseItem dose = new DoseItem();
+//        return dose;
+//    }
+
     public DoseItem removeLastFuture(Context context) {
-        // TODO: 4/3/16 stub
-        DoseItem dose = new DoseItem();
+        DoseItem dose = getLastFuture(context);
+        if (dose != null) {
+            DatabaseDAO db = new DatabaseDAO(context);
+            db.open();
+            db.removeDose(dose.getId());
+            db.close();
+        }
+
         return dose;
     }
 

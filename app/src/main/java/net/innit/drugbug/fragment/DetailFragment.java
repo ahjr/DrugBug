@@ -78,7 +78,7 @@ public class DetailFragment extends DialogFragment {
         dose = db.getDose(id);
         db.close();
 
-        View view = inflater.inflate(R.layout.activity_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         // Dose is taken
         if (dose.isTaken()) {
