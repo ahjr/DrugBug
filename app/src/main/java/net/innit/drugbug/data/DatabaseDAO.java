@@ -205,12 +205,12 @@ public class DatabaseDAO {
                 case SORT_NEXT_FUTURE_ASC:
                     selection = DBHelper.COLUMN_ACTIVE + "=1";
                     orderBy = DBHelper.COLUMN_DATE + " ASC";
-                    cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
+                    cursor = database.query(DBHelper.VIEW_DOSE_FULL, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
                     break;
                 case SORT_NEXT_FUTURE_DESC:
                     selection = DBHelper.COLUMN_ACTIVE + "=1";
                     orderBy = DBHelper.COLUMN_DATE + " DESC";
-                    cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
+                    cursor = database.query(DBHelper.VIEW_DOSE_FULL, medicationsAllColumns, selection, null, DBHelper.COLUMN_MED_ID, null, orderBy);
                     break;
                 case SORT_ARCHIVED_ASC:
                     selection = DBHelper.COLUMN_ARCHIVED + "=1";
@@ -226,7 +226,7 @@ public class DatabaseDAO {
         }
         List<MedicationItem> returnList = new ArrayList<>();
         if (cursor == null) {
-            cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, medicationsAllColumns, null, null, DBHelper.COLUMN_MED_ID, null, null);
+            cursor = database.query(DBHelper.VIEW_DOSE_FULL, medicationsAllColumns, null, null, DBHelper.COLUMN_MED_ID, null, null);
         }
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
@@ -446,7 +446,7 @@ public class DatabaseDAO {
      */
     private List<DoseItem> getDoses(String selection, String orderBy) {
         List<DoseItem> returnList = new ArrayList<>();
-        Cursor cursor = database.query(DBHelper.VIEW_DOSE_WITH_MED, null, selection, null, null, null, orderBy);
+        Cursor cursor = database.query(DBHelper.VIEW_DOSE_FULL, null, selection, null, null, null, orderBy);
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 returnList.add(getDoseFromDB(cursor, null));
@@ -582,7 +582,7 @@ public class DatabaseDAO {
         String table;
         String[] columns;
         if (medication == null) {
-            table = DBHelper.VIEW_DOSE_WITH_MED;
+            table = DBHelper.VIEW_DOSE_FULL;
             columns = dosesWithMedAllColumns;
         } else {
             table = DBHelper.TABLE_DOSES;

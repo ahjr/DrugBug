@@ -31,7 +31,8 @@ class DBHelper extends SQLiteOpenHelper {
     /**
      * View name definitions
      */
-    public static final String VIEW_DOSE_WITH_MED = "doses_with_med";
+    public static final String VIEW_DOSE_FULL = "doses_full";
+    public static final String VIEW_MEDICATION_FULL = "medications_full";
 
     /**
      * Table name definitions
@@ -47,11 +48,13 @@ class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TABLE_MEDICATIONS + "(" +
                     COLUMN_MED_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NAME + " TEXT NOT NULL, " +
-                    COLUMN_FREQUENCY + " TEXT, " +
+                    COLUMN_FREQ_ID + " INTEGER, " +
                     COLUMN_IMAGE_PATH + " TEXT, " +
                     COLUMN_ACTIVE + " INTEGER DEFAULT 1, " +
                     COLUMN_ARCHIVED + " INTEGER DEFAULT 0, " +
-                    COLUMN_ARCHIVE_DATE + " INTEGER DEFAULT 0" +
+                    COLUMN_ARCHIVE_DATE + " INTEGER DEFAULT 0, " +
+                    "FOREIGN KEY(" + COLUMN_FREQ_ID + ") " +
+                    "REFERENCES " + TABLE_FREQUENCIES + "(" + COLUMN_FREQ_ID + ")" +
                     ")";
 
     private static final String CREATE_TABLE_DOSES =
@@ -79,8 +82,8 @@ class DBHelper extends SQLiteOpenHelper {
     /**
      * Create view definitions
      */
-    private static final String CREATE_VIEW_DOSE_WITH_MED =
-            "CREATE VIEW " + VIEW_DOSE_WITH_MED + " AS " +
+    private static final String CREATE_VIEW_DOSE_FULL =
+            "CREATE VIEW " + VIEW_DOSE_FULL + " AS " +
                     "SELECT " + TABLE_DOSES + "." + COLUMN_ID + ", " +
                     TABLE_DOSES + "." + COLUMN_DATE + ", " +
                     TABLE_DOSES + "." + COLUMN_REMINDER + ", " +
@@ -88,13 +91,20 @@ class DBHelper extends SQLiteOpenHelper {
                     TABLE_DOSES + "." + COLUMN_DOSAGE + ", " +
                     TABLE_DOSES + "." + COLUMN_MED_ID + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_NAME + ", " +
-                    TABLE_MEDICATIONS + "." + COLUMN_FREQUENCY + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_FREQ_ID + ", " +
+                    TABLE_FREQUENCIES + "." + COLUMN_LABEL + ", " +
+                    TABLE_FREQUENCIES + "." + COLUMN_TIME_OF_DAY + ", " +
+                    TABLE_FREQUENCIES + "." + COLUMN_INTERVAL + ", " +
+                    TABLE_FREQUENCIES + "." + COLUMN_NIGHT_REMINDER + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_IMAGE_PATH + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_ACTIVE + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_ARCHIVED + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_ARCHIVE_DATE + " " +
-                    "FROM " + TABLE_DOSES + " JOIN " + TABLE_MEDICATIONS + " " +
-                    "ON " + TABLE_DOSES + "." + COLUMN_MED_ID + "=" + TABLE_MEDICATIONS + "." + COLUMN_MED_ID;
+                    "FROM " + TABLE_DOSES + " " +
+                    "JOIN " + TABLE_MEDICATIONS + " " +
+                    "ON " + TABLE_DOSES + "." + COLUMN_MED_ID + "=" + TABLE_MEDICATIONS + "." + COLUMN_MED_ID + " " +
+                    "JOIN " + TABLE_FREQUENCIES + " " +
+                    "ON " + TABLE_MEDICATIONS + "." + COLUMN_FREQ_ID + "=" + TABLE_FREQUENCIES + "." + COLUMN_FREQ_ID;
 
     private static final String DB_NAME = "drugbug.db";
     private static final int DB_VERSION = 24;
@@ -108,7 +118,7 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MEDICATIONS);
         db.execSQL(CREATE_TABLE_DOSES);
         db.execSQL(CREATE_TABLE_FREQUENCIES);
-        db.execSQL(CREATE_VIEW_DOSE_WITH_MED);
+        db.execSQL(CREATE_VIEW_DOSE_FULL);
     }
 
     @Override
@@ -116,7 +126,7 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDICATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOSES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FREQUENCIES);
-        db.execSQL("DROP VIEW IF EXISTS " + VIEW_DOSE_WITH_MED);
+        db.execSQL("DROP VIEW IF EXISTS " + VIEW_DOSE_FULL);
         onCreate(db);
     }
 }
