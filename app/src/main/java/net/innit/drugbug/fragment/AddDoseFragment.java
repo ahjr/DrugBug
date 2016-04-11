@@ -479,7 +479,9 @@ public class AddDoseFragment extends DialogFragment {
     }
 
     private boolean hasCamera() {
-        final boolean deviceHasCameraFlag = getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        final boolean deviceHasCameraFlag = (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
+                getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY) ||
+                getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT));
         //noinspection deprecation
         return !(!deviceHasCameraFlag || Camera.getNumberOfCameras() == 0);
     }
