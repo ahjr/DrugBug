@@ -1,19 +1,20 @@
 package net.innit.drugbug.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-/**
- * ** NOT IN USE **
- * Implemented as a static list in DatabaseDAO object for now
- */
 public class FrequencyItem {
+    private long id;
     private String label;
-    private List<Date> dates = new ArrayList<>();
+    private String timesOfDay;
+    private Long interval;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getLabel() {
-
         return label;
     }
 
@@ -21,11 +22,36 @@ public class FrequencyItem {
         this.label = label;
     }
 
-//    public List<Long> getOffsets() {
-//        return offsets;
-//    }
-//
-//    public void setOffsets(List<Long> offsets) {
-//        this.offsets = offsets;
-//    }
+    public String getTimesOfDay() {
+        return timesOfDay;
+    }
+
+    public void setTimesOfDay(String timesOfDay) {
+        // Enforce either interval or times of day
+        if (interval > 0) {
+            interval = null;
+        }
+        this.timesOfDay = timesOfDay;
+    }
+
+    public Long getInterval() {
+        return interval;
+    }
+
+    public void setInterval(long interval) {
+        // Enforce either interval or times of day
+        if (timesOfDay != null) {
+            timesOfDay = null;
+        }
+        this.interval = interval;
+    }
+
+    public boolean usesInterval() {
+        return interval != null;
+    }
+
+    public boolean usesTimesOfDay() {
+        return timesOfDay != null;
+    }
+
 }

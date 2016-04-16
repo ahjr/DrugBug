@@ -13,7 +13,7 @@ class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_DOSAGE = "dosage";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_FREQUENCY = "frequency";
+//    public static final String COLUMN_FREQUENCY = "frequency";
     public static final String COLUMN_IMAGE_PATH = "image_path";
     public static final String COLUMN_REMINDER = "reminder";
     public static final String COLUMN_TAKEN = "taken";
@@ -49,6 +49,9 @@ class DBHelper extends SQLiteOpenHelper {
                     COLUMN_MED_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NAME + " TEXT NOT NULL, " +
                     COLUMN_FREQ_ID + " INTEGER, " +
+                    COLUMN_END_DATE + " INTEGER, " +
+                    COLUMN_NUM_REMINDERS + " INTEGER, " +
+                    COLUMN_NIGHT_REMINDER + " INTEGER, " +
                     COLUMN_IMAGE_PATH + " TEXT, " +
                     COLUMN_ACTIVE + " INTEGER DEFAULT 1, " +
                     COLUMN_ARCHIVED + " INTEGER DEFAULT 0, " +
@@ -75,13 +78,31 @@ class DBHelper extends SQLiteOpenHelper {
                     COLUMN_LABEL + " TEXT NOT NULL, " +
                     COLUMN_TIME_OF_DAY + " TEXT, " +
                     COLUMN_INTERVAL + " INTEGER, " +
-                    COLUMN_NIGHT_REMINDER + " INTEGER, " +
-                    "PRIMARY KEY (" + COLUMN_TIME_OF_DAY + ", " + COLUMN_INTERVAL + ", " + COLUMN_NIGHT_REMINDER + ")" +
+                    "PRIMARY KEY (" + COLUMN_TIME_OF_DAY + ", " + COLUMN_INTERVAL + ")" +
                     ")";
 
     /**
      * Create view definitions
      */
+    private static final String CREATE_VIEW_MEDICATION_FULL =
+            "CREATE VIEW " + VIEW_MEDICATION_FULL + " AS " +
+                    "SELECT " + TABLE_MEDICATIONS + "." + COLUMN_MED_ID + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_NAME + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_FREQ_ID + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_END_DATE + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_NUM_REMINDERS + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_NIGHT_REMINDER + ", " +
+                    TABLE_FREQUENCIES + "." + COLUMN_LABEL + ", " +
+                    TABLE_FREQUENCIES + "." + COLUMN_TIME_OF_DAY + ", " +
+                    TABLE_FREQUENCIES + "." + COLUMN_INTERVAL + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_IMAGE_PATH + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_ACTIVE + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_ARCHIVED + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_ARCHIVE_DATE + " " +
+                    "FROM " + TABLE_MEDICATIONS + " " +
+                    "JOIN " + TABLE_FREQUENCIES + " " +
+                    "ON " + TABLE_MEDICATIONS + "." + COLUMN_FREQ_ID + "=" + TABLE_FREQUENCIES + "." + COLUMN_FREQ_ID;
+
     private static final String CREATE_VIEW_DOSE_FULL =
             "CREATE VIEW " + VIEW_DOSE_FULL + " AS " +
                     "SELECT " + TABLE_DOSES + "." + COLUMN_ID + ", " +
@@ -92,10 +113,12 @@ class DBHelper extends SQLiteOpenHelper {
                     TABLE_DOSES + "." + COLUMN_MED_ID + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_NAME + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_FREQ_ID + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_END_DATE + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_NUM_REMINDERS + ", " +
+                    TABLE_MEDICATIONS + "." + COLUMN_NIGHT_REMINDER + ", " +
                     TABLE_FREQUENCIES + "." + COLUMN_LABEL + ", " +
                     TABLE_FREQUENCIES + "." + COLUMN_TIME_OF_DAY + ", " +
                     TABLE_FREQUENCIES + "." + COLUMN_INTERVAL + ", " +
-                    TABLE_FREQUENCIES + "." + COLUMN_NIGHT_REMINDER + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_IMAGE_PATH + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_ACTIVE + ", " +
                     TABLE_MEDICATIONS + "." + COLUMN_ARCHIVED + ", " +
@@ -107,7 +130,7 @@ class DBHelper extends SQLiteOpenHelper {
                     "ON " + TABLE_MEDICATIONS + "." + COLUMN_FREQ_ID + "=" + TABLE_FREQUENCIES + "." + COLUMN_FREQ_ID;
 
     private static final String DB_NAME = "drugbug.db";
-    private static final int DB_VERSION = 24;
+    private static final int DB_VERSION = 25;
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -119,6 +142,7 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_DOSES);
         db.execSQL(CREATE_TABLE_FREQUENCIES);
         db.execSQL(CREATE_VIEW_DOSE_FULL);
+        db.execSQL(CREATE_VIEW_MEDICATION_FULL);
     }
 
     @Override
@@ -127,6 +151,7 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOSES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FREQUENCIES);
         db.execSQL("DROP VIEW IF EXISTS " + VIEW_DOSE_FULL);
+        db.execSQL("DROP VIEW IF EXISTS " + VIEW_MEDICATION_FULL);
         onCreate(db);
     }
 }

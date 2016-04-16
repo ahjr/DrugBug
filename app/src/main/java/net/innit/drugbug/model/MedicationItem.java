@@ -23,7 +23,11 @@ import java.util.List;
 public class MedicationItem implements Comparable<MedicationItem> {
     private long id;
     private String name;    // Name of drug taken
-    private String frequency; // Frequency of doses
+    private FrequencyItem frequency; // Frequency of doses
+    private Date reminderEndDate;
+    private boolean nightReminders;
+    private Integer numReminders;
+
     private String imagePath; // Picture of the pill or label
     private boolean active = true;
     private boolean archived;
@@ -67,12 +71,43 @@ public class MedicationItem implements Comparable<MedicationItem> {
         this.name = name;
     }
 
-    public String getFrequency() {
+    public FrequencyItem getFrequency() {
         return frequency;
     }
 
-    public void setFrequency(String frequency) {
+    public void setFrequency(FrequencyItem frequency) {
         this.frequency = frequency;
+    }
+
+    public Date getReminderEndDate() {
+        return reminderEndDate;
+    }
+
+    public void setReminderEndDate(Date reminderEndDate) {
+        if (numReminders != null) {
+            numReminders = null;
+        }
+        this.reminderEndDate = reminderEndDate;
+    }
+
+    public Integer getNumReminders() {
+        return numReminders;
+    }
+
+    public void setNumReminders(Integer numReminders) {
+        // Enforce either number of reminders or end date - can't have both
+        if (reminderEndDate != null) {
+            reminderEndDate = null;
+        }
+        this.numReminders = numReminders;
+    }
+
+    public boolean allowsNightReminders() {
+        return nightReminders;
+    }
+
+    public void setNightReminders(boolean nightReminders) {
+        this.nightReminders = nightReminders;
     }
 
     public boolean isActive() {

@@ -39,7 +39,10 @@ public class DatabaseDAO {
     private static final String[] medicationsAllColumns = {
             DBHelper.COLUMN_MED_ID,
             DBHelper.COLUMN_NAME,
-            DBHelper.COLUMN_FREQUENCY,
+            DBHelper.COLUMN_FREQ_ID,
+            DBHelper.COLUMN_END_DATE,
+            DBHelper.COLUMN_NUM_REMINDERS,
+            DBHelper.COLUMN_NIGHT_REMINDER,
             DBHelper.COLUMN_IMAGE_PATH,
             DBHelper.COLUMN_ACTIVE,
             DBHelper.COLUMN_ARCHIVED,
@@ -56,10 +59,39 @@ public class DatabaseDAO {
             DBHelper.COLUMN_TAKEN,
             DBHelper.COLUMN_DOSAGE
     };
-    private static final String[] dosesWithMedAllColumns = {
+    private static final String[] frequenciesAllColumns = {
+            DBHelper.COLUMN_FREQ_ID,
+            DBHelper.COLUMN_LABEL,
+            DBHelper.COLUMN_TIME_OF_DAY,
+            DBHelper.COLUMN_INTERVAL
+    };
+
+    private static final String[] medicationsFullAllColumns = {
             DBHelper.COLUMN_MED_ID,
             DBHelper.COLUMN_NAME,
-            DBHelper.COLUMN_FREQUENCY,
+            DBHelper.COLUMN_FREQ_ID,
+            DBHelper.COLUMN_LABEL,
+            DBHelper.COLUMN_TIME_OF_DAY,
+            DBHelper.COLUMN_INTERVAL,
+            DBHelper.COLUMN_END_DATE,
+            DBHelper.COLUMN_NUM_REMINDERS,
+            DBHelper.COLUMN_NIGHT_REMINDER,
+            DBHelper.COLUMN_IMAGE_PATH,
+            DBHelper.COLUMN_ACTIVE,
+            DBHelper.COLUMN_ARCHIVED,
+            DBHelper.COLUMN_ARCHIVE_DATE,
+    };
+
+    private static final String[] dosesFullAllColumns = {
+            DBHelper.COLUMN_MED_ID,
+            DBHelper.COLUMN_NAME,
+            DBHelper.COLUMN_FREQ_ID,
+            DBHelper.COLUMN_LABEL,
+            DBHelper.COLUMN_TIME_OF_DAY,
+            DBHelper.COLUMN_INTERVAL,
+            DBHelper.COLUMN_END_DATE,
+            DBHelper.COLUMN_NUM_REMINDERS,
+            DBHelper.COLUMN_NIGHT_REMINDER,
             DBHelper.COLUMN_IMAGE_PATH,
             DBHelper.COLUMN_ACTIVE,
             DBHelper.COLUMN_ARCHIVED,
@@ -348,7 +380,7 @@ public class DatabaseDAO {
     private ContentValues createMedCV(MedicationItem medication) {
         ContentValues values = new ContentValues();
         values.put(DBHelper.COLUMN_NAME, medication.getName());
-        values.put(DBHelper.COLUMN_FREQUENCY, medication.getFrequency());
+        values.put(DBHelper.COLUMN_FREQ_ID, medication.getFrequency().getId());
         values.put(DBHelper.COLUMN_IMAGE_PATH, medication.getImagePath());
         values.put(DBHelper.COLUMN_ACTIVE, medication.isActive());
         values.put(DBHelper.COLUMN_ARCHIVED, medication.isArchived());
@@ -583,7 +615,7 @@ public class DatabaseDAO {
         String[] columns;
         if (medication == null) {
             table = DBHelper.VIEW_DOSE_FULL;
-            columns = dosesWithMedAllColumns;
+            columns = dosesFullAllColumns;
         } else {
             table = DBHelper.TABLE_DOSES;
             columns = dosesAllColumns;
