@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
 import net.innit.drugbug.model.DoseItem;
+import net.innit.drugbug.model.FrequencyItem;
 import net.innit.drugbug.model.MedicationItem;
 
 import java.text.ParseException;
@@ -163,21 +164,37 @@ public class DatabaseDAO {
      * @return medication item cursor is pointing to
      */
     private MedicationItem getMedFromDB(Cursor cursor) {
+        MedicationItem medication = getMedicationItem(cursor);
+        if (cursor.isLast()) cursor.close();
+        return medication;
+    }
+
+    @NonNull
+    private MedicationItem getMedicationItem(Cursor cursor) {
         MedicationItem medication = new MedicationItem();
+        medication.setFrequency(getFrequencyItem(cursor));
         medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MED_ID)));
         medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-        medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
         medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
         medication.setActive(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
         medication.setArchived(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVED)) == 1);
         long archiveDate = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVE_DATE));
         medication.setArchiveDate((archiveDate>0) ? new Date(archiveDate): null);
-        if (cursor.isLast()) cursor.close();
         return medication;
     }
 
+    @NonNull
+    private FrequencyItem getFrequencyItem(Cursor cursor) {
+        FrequencyItem frequency = new FrequencyItem();
+        frequency.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_FREQ_ID)));
+        frequency.setLabel(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_LABEL)));
+        frequency.setTimesOfDay(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_TIME_OF_DAY)));
+        frequency.setInterval(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_INTERVAL)));
+        return frequency;
+    }
+
     private MedicationItem getMedFromSelection(String selection) {
-        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, null);
+        Cursor cursor = database.query(DBHelper.VIEW_MEDICATION_FULL, medicationsFullAllColumns, selection, null, null, null, null);
         if (cursor.getCount() == 1) {
             cursor.moveToFirst();
             return getMedFromDB(cursor);
@@ -194,7 +211,7 @@ public class DatabaseDAO {
      */
     private List<MedicationItem> getMedications(String selection, String orderBy) {
         List<MedicationItem> returnList = new ArrayList<>();
-        Cursor cursor = database.query(DBHelper.TABLE_MEDICATIONS, medicationsAllColumns, selection, null, null, null, orderBy);
+        Cursor cursor = database.query(DBHelper.VIEW_MEDICATION_FULL, medicationsFullAllColumns, selection, null, null, null, orderBy);
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 returnList.add(getMedFromDB(cursor));
@@ -446,15 +463,16 @@ public class DatabaseDAO {
      */
     private DoseItem getDoseFromDB(Cursor cursor, MedicationItem medication) {
         if (medication == null) {
-            medication = new MedicationItem();
-            medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MED_ID)));
-            medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-            medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
-            medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
-            medication.setActive(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
-            medication.setArchived(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
-            long archiveDate = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVE_DATE));
-            medication.setArchiveDate((archiveDate > 0) ? new Date(archiveDate) : null);
+            medication = getMedicationItem(cursor);
+//            medication = new MedicationItem();
+//            medication.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_MED_ID)));
+//            medication.setName(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME)));
+//            medication.setFrequency(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_FREQUENCY)));
+//            medication.setImagePath(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_IMAGE_PATH)));
+//            medication.setActive(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
+//            medication.setArchived(cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ACTIVE)) == 1);
+//            long archiveDate = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ARCHIVE_DATE));
+//            medication.setArchiveDate((archiveDate > 0) ? new Date(archiveDate) : null);
         }
 
         DoseItem dose = new DoseItem();
